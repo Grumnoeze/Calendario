@@ -1,0 +1,126 @@
+/* ===== Login.css ===== */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background-color: #EDF5FA;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  background-color: #FFFFFF;
+  border-radius: 16px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 40px 50px;
+  width: 360px;
+  border-left: 8px solid #00457F;
+}
+
+h2 {
+  text-align: center;
+  color: #00457F;
+  margin-bottom: 25px;
+  font-weight: 700;
+}
+
+input,
+select {
+  padding: 12px;
+  margin-bottom: 18px;
+  border: 2px solid #00457F;
+  border-radius: 8px;
+  font-size: 15px;
+  outline: none;
+  background-color: #F7FAFC;
+  transition: 0.2s;
+}
+
+input:focus,
+select:focus {
+  border-color: #EC6206;
+  box-shadow: 0px 0px 5px rgba(236, 98, 6, 0.4);
+}
+
+button {
+  background-color: #00457F;
+  color: #FFFFFF;
+  font-weight: 600;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  background-color: #EC6206;
+  transform: translateY(-2px);
+}
+
+p {
+  text-align: center;
+  color: #EC6206;
+  font-size: 14px;
+  margin-top: 12px;
+}
+
+/* Para enlaces de recuperación de contraseña */
+form a {
+  text-align: right;
+  color: #00457F;
+  text-decoration: none;
+  font-size: 13px;
+  margin-bottom: 18px;
+}
+
+form a:hover {
+  color: #EC6206;
+}
+
+/* Sección visual combinada (para cuando agregues diseño con logo) */
+.login-container {
+  display: flex;
+  width: 800px;
+  height: 500px;
+  background-color: #EDF5FA;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.login-left {
+  flex: 1;
+  background-color: #EDF5FA;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-right {
+  flex: 1;
+  background-color: #00457F;
+  color: #EAC56E;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-right h1 {
+  font-size: 28px;
+  color: #EAC56E;
+  margin-top: 20px;
+}
+
+.logo {
+  width: 140px;
+  height: auto;
+  margin-bottom: 15px;
+}
