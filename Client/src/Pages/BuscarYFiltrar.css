@@ -1,0 +1,224 @@
+.buscar-filtrar-layout {
+  padding: 2rem;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.buscar-filtrar-layout h2 {
+  color: #0077b6;
+  margin-bottom: 1rem;
+}
+
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.filtros input,
+.filtros select,
+.filtros button {
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 0.95rem;
+}
+
+.filtros button {
+  background-color: #0077b6;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+.buscar-filtrar-layout {
+  padding: 2rem;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f9f9f9;
+}
+
+.titulo-vista {
+  font-size: 1.5rem;
+  color: #003366;
+  margin-bottom: 1rem;
+}
+
+.filtros-busqueda {
+  background-color: #002b5c;
+  padding: 1rem;
+  border-radius: 8px;
+  color: white;
+}
+
+.input-busqueda {
+  width: 100%;
+  padding: 0.6rem;
+  margin-bottom: 1rem;
+  border-radius: 6px;
+  border: none;
+  font-size: 1rem;
+}
+
+.grupo-filtros {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.filtro-select {
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: none;
+  font-size: 0.95rem;
+}
+
+.btn-limpiar {
+  background-color: #f44336;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.resultados-busqueda {
+  margin-top: 2rem;
+}
+
+.tarjeta-evento {
+  background-color: white;
+  border: 1px solid #ccc;
+  border-left: 6px solid #0077b6;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.evento-info h4 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #003366;
+}
+
+.evento-info p {
+  margin: 0.3rem 0;
+  color: #555;
+}
+
+.evento-rango {
+  font-size: 0.85rem;
+  color: #777;
+}
+
+.evento-tag {
+  background-color: #e0e0e0;
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  margin-top: 0.3rem;
+  display: inline-block;
+}
+
+.evento-acciones button {
+  margin-left: 0.5rem;
+  padding: 0.4rem 0.8rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.btn-detalle {
+  background-color: #4caf50;
+  color: white;
+}
+
+.btn-editar {
+  background-color: #2196f3;
+  color: white;
+}
+.btn-eliminar {
+  background-color: #f44336;
+  color: white;
+}
+
+.buscar-filtrar-layout {
+  display: flex;
+  min-height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f9f9f9;
+}
+
+.sidebar {
+  width: 250px;
+  background-color: #002b5c;
+  color: white;
+  padding: 1rem;
+}
+
+.logo-container {
+  text-align: center;
+}
+
+.logo-img {
+  width: 60px;
+  height: auto;
+}
+
+.logo-divider {
+  margin: 1rem 0;
+  border: 1px solid #ccc;
+}
+
+.rol-usuario {
+  text-align: center;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+}
+
+.menu-navegacion {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.menu-btn {
+  background-color: #ffffff22;
+  color: white;
+  border: none;
+  padding: 0.6rem;
+  text-align: left;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.menu-btn span {
+  font-size: 0.8rem;
+  color: #ccc;
+}
+
+.menu-btn.activo {
+  background-color: #ffffff55;
+  font-weight: bold;
+}
+
+.contenido {
+  flex: 1;
+  padding: 2rem;
+}
+
+.titulo-vista {
+  font-size: 1.5rem;
+  color: #003366;
+  margin-bottom: 1rem;
+}
+
+/* ...los estilos de filtros y tarjetas que ya tenías... */
+.filtros-busqueda {
+  background-color: #002b5c;
+  padding: 1rem;
+  border-radius: 8px;
+  color: white;
+}

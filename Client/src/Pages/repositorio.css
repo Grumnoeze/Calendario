@@ -1,0 +1,166 @@
+/* Tarjetas de documentos */
+.lista-documentos {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  background-color: #f0f2f5; /* Fondo suave para que las tarjetas resalten */
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+.tarjeta-documento {
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-left: 6px solid #0077b6;
+  padding: 1.2rem 1rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08); /* Sombra suave */
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  transition: transform 0.2s ease;
+}
+
+.tarjeta-documento:hover {
+  transform: translateY(-2px); /* Efecto sutil al pasar el mouse */
+}
+
+.documento-info {
+  max-width: 75%;
+}
+
+.documento-info h4 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #003366;
+}
+
+.documento-info p {
+  margin: 0.3rem 0;
+  color: #555;
+  font-size: 0.95rem;
+}
+
+.etiqueta {
+  display: inline-block;
+  padding: 0.3rem 0.7rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1);
+}
+
+/* Colores por dimensión */
+.etiqueta.tecnico {
+  background-color: #ffeb3b;
+  color: #333;
+}
+
+.etiqueta.socio {
+  background-color: #2196f3;
+  color: white;
+}
+
+.etiqueta.pedagogico {
+  background-color: #4caf50;
+  color: white;
+}
+
+/* Botón de descarga */
+.btn-descargar {
+  background-color: #0077b6;
+  color: white;
+  border: none;
+  padding: 0.6rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  align-self: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  transition: background-color 0.2s ease;
+}
+
+.btn-descargar:hover {
+  background-color: #005f91;
+}
+
+
+.tarjeta-documento {
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  padding: 1.2rem 1rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.documento-cuerpo {
+  flex: 1;
+  padding-right: 1rem;
+}
+
+.documento-encabezado {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.6rem;
+}
+
+.documento-nombre {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #003366;
+  margin: 0;
+}
+
+.documento-evento {
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.documento-meta {
+  margin: 0.2rem 0;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.etiqueta {
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.etiqueta.tecnico {
+  background-color: #ffeb3b;
+  color: #333;
+}
+
+.etiqueta.socio {
+  background-color: #2196f3;
+  color: white;
+}
+
+.etiqueta.pedagogico {
+  background-color: #4caf50;
+  color: white;
+}
+
+.btn-descargar {
+  background-color: #0077b6;
+  color: white;
+  border: none;
+  padding: 0.6rem 1rem;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.btn-descargar:hover {
+  background-color: #005f91;
+}
