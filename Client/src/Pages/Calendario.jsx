@@ -4,30 +4,33 @@ import { useEffect, useState, useRef } from 'react';
 // Importamos useNavigate para redireccionar entre vistas
 import { useNavigate } from 'react-router-dom';
 
-// Importamos la localización en español para el calendario
-import esLocale from '@fullcalendar/core/locales/es';
-
-// Importamos axios para hacer peticiones HTTP
 import axios from 'axios';
-
-// Importamos el componente principal de calendario
 import FullCalendar from '@fullcalendar/react';
-
-// Importamos el plugin para vista mensual (dayGrid)
 import dayGridPlugin from '@fullcalendar/daygrid';
-
-// Importamos el logo institucional
+import timeGridPlugin from '@fullcalendar/timegrid';
+import interactionPlugin from '@fullcalendar/interaction';
 import Logo from './img/Logo.jpg';
-
-// Importamos los estilos específicos del calendario
 import './Calendario.css';
+import esLocaleOriginal from '@fullcalendar/core/locales/es';
 
-// Componente principal del calendario institucional
+const esConMayusculas = {
+  ...esLocaleOriginal,
+  options: {
+    ...esLocaleOriginal.options,
+    monthNames: [
+      'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+    ],
+    monthNamesShort: [
+      'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun',
+      'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'
+    ]
+  }
+};
+
+
 function Calendario() {
-  // Estado para guardar los eventos que vienen del backend
   const [eventos, setEventos] = useState([]);
-
-  // Estado para el selector de estado del evento (realizado, pendiente, cancelado)
   const [estadoSeleccionado, setEstadoSeleccionado] = useState('Todos');
   const [eventoSeleccionado, setEventoSeleccionado] = useState(null);
   const calendarRef = useRef(null);
@@ -77,7 +80,6 @@ function Calendario() {
   // Hook para redireccionar entre rutas
   const navigate = useNavigate();
 
-  // useEffect para cargar los eventos al montar el componente
   useEffect(() => {
     axios.get('http://localhost:3000/api/listarEventos')
       .then(res => {
@@ -102,11 +104,21 @@ function Calendario() {
       .catch(err => console.error(err));
   }, []);
 
+  const handleMouseEnter = (info) => {
+    setEventoHover({
+      title: info.event.title,
+      start: info.event.startStr,
+      x: info.jsEvent.pageX,
+      y: info.jsEvent.pageY
+    });
+  };
 
-  // Render del componente
+  const handleMouseLeave = () => {
+    setEventoHover(null);
+  };
+
   return (
     <div className="calendario-layout">
-      {/* 🟦 Barra lateral institucional */}
       <aside className="sidebar">
         <div className="logo-container">
           <img src={Logo} alt="Logo institucional" className="logo-img" />
@@ -115,60 +127,77 @@ function Calendario() {
 
         <h2 className="rol-usuario">Director</h2>
 
-        {/* Menú de navegación lateral */}
         <nav className="menu-navegacion">
           <button className="menu-btn activo" onClick={() => navigate("/calendario")}>
-            Calendario<br /><span>Vista mensual y diaria</span>
+            📅 Calendario<br /><span>Vista mensual y diaria</span>
           </button>
           <button className="menu-btn" onClick={() => navigate("/agregar-evento")}>
-            Crear evento<br /><span>Crear nuevo evento</span>
+            ➕ Crear evento<br /><span>Crear nuevo evento</span>
           </button>
           <button className="menu-btn" onClick={() => navigate("/buscar-filtrar")}>
-            Buscar y filtrar<br /><span>Buscar un evento específico</span>
+            🔍 Buscar y filtrar<br /><span>Buscar un evento específico</span>
           </button>
           <button className="menu-btn" onClick={() => navigate("/admin-panel")}>
-            Gestión de usuarios<br /><span>Usuarios y permisos</span>
+            ⚙️ Panel Admin<br /><span>Usuarios y permisos</span>
           </button>
           <button className="menu-btn" onClick={() => navigate("/repositorio")}>
-            Repositorio<br /><span>Documento adjunto</span>
+            📁 Repositorio<br /><span>Documento adjunto</span>
           </button>
         </nav>
+
+        <div className="usuario-sidebar">
+          <span>Pablo Gómez (admin)</span>
+          <button className="cerrar-sesion">Cerrar sesión</button>
+        </div>
       </aside>
 
-      {/* 🟨 Contenido principal del calendario */}
       <main className="contenido">
-        {/* Encabezado con título y botón */}
         <header className="encabezado">
           <h2>📅 Calendario Institucional</h2>
-          <button className="nuevo-evento" onClick={() => navigate("/agregar-evento")}>+ Nuevo evento</button>
         </header>
 
-        {/* Componente de calendario con eventos cargados */}
         <FullCalendar
-          ref={calendarRef}
-          plugins={[dayGridPlugin]}
+          plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
           initialView="dayGridMonth"
-          events={eventos}
-          height="auto"
-          locale={esLocale}
-          eventClick={(info) => {
-            const evento = info.event;
-            setEventoSeleccionado({
-              id: evento.id,
-              title: evento.title,
-              start: evento.startStr,
-              tipo: evento.extendedProps.tipo,
-              estado: evento.extendedProps.estado || 'Pendiente'
-            });
+          headerToolbar={{
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,timeGridDay'
           }}
+          events={eventos}
+          locale={esConMayusculas}
+          height="auto"
+          eventMouseEnter={handleMouseEnter}
+          eventMouseLeave={handleMouseLeave}
         />
 
+        {eventoHover && (
+          <div
+            className="popup-evento"
+            style={{
+              top: eventoHover.y + 10,
+              left: eventoHover.x + 10
+            }}
+          >
+            <strong>{eventoHover.title}</strong><br />
+            <span>{new Date(eventoHover.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+          </div>
+        )}
 
-        {eventoSeleccionado && (
-          <div className="evento-flotante">
-            <div className="evento-flotante-contenido">
-              <div className="evento-info">
-                <h3 className="evento-titulo">{eventoSeleccionado.tipo}</h3>
+        <div className="evento-flotante">
+          <div className="evento-flotante-contenido">
+            <div className="evento-info">
+              <h3 className="evento-titulo">Técnico-administrativo</h3>
+
+              <div className="evento-hora-estado">
+                <label htmlFor="hora">🕒 Horario:</label>
+                <input
+                  type="time"
+                  id="hora"
+                  value={horaEvento}
+                  onChange={(e) => setHoraEvento(e.target.value)}
+                  className="hora-input"
+                />
 
                 <div className="evento-hora-estado">
                   <label>🕒 Hora de inicio:</label>
@@ -209,12 +238,11 @@ function Calendario() {
               </div>
             </div>
           </div>
-        )}
+        </div>
 
       </main>
     </div>
   );
 }
 
-// Exportamos el componente para que pueda usarse en otras vistas
 export default Calendario;
