@@ -23,18 +23,20 @@ const CrearEvento = (req, res) => {
   }
 
   const Insertar = `
-    INSERT INTO Eventos (
-      Titulo, FechaInicio, FechaFin, Ubicacion, Dimension, AsignarA,
-      Descripcion, Materia, PermisoVisualizacion, PermisoEdicion,
-      Recordatorio, Tipo, UsuarioId
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `;
+  INSERT INTO Eventos (
+    Titulo, FechaInicio, FechaFin, Ubicacion, Dimension, AsignarA,
+    Descripcion, Materia, PermisoVisualizacion, PermisoEdicion,
+    Recordatorio, Tipo, UsuarioId, Estado
+  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+`;
+
 
   const valores = [
     Titulo, FechaInicio, FechaFin, Ubicacion, Dimension, AsignarA,
     Descripcion, Materia, PermisoVisualizacion, PermisoEdicion,
-    Recordatorio ? 1 : 0, Tipo, UsuarioId
+    Recordatorio ? 1 : 0, Tipo, UsuarioId, 'Pendiente'
   ];
+
 
   db.run(Insertar, valores, function (error) {
     if (error) {

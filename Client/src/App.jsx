@@ -4,8 +4,10 @@ import Register from "./Pages/Register"
 
 import PrivateRoute from "./Components/PrivateRoute"
 import AdminPanel from "./Pages/AdminPanel"
-import AgregarEvento from "./Pages/AgregarEvento"
+import CrearEventoVista from "./Pages/CrearEventoVista"
 import Calendario from "./Pages/Calendario"
+import BuscarFiltrar from "./Pages/BuscarYFiltrar"
+import Repositorio from "./Pages/Repositorio"
 
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 
@@ -27,14 +29,29 @@ function App() {
         } />
         <Route path="/agregar-evento" element={
           <PrivateRoute roles={["docente", "admin"]}>
-            <AgregarEvento />
+            <CrearEventoVista />
           </PrivateRoute>
         } />
+
         <Route path="/admin-panel" element={
           <PrivateRoute roles={["admin"]}>
             <AdminPanel />
           </PrivateRoute>
         } />
+
+        <Route path="/buscar-filtrar" element={
+          <PrivateRoute roles={["docente", "admin"]}>
+            <BuscarFiltrar />
+          </PrivateRoute>
+        } />
+        <Route path="/repositorio" element={
+          <PrivateRoute roles={["docente", "admin"]}>
+            <Repositorio />
+          </PrivateRoute>
+        } />
+
+
+
 
       </Routes>
     </>

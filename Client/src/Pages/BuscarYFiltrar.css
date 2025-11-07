@@ -151,12 +151,12 @@
   background-color: #f9f9f9;
 }
 
-.sidebar {
+/* .sidebar {
   width: 250px;
   background-color: #002b5c;
   color: white;
   padding: 1rem;
-}
+} */
 
 .logo-container {
   text-align: center;
@@ -183,7 +183,7 @@
   flex-direction: column;
   gap: 0.5rem;
 }
-
+/* 
 .menu-btn {
   background-color: #ffffff22;
   color: white;
@@ -196,8 +196,8 @@
 
 .menu-btn span {
   font-size: 0.8rem;
-  color: #ccc;
-}
+  color: #ccc; }*/
+
 
 .menu-btn.activo {
   background-color: #ffffff55;
@@ -216,9 +216,9 @@
 }
 
 /* ...los estilos de filtros y tarjetas que ya tenías... */
-.filtros-busqueda {
+/* .filtros-busqueda {
   background-color: #002b5c;
   padding: 1rem;
   border-radius: 8px;
   color: white;
-}
+} */

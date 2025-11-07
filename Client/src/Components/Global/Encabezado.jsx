@@ -1,5 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 
+import Logo from '../../Pages/img/Logo1.png';
+
 function Encabezado() {
   const navigate = useNavigate();
   const usuario = JSON.parse(localStorage.getItem("usuario"));
