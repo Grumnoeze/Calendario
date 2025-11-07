@@ -14,7 +14,7 @@ const db_crear = new SQLite3.Database(SQLite3_Ubicacion, (error) => {
             `
             CREATE TABLE IF NOT EXISTS Usuarios(
                 Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                User TEXT UNIQUE,
+                Mail TEXT UNIQUE,
                 Password TEXT,
                 Name TEXT,
                 Rol TEXT
