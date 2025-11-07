@@ -1,86 +1,163 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import './Login.css';
-import Logo2 from './img/Logo2.png';
 
-function Login() {
+function AgregarEvento() {
+
   const [form, setForm] = useState({
-    User: '',
-    Password: '',
-    showPassword: false
+    Titulo: '',
+    FechaInicio: '',
+    FechaFin: '',
+    HoraInicio: '',
+    HoraFin: '',
+    Ubicacion: '',
+    Dimension: '',
+    AsignarA: '',
+    Descripcion: '',
+    Materia: '',
+    PermisoVisualizacion: '',
+    PermisoEdicion: '',
+    Recordatorio: false
   });
-  const [mensaje, setMensaje] = useState('');
+  const [crearActivo, setCrearActivo] = useState(true);
+  const [usuarios, setUsuarios] = useState([]);
   const navigate = useNavigate();
 
+  const [mensaje, setMensaje] = useState('');
+
+  const usuario = JSON.parse(localStorage.getItem("usuario"));
+  const UsuarioId = usuario?.Id;
+
+  useEffect(() => {
+    axios.get('http://localhost:3000/api/listarUsuarios')
+      .then(res => setUsuarios(res.data))
+      .catch(err => console.error("Error al cargar usuarios:", err));
+  }, []);
+
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value, type, checked } = e.target;
+    setForm({ ...form, [name]: type === 'checkbox' ? checked : value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (form.FechaInicio > form.FechaFin) {
+      setMensaje("⚠️ La fecha de fin debe ser posterior a la de inicio");
+      return;
+    }
     try {
-      const res = await axios.post('http://localhost:3000/api/iniciarSesion', form);
-      const usuario = res.data;
-      localStorage.setItem('usuario', JSON.stringify(usuario));
+      const evento = {
+        ...form,
+        Tipo: form.Dimension || 'evento',
+        UsuarioId
+      };
 
-      if (usuario.Rol === 'admin') navigate('/admin-panel');
-      else if (usuario.Rol === 'docente') navigate('/agregar-evento');
-      else if (usuario.Rol === 'familia') navigate('/calendario');
+
+      const res = await axios.post('http://localhost:3000/api/crearEvento', evento);
+      setMensaje(res.data.Mensaje);
     } catch (error) {
       setMensaje(error.response?.data?.Error || 'Error desconocido');
     }
   };
 
   return (
-    <div className="login-layout">
-      <div className="login-form">
-        <h2>Iniciar sesión</h2>
-        <form onSubmit={handleSubmit}>
-          <label htmlFor="User">Correo electrónico:</label>
-          <input
-            name="User"
-            id="User"
-            type="email"
-            placeholder="Ingrese su correo electrónico"
-            onChange={handleChange}
-            required
-          />
-
-          <label htmlFor="Password">Contraseña:</label>
-          <div className="password-wrapper">
-            <input
-              name="Password"
-              id="Password"
-              type={form.showPassword ? 'text' : 'password'}
-              placeholder="Ingrese su contraseña"
-              onChange={handleChange}
-              required
-            />
-            <span
-              className="password-icon"
-              onClick={() => setForm({ ...form, showPassword: !form.showPassword })}
-            >
-              {form.showPassword ? '🙈' : '👁️'}
-            </span>
-          </div>
-
-          <div className="login-links">
-            <a href="#">¿Olvidaste tu contraseña?</a>
-          </div>
-
-          <button type="submit">Ingresar</button>
-          <p className="login-error">{mensaje}</p>
-        </form>
+    <form onSubmit={handleSubmit}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
+        <div style={{
+          width: '50px',
+          height: '50px',
+          backgroundColor: '#eee',
+          borderRadius: '8px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: '24px',
+          color: '#999'
+        }}></div>
+        <h2 style={{ margin: 0 }}>📝 Crear nuevo evento</h2>
       </div>
 
-      <div className="login-banner">
-        <img src={Logo2} alt="Logo Colegio" className="login-logo" />
-        <h1 className="login-nombre">Colegio San Agustín</h1>
-      </div>
-    </div>
+      <label>Título del evento:</label>
+      <input name="Titulo" onChange={handleChange} required />
+
+      <label>Fecha de inicio:</label>
+      <input name="FechaInicio" type="date" onChange={handleChange} required />
+
+      <label>Fecha de fin:</label>
+      <input name="FechaFin" type="date" onChange={handleChange} required />
+
+      <label>Hora de inicio:</label>
+      <input name="HoraInicio" type="time" onChange={handleChange} required />
+
+      <label>Hora de fin:</label>
+      <input name="HoraFin" type="time" onChange={handleChange} required />
+
+      <label>Ubicación:</label>
+      <input name="Ubicacion" onChange={handleChange} />
+
+      <label>Dimensión:</label>
+      <select name="Dimension" onChange={handleChange} required>
+        <option value="">Seleccione una dimensión</option>
+        <option value="Tecnico-Administrativa">Técnico-Administrativa</option>
+        <option value="Socio-Comunitaria">Socio-Comunitaria</option>
+        <option value="Pedadogica-Didactica">Pedagógica-Didáctica</option>
+      </select>
+
+      <label>Asignar a:</label>
+      <select name="AsignarA" onChange={handleChange} required>
+        <option value="">Asignar a...</option>
+        {usuarios.map(u => (
+          <option key={u.Id} value={u.Id}>
+            {u.Name} ({u.Rol})
+          </option>
+        ))}
+      </select>
+
+      <label>Descripción:</label>
+      <textarea name="Descripcion" onChange={handleChange} />
+
+      <label>Materia:</label>
+      <select name="Materia" onChange={handleChange}>
+        <option value="">Sin materia</option>
+        <option value="Matematicas">Matemáticas</option>
+        <option value="Educacion Fisica">Educación Física</option>
+        <option value="Practicas del Lenguaje">Prácticas del Lenguaje</option>
+        <option value="Musica">Música</option>
+        <option value="Ciencias Sociales">Ciencias Sociales</option>
+        <option value="Ciencias Naturales">Ciencias Naturales</option>
+        <option value="Ingles">Inglés</option>
+      </select>
+
+      <label>Archivos adjuntos:</label>
+      <input type="file" name="Adjunto" onChange={(e) => setForm({ ...form, Adjunto: e.target.files[0] })} />
+
+      <label>Permisos de visualización:</label>
+      <input name="PermisoVisualizacion" onChange={handleChange} />
+
+      <label>Permisos de edición:</label>
+      <input name="PermisoEdicion" onChange={handleChange} />
+
+      <label>
+        <input
+          type="checkbox"
+          name="Recordatorio"
+          checked={form.Recordatorio}
+          onChange={handleChange}
+        />
+        Enviar recordatorio (2 días antes)
+      </label>
+
+
+
+      <button type="submit">Crear evento</button>
+      <button type="button" onClick={() => navigate(-1)}>Cancelar</button>
+
+
+      <p>{mensaje}</p>
+    </form>
+
   );
 }
 
-export default Login;
+
+export default AgregarEvento;

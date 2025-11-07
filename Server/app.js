@@ -15,7 +15,9 @@ App.use(Express.json());
 
 const EventoRouter = require('./src/Router/Evento.Router');
 const Router = require('./src/Router/Login.Router');
+const RepositorioRouter = require('./src/Router/Repositorio.Router');
 
+App.use('/api', RepositorioRouter);
 App.use('/api', EventoRouter);
 App.use('/api', Router);
 

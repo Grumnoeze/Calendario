@@ -1,6 +1,6 @@
 const express = require('express');
 const Rutas = express.Router();
-const { CrearEvento, ListarEventos, EliminarEvento } = require('../Controller/Evento.Controller');
+const { CrearEvento, ListarEventos, EliminarEvento, FiltrarEventos} = require('../Controller/Evento.Controller');
 const db = require('../DataBase/DB');
 
 Rutas.put('/actualizarEstado/:id', async (req, res) => {
@@ -24,6 +24,7 @@ Rutas.put('/actualizarEstado/:id', async (req, res) => {
 
 Rutas.post('/crearEvento', CrearEvento);
 Rutas.get('/listarEventos', ListarEventos);
+Rutas.get('/filtrarEventos', FiltrarEventos);
 Rutas.delete('/eliminarEvento/:id', EliminarEvento);
 
 

@@ -6,6 +6,8 @@ const CrearEvento = (req, res) => {
     Titulo,
     FechaInicio,
     FechaFin,
+    HoraInicio,
+    HoraFin,
     Ubicacion,
     Dimension,
     AsignarA,
@@ -18,24 +20,25 @@ const CrearEvento = (req, res) => {
     UsuarioId
   } = req.body;
 
+
   if (!Titulo || !FechaInicio || !FechaFin || !UsuarioId) {
     return res.status(400).json({ Error: "Faltan datos obligatorios" });
   }
 
   const Insertar = `
   INSERT INTO Eventos (
-    Titulo, FechaInicio, FechaFin, Ubicacion, Dimension, AsignarA,
+    Titulo, FechaInicio, FechaFin, HoraInicio, HoraFin, Ubicacion, Dimension, AsignarA,
     Descripcion, Materia, PermisoVisualizacion, PermisoEdicion,
     Recordatorio, Tipo, UsuarioId, Estado
-  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 `;
 
-
   const valores = [
-    Titulo, FechaInicio, FechaFin, Ubicacion, Dimension, AsignarA,
+    Titulo, FechaInicio, FechaFin, HoraInicio, HoraFin, Ubicacion, Dimension, AsignarA,
     Descripcion, Materia, PermisoVisualizacion, PermisoEdicion,
     Recordatorio ? 1 : 0, Tipo, UsuarioId, 'Pendiente'
   ];
+
 
 
   db.run(Insertar, valores, function (error) {
@@ -70,4 +73,32 @@ const EliminarEvento = (req, res) => {
   });
 };
 
-module.exports = { CrearEvento, ListarEventos, EliminarEvento };
+const FiltrarEventos = (req, res) => {
+  const { texto, dimension, fecha, responsable } = req.query;
+
+  let condiciones = [];
+  let valores = [];
+
+  if (texto) {
+    condiciones.push("(Titulo LIKE ? OR Descripcion LIKE ?)");
+    valores.push(`%${texto}%`, `%${texto}%`);
+  }
+  if (dimension) {
+    condiciones.push("Dimension = ?");
+    valores.push(dimension);
+  }
+  if (responsable) {
+    condiciones.push("AsignarA = ?");
+    valores.push(responsable);
+  }
+
+  const where = condiciones.length ? `WHERE ${condiciones.join(" AND ")}` : "";
+  const sql = `SELECT * FROM Eventos ${where}`;
+
+  db.all(sql, valores, (err, filas) => {
+    if (err) return res.status(500).json({ Error: "Error al filtrar eventos" });
+    res.status(200).json(filas);
+  });
+};
+
+module.exports = { CrearEvento, ListarEventos, EliminarEvento, FiltrarEventos };

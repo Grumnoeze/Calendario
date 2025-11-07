@@ -32,6 +32,7 @@ const esConMayusculas = {
 function Calendario() {
   const [eventos, setEventos] = useState([]);
   const [estadoSeleccionado, setEstadoSeleccionado] = useState('Todos');
+  const [eventoHover, setEventoHover] = useState(null);
   const [eventoSeleccionado, setEventoSeleccionado] = useState(null);
   const calendarRef = useRef(null);
   const guardarEstadoEnBD = async (id, estado) => {
@@ -86,8 +87,8 @@ function Calendario() {
         const eventosFormateados = res.data.map(ev => ({
           id: ev.Id,
           title: ev.Titulo,
-          start: ev.FechaInicio,
-          end: ev.FechaFin,
+          start: `${ev.FechaInicio}T${ev.HoraInicio}`,
+          end: `${ev.FechaFin}T${ev.HoraFin}`,
           backgroundColor:
             ev.Estado === 'Pendiente' ? '#ffeb3b' :
               ev.Estado === 'Cancelado' ? '#f44336' :
@@ -103,6 +104,7 @@ function Calendario() {
       })
       .catch(err => console.error(err));
   }, []);
+
 
   const handleMouseEnter = (info) => {
     setEventoHover({
@@ -184,24 +186,29 @@ function Calendario() {
           </div>
         )}
 
-        <div className="evento-flotante">
-          <div className="evento-flotante-contenido">
-            <div className="evento-info">
-              <h3 className="evento-titulo">Técnico-administrativo</h3>
-
-              <div className="evento-hora-estado">
-                <label htmlFor="hora">🕒 Horario:</label>
-                <input
-                  type="time"
-                  id="hora"
-                  value={horaEvento}
-                  onChange={(e) => setHoraEvento(e.target.value)}
-                  className="hora-input"
-                />
+        {eventoSeleccionado && (
+          <div className="evento-flotante">
+            <div className="evento-flotante-contenido">
+              <div className="evento-info">
+                <h3 className="evento-titulo">Técnico-administrativo</h3>
 
                 <div className="evento-hora-estado">
+                  <label htmlFor="hora">🕒 Horario:</label>
+                  <input
+                    type="time"
+                    id="hora"
+                    value={horaEvento}
+                    onChange={(e) => setHoraEvento(e.target.value)}
+                    className="hora-input"
+                  />
+
                   <label>🕒 Hora de inicio:</label>
-                  <input type="time" value={eventoSeleccionado.start.slice(11, 16)} readOnly className="hora-input" />
+                  <input
+                    type="time"
+                    value={eventoSeleccionado.start?.slice(11, 16) || ""}
+                    readOnly
+                    className="hora-input"
+                  />
 
                   <label>Estado:</label>
                   <select
@@ -210,9 +217,8 @@ function Calendario() {
                       const nuevoEstado = e.target.value;
                       setEventoSeleccionado({ ...eventoSeleccionado, estado: nuevoEstado });
                       actualizarColorEvento(eventoSeleccionado.id, nuevoEstado);
-                      await guardarEstadoEnBD(eventoSeleccionado.id, nuevoEstado); // ← guarda en BD
+                      await guardarEstadoEnBD(eventoSeleccionado.id, nuevoEstado);
                     }}
-
                     className="estado-dropdown"
                   >
                     <option value="Pendiente">🕒 Pendiente</option>
@@ -220,25 +226,25 @@ function Calendario() {
                     <option value="Cancelado">❌ Cancelado</option>
                   </select>
 
+                  <label>
+                    <input type="checkbox" checked={eventoSeleccionado.estado === "Realizado"} readOnly />
+                    Evento marcado como realizado
+                  </label>
+
+                  <div className="evento-descripcion">
+                    <p>{eventoSeleccionado.title}</p>
+                  </div>
                 </div>
 
-                <label>
-                  <input type="checkbox" checked={eventoSeleccionado.estado === "Realizado"} readOnly />
-                  Evento marcado como realizado
-                </label>
-
-                <div className="evento-descripcion">
-                  <p>{eventoSeleccionado.title}</p>
+                <div className="evento-acciones">
+                  <button onClick={() => setEventoSeleccionado(null)}>Cancelar</button>
+                  <button className="detalles-btn">Detalles</button>
                 </div>
-              </div>
-
-              <div className="evento-acciones">
-                <button onClick={() => setEventoSeleccionado(null)}>Cancelar</button>
-                <button className="detalles-btn">Detalles</button>
               </div>
             </div>
           </div>
-        </div>
+        )}
+
 
       </main>
     </div>

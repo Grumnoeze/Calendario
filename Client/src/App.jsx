@@ -4,6 +4,7 @@ import Register from "./Pages/Register";
 import PrivateRoute from "./Components/PrivateRoute";
 import AdminPanel from "./Pages/AdminPanel";
 import AgregarEvento from "./Pages/AgregarEvento";
+import CrearEventoVista from "./Pages/CrearEventoVista";
 import Calendario from "./Pages/Calendario";
 import Repositorio from "./Pages/repositorio";
 import BuscarFiltrar from "./Pages/BuscarYFiltrar";

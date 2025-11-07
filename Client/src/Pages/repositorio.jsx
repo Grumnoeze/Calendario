@@ -1,9 +1,40 @@
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import Logo from './img/Logo.jpg';
 import './repositorio.css';
 
+
 function Repositorio() {
   const navigate = useNavigate();
+  const [documentos, setDocumentos] = useState([]);
+  const [filtros, setFiltros] = useState({ texto: '', dimension: '', materia: '' });
+
+  const buscarDocumentos = async () => {
+    const params = new URLSearchParams(filtros);
+    const res = await axios.get(`http://localhost:3000/api/documentos?${params}`);
+    console.log("Documentos recibidos:", res.data);
+    setDocumentos(res.data);
+  };
+  const [mostrarModal, setMostrarModal] = useState(false);
+  const [form, setForm] = useState({
+    nombre: '',
+    dimension: '',
+    materia: '',
+    eventoId: '',
+    archivo: null
+  });
+
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFiltros(prev => ({ ...prev, [name]: value }));
+  };
+
+
+  useEffect(() => {
+    buscarDocumentos();
+  }, [filtros]);
 
   return (
     <div className="repositorio-layout">
@@ -51,69 +82,103 @@ function Repositorio() {
           <div className="filtros-repositorio">
             <input
               type="text"
+              name="texto"
+              value={filtros.texto}
+              onChange={handleChange}
               placeholder="🔍 Buscar documentos por nombre o evento..."
               className="input-busqueda"
             />
 
             <div className="grupo-filtros">
-              <select className="filtro-select">
+              <select name="dimension" value={filtros.dimension} onChange={handleChange} className="filtro-select">
                 <option value="">📂 Todas las dimensiones</option>
-                <option value="tecnico">🛠️ Técnico-Administrativa</option>
-                <option value="pedagogico">📘 Pedagógico-Didáctica</option>
-                <option value="socio">🤝 Socio-Comunitaria</option>
+                <option value="Tecnico-Administrativa">🛠️ Técnico-Administrativa</option>
+                <option value="Pedadogica-Didactica">📘 Pedagógico-Didáctica</option>
+                <option value="Socio-Comunitaria">🤝 Socio-Comunitaria</option>
               </select>
 
-              <select className="filtro-select">
+              <select name="materia" value={filtros.materia} onChange={handleChange} className="filtro-select">
                 <option value="">📚 Materia</option>
-                <option value="matematica">➗ Matemática</option>
-                <option value="lengua">📖 Lengua</option>
-                <option value="educacion">🏃 Educación Física</option>
+                <option value="Matematicas">➗ Matemática</option>
+                <option value="Practicas del Lenguaje">📖 Lengua</option>
+                <option value="Educacion Fisica">🏃 Educación Física</option>
               </select>
             </div>
           </div>
 
+          <button className="btn-subir" onClick={() => setMostrarModal(true)}>
+            📤 Subir nuevo documento
+          </button>
+
           <div className="lista-documentos">
-            <h3>📄 Documentos (3)</h3>
+            {documentos.length === 0 ? (
+              <p>No se encontraron documentos</p>
+            ) : (
+              documentos.map(doc => (
+                <div key={doc.Id} className="tarjeta-documento">
+                  <div className="documento-info">
+                    <span className={`etiqueta ${doc.Dimension.toLowerCase()}`}>{doc.Dimension}</span>
+                    <h4>{doc.Nombre}</h4>
+                    <p>📅 Evento ID: {doc.EventoId}</p>
+                    <p>📚 Materia: {doc.Materia}</p>
+                    <p>🗓️ Fecha: {doc.FechaSubida}</p>
+                    <p>📦 Archivo: {doc.Ruta}</p>
+                  </div>
+                  <a
+                    href={`http://localhost:3000/uploads/${doc.Ruta}`}
+                    className="btn-descargar"
+                    download
+                  >
+                    ⬇️ Descargar
+                  </a>
+                </div>
+              ))
+            )}
 
-            <div className="tarjeta-documento">
-              <div className="documento-info">
-                <span className="etiqueta tecnico">🛠️ Técnico-Administrativa</span>
-                <h4>Nombre archivo.pdf</h4>
-                <p>📅 Evento: Reunión de Personal Docente</p>
-                <p>📚 Materia(s): Matemática</p>
-                <p>🗓️ Fecha: 01/11/2025</p>
-                <p>📦 Tamaño: 3 MB | Tipo: PDF</p>
-              </div>
-              <button className="btn-descargar">⬇️ Descargar</button>
-            </div>
+            {mostrarModal && (
+              <div className="modal-overlay">
+                <div className="modal-contenido">
+                  <h3>📤 Subir Documento</h3>
+                  <form onSubmit={async (e) => {
+                    e.preventDefault();
+                    const data = new FormData();
+                    data.append('archivo', form.archivo);
+                    data.append('nombre', form.nombre);
+                    data.append('dimension', form.dimension);
+                    data.append('materia', form.materia);
+                    data.append('eventoId', form.eventoId);
 
-            <div className="tarjeta-documento">
-              <div className="documento-info">
-                <span className="etiqueta socio">🤝 Socio-Comunitaria</span>
-                <h4>Nombre archivo.pdf</h4>
-                <p>📅 Evento: Reunión de Personal Docente</p>
-                <p>📚 Materia(s): Lengua</p>
-                <p>🗓️ Fecha: 01/11/2025</p>
-                <p>📦 Tamaño: 3 MB | Tipo: PDF</p>
+                    await axios.post('http://localhost:3000/api/subirDocumento', data);
+                    setMostrarModal(false);
+                    buscarDocumentos(); // refresca la lista
+                  }}>
+                    <input type="text" placeholder="Nombre del archivo" onChange={(e) => setForm({ ...form, nombre: e.target.value })} required />
+                    <select onChange={(e) => setForm({ ...form, dimension: e.target.value })} required>
+                      <option value="">Dimensión</option>
+                      <option value="Tecnico-Administrativa">Técnico-Administrativa</option>
+                      <option value="Pedadogica-Didactica">Pedagógica-Didáctica</option>
+                      <option value="Socio-Comunitaria">Socio-Comunitaria</option>
+                    </select>
+                    <select onChange={(e) => setForm({ ...form, materia: e.target.value })} required>
+                      <option value="">Materia</option>
+                      <option value="Matematicas">Matemáticas</option>
+                      <option value="Practicas del Lenguaje">Lengua</option>
+                      <option value="Educacion Fisica">Educación Física</option>
+                    </select>
+                    <input type="number" placeholder="ID del evento" onChange={(e) => setForm({ ...form, eventoId: e.target.value })} required />
+                    <input type="file" onChange={(e) => setForm({ ...form, archivo: e.target.files[0] })} required />
+                    <button type="submit">Subir</button>
+                    <button type="button" onClick={() => setMostrarModal(false)}>Cancelar</button>
+                  </form>
+                </div>
               </div>
-              <button className="btn-descargar">⬇️ Descargar</button>
-            </div>
+            )}
 
-            <div className="tarjeta-documento">
-              <div className="documento-info">
-                <span className="etiqueta pedagogico">📘 Pedagógico-Didáctica</span>
-                <h4>Nombre archivo.pdf</h4>
-                <p>📅 Evento: Reunión de Personal Docente</p>
-                <p>📚 Materia(s): Educación Física</p>
-                <p>🗓️ Fecha: 01/11/2025</p>
-                <p>📦 Tamaño: 3 MB | Tipo: PDF</p>
-              </div>
-              <button className="btn-descargar">⬇️ Descargar</button>
-            </div>
           </div>
         </section>
       </main>
     </div>
+
   );
 }
 
