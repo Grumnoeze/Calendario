@@ -1,113 +1,85 @@
 import { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import './Login.css';
+import Logo2 from './img/Logo2.png';
 
-function AgregarEvento() {
-    const [form, setForm] = useState({
-        Titulo: '',
-        Fecha: '',
-        HoraInicio: '',
-        HoraFin: '',
-        Ubicacion: '',
-        Dimension: '',
-        AsignarA: '',
-        Descripcion: '',
-        Materia: '',
-        PermisoVisualizacion: '',
-        PermisoEdicion: '',
-        Recordatorio: false
-    });
-    const [crearActivo, setCrearActivo] = useState(true);
-    const [mensaje, setMensaje] = useState('');
+function Login() {
+  const [form, setForm] = useState({
+    User: '',
+    Password: '',
+    showPassword: false
+  });
+  const [mensaje, setMensaje] = useState('');
+  const navigate = useNavigate();
 
-    const usuario = JSON.parse(localStorage.getItem("usuario"));
-    const UsuarioId = usuario?.Id;
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
 
-    const handleChange = (e) => {
-        const { name, value, type, checked } = e.target;
-        setForm({ ...form, [name]: type === 'checkbox' ? checked : value });
-    };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await axios.post('http://localhost:3000/api/iniciarSesion', form);
+      const usuario = res.data;
+      localStorage.setItem('usuario', JSON.stringify(usuario));
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            const evento = {
-                ...form,
-                FechaInicio: `${form.Fecha}T${form.HoraInicio}`,
-                FechaFin: `${form.Fecha}T${form.HoraFin}`,
-                Tipo: form.Dimension || 'evento',
-                UsuarioId
-            };
-            const res = await axios.post('http://localhost:3000/api/crearEvento', evento);
-            setMensaje(res.data.Mensaje);
-        } catch (error) {
-            setMensaje(error.response?.data?.Error || 'Error desconocido');
-        }
-    };
+      if (usuario.Rol === 'admin') navigate('/admin-panel');
+      else if (usuario.Rol === 'docente') navigate('/agregar-evento');
+      else if (usuario.Rol === 'familia') navigate('/calendario');
+    } catch (error) {
+      setMensaje(error.response?.data?.Error || 'Error desconocido');
+    }
+  };
 
-    return (
+  return (
+    <div className="login-layout">
+      <div className="login-form">
+        <h2>Iniciar sesión</h2>
         <form onSubmit={handleSubmit}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
-                <div style={{
-                    width: '50px',
-                    height: '50px',
-                    backgroundColor: '#eee',
-                    borderRadius: '8px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '24px',
-                    color: '#999'
-                }}>
-                    
-                </div>
-                <h2 style={{ margin: 0 }}>📝 Crear nuevo evento</h2>
-            </div>
+          <label htmlFor="User">Correo electrónico:</label>
+          <input
+            name="User"
+            id="User"
+            type="email"
+            placeholder="Ingrese su correo electrónico"
+            onChange={handleChange}
+            required
+          />
 
+          <label htmlFor="Password">Contraseña:</label>
+          <div className="password-wrapper">
+            <input
+              name="Password"
+              id="Password"
+              type={form.showPassword ? 'text' : 'password'}
+              placeholder="Ingrese su contraseña"
+              onChange={handleChange}
+              required
+            />
+            <span
+              className="password-icon"
+              onClick={() => setForm({ ...form, showPassword: !form.showPassword })}
+            >
+              {form.showPassword ? '🙈' : '👁️'}
+            </span>
+          </div>
 
-            <>
-                <input name="Titulo" placeholder="Título del evento" onChange={handleChange} required />
-                <input name="Fecha" type="date" onChange={handleChange} required />
-                <input name="HoraInicio" type="time" onChange={handleChange} required />
-                <input name="HoraFin" type="time" onChange={handleChange} required />
-                <input name="Ubicacion" placeholder="Aula, sala, patio, etc." onChange={handleChange} />
+          <div className="login-links">
+            <a href="#">¿Olvidaste tu contraseña?</a>
+          </div>
 
-                <select name="Dimension" onChange={handleChange}>
-                    <option value="">Seleccione una dimensión</option>
-                    <option value="evento">Evento</option>
-                    <option value="clase">Clase</option>
-                    <option value="reunion">Reunión</option>
-                </select>
-
-                <input name="AsignarA" placeholder="Asignar a..." onChange={handleChange} />
-                <textarea name="Descripcion" placeholder="Descripción detallada del evento" onChange={handleChange} />
-
-                <select name="Materia" onChange={handleChange}>
-                    <option value="">Materia</option>
-                    <option value="Matemática">Matemática</option>
-                    <option value="Lengua">Lengua</option>
-                    <option value="Ciencias">Ciencias</option>
-                </select>
-
-                <input name="PermisoVisualizacion" placeholder="Visualización (ej: administrador)" onChange={handleChange} />
-                <input name="PermisoEdicion" placeholder="Permisos de edición" onChange={handleChange} />
-
-                <label>
-                    <input
-                        type="checkbox"
-                        name="Recordatorio"
-                        checked={form.Recordatorio}
-                        onChange={handleChange}
-                    />
-                    Enviar recordatorio (2 días antes)
-                </label>
-
-                <button type="submit">Crear evento</button>
-                <button type="button" onClick={() => setForm({})}>Cancelar</button>
-            </>
-
-            <p>{mensaje}</p>
+          <button type="submit">Ingresar</button>
+          <p className="login-error">{mensaje}</p>
         </form>
-    );
+      </div>
+
+      <div className="login-banner">
+        <img src={Logo2} alt="Logo Colegio" className="login-logo" />
+        <h1 className="login-nombre">Colegio San Agustín</h1>
+      </div>
+    </div>
+  );
 }
 
-export default AgregarEvento;
+export default Login;
