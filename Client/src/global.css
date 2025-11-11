@@ -1,0 +1,108 @@
+/* ======= GLOBAL.CSS ======= */
+
+/* Fuente general */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+:root {
+  --color-azul: #00457F;
+  --color-celeste: #EDF5FA;
+  --color-naranja: #EC6206;
+  --color-blanco: #ffffff;
+  --color-gris: #f2f2f2;
+  --color-texto: #222;
+  --fuente-base: 'Poppins', 'Segoe UI', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: var(--fuente-base);
+}
+
+/* ====== Estructura general ====== */
+body {
+  background-color: var(--color-celeste);
+  color: var(--color-texto);
+  min-height: 100vh;
+}
+
+/* ====== Encabezados ====== */
+header {
+  background-color: var(--color-azul);
+  color: var(--color-blanco);
+  padding: 1rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 8px rgba(87, 86, 86, 0.15);
+}
+
+header h1, header h2 {
+  font-weight: 700;
+  font-size: 1.5rem;
+}
+
+header img {
+  height: 60px;
+}
+
+/* ====== Botones ====== */
+button {
+  background-color: var(--color-azul);
+  color: var(--color-blanco);
+  border: none;
+  border-radius: 6px;
+  padding: 0.7rem 1.2rem;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+button:hover {
+  background-color: var(--color-naranja);
+}
+
+/* ====== Tablas ====== */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  background-color: var(--color-blanco);
+  box-shadow: 0 0 8px rgba(107, 106, 106, 0.1);
+}
+
+th, td {
+  padding: 0.8rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+th {
+  background-color: var(--color-azul);
+  color: var(--color-blanco);
+  font-weight: 600;
+}
+
+tr:hover {
+  background-color: #f7faff;
+}
+
+/* ====== Enlaces ====== */
+a {
+  color: var(--color-azul);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--color-naranja);
+  text-decoration: underline;
+}
+
+/* ====== Footer ====== */
+footer {
+  text-align: center;
+  padding: 1rem;
+  color: #777;
+  background-color: var(--color-gris);
+}

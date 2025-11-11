@@ -1,0 +1,665 @@
+.calendario-layout {
+  display: flex;
+  height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #fdfdfd;
+}
+
+
+.encabezado {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #1A3D64; /* gris oscuro */
+  color: white;
+  padding: 1rem;
+  border-radius: 6px;
+}
+
+.encabezado h2 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.nuevo-evento {
+  background-color: #0077b6;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.nuevo-evento:hover {
+  background-color: #005f87;
+}
+
+
+
+/* BARRA LATERAL */
+.sidebar {
+  width: 220px;
+  background-color: #ffffff;
+  color: #333;
+  padding: 1rem;
+  border-right: 1px solid #ddd;
+  overflow: visible;
+  position: relative;
+}
+
+.logo-container {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.logo-img {
+  width: 80px;
+  height: auto;
+  margin-top: 1rem;
+}
+
+.logo-divider {
+  border: none;
+  height: 2px;
+  background-color: #ccc;
+  margin: 0.5rem auto;
+  width: 60%;
+}
+
+.rol-usuario {
+  background-color: #c9a86b;
+  color: white;
+  text-align: center;
+  padding: 0.5rem;
+  border-radius: 6px;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  font-weight: bold;
+}
+
+.menu-navegacion {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* Desplegable de Eventos */
+.menu-desplegable-wrapper {
+  position: relative;
+}
+
+.menu-desplegable-toggle {
+  position: relative;
+  width: 100%;
+}
+
+.chevron {
+  display: inline-block;
+  margin-left: auto;
+  transition: transform 0.3s ease;
+  font-size: 0.7rem;
+}
+
+.chevron.abierto {
+  transform: rotate(180deg);
+}
+
+.menu-desplegable-contenido {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  left: 0;
+  right: 0;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  max-height: 400px;
+  overflow-y: auto;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.eventos-lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.evento-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid #f0f0f0;
+  transition: all 0.2s ease;
+}
+
+.evento-item:hover {
+  background-color: #f9f9f9;
+}
+
+.evento-item:last-child {
+  border-bottom: none;
+}
+
+.evento-item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.evento-item-titulo {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #003366;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.evento-item-fecha {
+  display: block;
+  font-size: 0.75rem;
+  color: #999;
+  margin-top: 0.2rem;
+}
+
+.evento-item-acciones {
+  display: flex;
+  gap: 0.4rem;
+  margin-left: 0.8rem;
+}
+
+.btn-item-ver,
+.btn-item-editar {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0.4rem;
+  transition: all 0.2s ease;
+  border-radius: 4px;
+}
+
+.btn-item-ver:hover {
+  background-color: #e3f2fd;
+  transform: scale(1.1);
+}
+
+.btn-item-editar:hover {
+  background-color: #fff3e0;
+  transform: scale(1.1);
+}
+
+.desplegable-vacio {
+  padding: 1.5rem 1rem;
+  text-align: center;
+  color: #999;
+}
+
+.desplegable-vacio p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.desplegable-footer {
+  padding: 0.8rem 1rem;
+  border-top: 1px solid #f0f0f0;
+  text-align: center;
+}
+
+.btn-ver-todos {
+  background: none;
+  border: none;
+  color: #0077b6;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.4rem 0.8rem;
+  transition: all 0.2s ease;
+  border-radius: 4px;
+}
+
+.btn-ver-todos:hover {
+  background-color: #e3f2fd;
+  color: #005a8f;
+}
+
+.menu-btn {
+  background-color: #f2f2f2;
+  border: none;
+  color: #333;
+  text-align: left;
+  padding: 0.6rem 0.8rem;
+  font-size: 0.95rem;
+  cursor: pointer;
+  border-left: 4px solid transparent;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.menu-btn span {
+  font-size: 0.8rem;
+  color: #666;
+  display: block;
+  margin-top: 0.2rem;
+}
+
+.menu-btn:hover {
+  background-color: #e0e0e0;
+  border-left: 4px solid #0077b6;
+}
+
+.menu-btn.activo {
+  background-color: #d0e8ff;
+  border-left: 4px solid #0077b6;
+  font-weight: bold;
+}
+
+.menu-btn.activo:hover {
+  background-color: #d0e8ff;
+}
+
+/* CONTENIDO PRINCIPAL */
+.contenido {
+  flex: 1;
+  padding: 1rem;
+}
+
+.encabezado {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nuevo-evento {
+  background-color: #0077b6;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+/* MENÚ DESPLEGABLE */
+.menu-desplegable {
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+.menu-desplegable label {
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.menu-desplegable select {
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background-color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.menu-desplegable select:hover {
+  border-color: #0077b6;
+}
+
+.menu-desplegable option[value="Realizado"] {
+  background-color: #90be6d;
+  color: white;
+}
+
+.menu-desplegable option[value="Pendiente"] {
+  background-color: #f94144;
+  color: white;
+}
+
+.menu-desplegable option[value="Cancelado"] {
+  background-color: #b08968;
+  color: white;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* PANEL DE EVENTO ABAJO */
+.evento-flotante {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: #f9f9f9;
+  border-top: 2px solid #ccc;
+}
+
+.evento-flotante-contenido {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  padding: 1rem;
+  border-radius: 8px;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.evento-info {
+  flex: 1;
+}
+
+.evento-tipo {
+  background-color: #c9a86b;
+  color: white;
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  display: inline-block;
+  margin-bottom: 0.5rem;
+}
+
+.evento-hora {
+  font-weight: bold;
+  margin: 0.3rem 0;
+}
+
+.evento-estado {
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  font-weight: bold;
+  display: inline-block;
+}
+
+.evento-estado.pendiente {
+  background-color: #f94144;
+  color: white;
+}
+
+.evento-descripcion {
+  flex: 2;
+  font-size: 0.95rem;
+}
+
+.evento-acciones {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.eliminar-btn {
+  padding: 0.4rem 0.8rem;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  background-color: #001f3f;
+  color: white;
+}
+
+.eliminar-btn:hover {
+  background-color: #ff4136;
+}
+
+/* Asegura que los nombres de los días estén visibles */
+.fc-col-header-cell-cushion {
+  color: #333 !important;
+  font-weight: bold;
+  font-size: 0.9rem;
+  padding: 0.5rem;
+  text-transform: capitalize;
+}
+
+/* También asegurate que el fondo no los tape */
+.fc-col-header-cell {
+  background-color: #ffffff;
+  border-bottom: 1px solid #ccc;
+}
+
+/* Asegura que los nombres de los días se vean completos */
+.fc-col-header-cell-cushion {
+  white-space: normal !important;     /* Permite que el texto se envuelva si es largo */
+  overflow: visible !important;       /* Evita que se corte el contenido */
+  text-overflow: unset !important;    /* Desactiva el recorte con puntos suspensivos */
+  font-size: 0.95rem;
+  font-weight: bold;
+  padding: 0.6rem;
+  color: #333;
+  text-align: center;
+}
+
+/* Ajusta el ancho de cada celda para que el texto tenga espacio */
+.fc-col-header-cell {
+  min-width: 100px;                   /* Aumenta el ancho mínimo de cada día */
+  background-color: #ffffff;
+  border-bottom: 1px solid #ccc;
+}
+.fc-col-header-cell {
+  background-color: #003366;
+}
+
+.fc-col-header-cell-cushion {
+  color: white !important;
+}
+
+.evento-titulo {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.evento-hora-estado {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.estado-dropdown {
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-weight: bold;
+  background-color: white;
+  cursor: pointer;
+}
+
+.estado-dropdown option[value="Realizado"] {
+  background-color: #90be6d;
+  color: white;
+}
+
+.estado-dropdown option[value="Pendiente"] {
+  background-color: #f94144;
+  color: white;
+}
+
+.estado-dropdown option[value="Cancelado"] {
+  background-color: #b08968;
+  color: white;
+}
+
+.detalles-btn {
+  padding: 0.4rem 0.8rem;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  background-color: #e0e0e0;
+  color: #333;
+  transition: background-color 0.3s ease;
+}
+
+.detalles-btn:hover {
+  background-color: #ccc;
+}
+p {
+  text-align: center;
+  color: #EC6206;  
+    margin-top: 15px;
+    font-size: 14px;
+
+}
+
+.encabezado {
+  background-color: #003366;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+}
+
+.logo-area {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.logo-img {
+  width: 40px;
+  height: auto;
+}
+
+.sistema-nombre {
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+.menu {
+  display: flex;
+  gap: 1rem;
+}
+
+.menu a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.menu a:hover {
+  text-decoration: underline;
+}
+
+.usuario {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.usuario span {
+  font-size: 0.9rem;
+}
+
+.usuario button {
+  background-color: #0077b6;
+  color: white;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.usuario button:hover {
+  background-color: #005f87;
+}
+
+.evento-hora-estado {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.hora-input {
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-weight: bold;
+  background-color: rgb(11, 42, 128);
+  cursor: pointer;
+}
+.hora-input:hover {
+  border-color: #0077b6;
+}
+
+.fc-timegrid-slot-label {
+  font-weight: bold;
+  color: #333;
+  background-color: #f3f3f3;
+  padding: 0.5rem;
+  font-size: 0.85rem;
+  border-right: 1px solid #ccc;
+}
+
+.fc-timegrid-event {
+  border-radius: 6px;
+  padding: 6px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  font-size: 0.9rem;
+  font-weight: 500;
+  background-color: #0077b6 !important;
+  color: white !important;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.fc-timegrid-event:hover {
+  background-color: #005f87 !important;
+}
+
+.popup-evento {
+  position: absolute;
+  background-color: white;
+  border: 1px solid #ccc;
+  padding: 0.75rem;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  z-index: 1000;
+  font-size: 0.85rem;
+  pointer-events: none;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.usuario-sidebar {
+  margin-top: 2rem;
+  border-top: 1px solid #ccc;
+  padding-top: 1rem;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.cerrar-sesion {
+  margin-top: 0.5rem;
+  background-color: #0077b6;
+  color: white;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.cerrar-sesion:hover {
+  background-color: #005f87;
+}

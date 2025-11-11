@@ -1,0 +1,309 @@
+.buscar-filtrar-layout {
+  display: flex;
+  min-height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f9f9f9;
+}
+
+.sidebar {
+  width: 250px;
+  background-color: #002b5c;
+  color: white;
+  padding: 1.5rem;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.logo-container {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.logo-img {
+  width: 60px;
+  height: auto;
+}
+
+.logo-divider {
+  margin: 1rem 0;
+  border: 1px solid #ffffff33;
+}
+
+.rol-usuario {
+  text-align: center;
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+  color: #ffffff;
+}
+
+.menu-navegacion {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.menu-btn {
+  background-color: #ffffff22;
+  color: white;
+  border: none;
+  padding: 0.7rem;
+  text-align: left;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.menu-btn:hover {
+  background-color: #ffffff33;
+}
+
+.menu-btn.activo {
+  background-color: #0077b6;
+  font-weight: bold;
+}
+
+.contenido {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+.titulo-vista {
+  font-size: 2rem;
+  color: #003366;
+  margin-bottom: 2rem;
+  font-weight: 600;
+}
+
+/* Sección de Filtros */
+.filtros-busqueda {
+  background: linear-gradient(135deg, #002b5c 0%, #003d7a 100%);
+  padding: 1.5rem;
+  border-radius: 8px;
+  color: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.input-busqueda {
+  width: 100%;
+  padding: 0.8rem;
+  margin-bottom: 1rem;
+  border-radius: 6px;
+  border: none;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+.input-busqueda::placeholder {
+  color: #999;
+}
+
+.grupo-filtros {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.filtro-select {
+  padding: 0.7rem;
+  border-radius: 6px;
+  border: none;
+  font-size: 0.95rem;
+  background-color: white;
+  color: #333;
+  cursor: pointer;
+  min-width: 150px;
+}
+
+.filtro-select option {
+  color: #333;
+  background-color: white;
+}
+
+.btn-limpiar {
+  background-color: #f44336;
+  color: white;
+  border: none;
+  padding: 0.7rem 1.2rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+.btn-limpiar:hover {
+  background-color: #e53935;
+}
+
+/* Sección de Resultados */
+.resultados-busqueda {
+  margin-top: 2rem;
+}
+
+.resultados-busqueda h3 {
+  font-size: 1.3rem;
+  color: #003366;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.tarjeta-evento {
+  background-color: white;
+  border: 1px solid #ddd;
+  border-left: 6px solid #0077b6;
+  padding: 1.2rem;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.tarjeta-evento:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.evento-info {
+  flex: 1;
+}
+
+.evento-info h4 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.2rem;
+  color: #003366;
+  font-weight: 600;
+}
+
+.evento-info p {
+  margin: 0.5rem 0;
+  color: #555;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  display: block;
+  min-height: 1.5rem;
+}
+
+.evento-rango {
+  display: block;
+  font-size: 0.85rem;
+  color: #999;
+  margin-top: 0.5rem;
+  font-weight: 500;
+}
+
+.evento-tag {
+  display: inline-block;
+  background-color: #e3f2fd;
+  color: #0077b6;
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  margin-top: 0.5rem;
+  font-weight: 600;
+}
+
+.evento-acciones {
+  display: flex;
+  gap: 0.5rem;
+  margin-left: 1.5rem;
+}
+
+.evento-acciones button {
+  padding: 0.6rem 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+  white-space: nowrap;
+}
+
+.btn-ir-evento {
+  background-color: #0077b6;
+  color: white;
+}
+
+.btn-ir-evento:hover {
+  background-color: #005a8f;
+  transform: scale(1.05);
+}
+
+.btn-detalle {
+  background-color: #4caf50;
+  color: white;
+}
+
+.btn-detalle:hover {
+  background-color: #45a049;
+}
+
+.btn-editar {
+  background-color: #2196f3;
+  color: white;
+}
+
+.btn-editar:hover {
+  background-color: #0b7dda;
+}
+
+.btn-eliminar {
+  background-color: #f44336;
+  color: white;
+}
+
+.btn-eliminar:hover {
+  background-color: #e53935;
+}
+
+/* Mensaje cuando no hay eventos */
+.resultados-busqueda p {
+  text-align: center;
+  color: #999;
+  padding: 2rem;
+  font-size: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .buscar-filtrar-layout {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    padding: 1rem;
+  }
+
+  .contenido {
+    padding: 1rem;
+  }
+
+  .grupo-filtros {
+    flex-direction: column;
+  }
+
+  .filtro-select {
+    width: 100%;
+    min-width: auto;
+  }
+
+  .tarjeta-evento {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .evento-acciones {
+    width: 100%;
+    margin-left: 0;
+    margin-top: 1rem;
+  }
+
+  .evento-acciones button {
+    width: 100%;
+  }
+}
