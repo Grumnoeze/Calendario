@@ -42,7 +42,7 @@ function BuscarYFiltrar() {
         {/* Podés reemplazar esto por un componente Sidebar reutilizable */}
         <h2 className="rol-usuario">Director</h2>
         <nav className="menu-navegacion">
-          <button className="menu-btn" onClick={() => navigate("/calendario")}>Calendario</button>
+          <button className="menu-btn" onClick={() => navigate("/calendario")}>Calendari</button>
           <button className="menu-btn" onClick={() => navigate("/agregar-evento")}>Crear evento</button>
           <button className="menu-btn activo" onClick={() => navigate("/buscar-filtrar")}>Buscar y filtrar</button>
           <button className="menu-btn" onClick={() => navigate("/admin-panel")}>Gestión de usuarios</button>
