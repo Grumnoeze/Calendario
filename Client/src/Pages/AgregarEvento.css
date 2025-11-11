@@ -1,51 +1,456 @@
-/* CrearEvento.css */
+/* AgregarEvento.css */
 
-.form-container {
-  max-width: 600px;
-  margin: auto;
-  padding: 2rem;
-  background-color: #fdfdfd;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+.agregar-evento-layout {
+  display: flex;
+  min-height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f9f9f9;
 }
 
-.form-header {
+/* BARRA LATERAL */
+.sidebar {
+  width: 220px;
+  background-color: #ffffff;
+  color: #333;
+  padding: 1rem;
+  border-right: 1px solid #ddd;
+  overflow: visible;
+  position: relative;
+}
+
+.logo-container {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.logo-img {
+  width: 80px;
+  height: auto;
+  margin-top: 1rem;
+}
+
+.logo-divider {
+  border: none;
+  height: 2px;
+  background-color: #ccc;
+  margin: 0.5rem auto;
+  width: 60%;
+}
+
+.rol-usuario {
+  background-color: #c9a86b;
+  color: white;
+  text-align: center;
+  padding: 0.5rem;
+  border-radius: 6px;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  font-weight: bold;
+}
+
+.menu-navegacion {
   display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* Desplegable de Eventos */
+.menu-desplegable-wrapper {
+  position: relative;
+}
+
+.menu-desplegable-toggle {
+  position: relative;
+  width: 100%;
+}
+
+.chevron {
+  display: inline-block;
+  margin-left: auto;
+  transition: transform 0.3s ease;
+  font-size: 0.7rem;
+}
+
+.chevron.abierto {
+  transform: rotate(180deg);
+}
+
+.menu-desplegable-contenido {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  left: 0;
+  right: 0;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  max-height: 400px;
+  overflow-y: auto;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.eventos-lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.evento-item {
+  display: flex;
+  justify-content: space-between;
   align-items: center;
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid #f0f0f0;
+  transition: all 0.2s ease;
+}
+
+.evento-item:hover {
+  background-color: #f9f9f9;
+}
+
+.evento-item:last-child {
+  border-bottom: none;
+}
+
+.evento-item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.evento-item-titulo {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #003366;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.evento-item-fecha {
+  display: block;
+  font-size: 0.75rem;
+  color: #999;
+  margin-top: 0.2rem;
+}
+
+.evento-item-acciones {
+  display: flex;
+  gap: 0.4rem;
+  margin-left: 0.8rem;
+}
+
+.btn-item-ver,
+.btn-item-editar {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0.4rem;
+  transition: all 0.2s ease;
+  border-radius: 4px;
+}
+
+.btn-item-ver:hover {
+  background-color: #e3f2fd;
+  transform: scale(1.1);
+}
+
+.btn-item-editar:hover {
+  background-color: #fff3e0;
+  transform: scale(1.1);
+}
+
+.desplegable-vacio {
+  padding: 1.5rem 1rem;
+  text-align: center;
+  color: #999;
+}
+
+.desplegable-vacio p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.desplegable-footer {
+  padding: 0.8rem 1rem;
+  border-top: 1px solid #f0f0f0;
+  text-align: center;
+}
+
+.btn-ver-todos {
+  background: none;
+  border: none;
+  color: #0077b6;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.4rem 0.8rem;
+  transition: all 0.2s ease;
+  border-radius: 4px;
+}
+
+.btn-ver-todos:hover {
+  background-color: #e3f2fd;
+  color: #005a8f;
+}
+
+.menu-btn {
+  background-color: #f2f2f2;
+  border: none;
+  color: #333;
+  text-align: left;
+  padding: 0.6rem 0.8rem;
+  font-size: 0.95rem;
+  cursor: pointer;
+  border-left: 4px solid transparent;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.menu-btn span {
+  font-size: 0.8rem;
+  color: #666;
+  display: block;
+  margin-top: 0.2rem;
+}
+
+.menu-btn:hover {
+  background-color: #e0e0e0;
+  border-left: 4px solid #0077b6;
+}
+
+.menu-btn.activo {
+  background-color: #d0e8ff;
+  border-left: 4px solid #0077b6;
+  font-weight: bold;
+}
+
+.usuario-sidebar {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid #ddd;
+  font-size: 0.9rem;
+}
+
+.usuario-sidebar span {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.cerrar-sesion {
+  width: 100%;
+  padding: 0.5rem;
+  background-color: #f44336;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.2s ease;
+}
+
+.cerrar-sesion:hover {
+  background-color: #e53935;
+}
+
+/* CONTENIDO PRINCIPAL */
+.contenido {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+.encabezado {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #1A3D64;
+  color: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+}
+
+.encabezado h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.formulario-evento {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  max-width: 800px;
+}
+
+.grupo-form {
+  margin-bottom: 1.5rem;
+}
+
+.grupo-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 1rem;
   margin-bottom: 1.5rem;
 }
 
-.form-header-icon {
-  width: 50px;
-  height: 50px;
-  background-color: #eee;
-  border-radius: 8px;
+.grupo-form label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #003366;
+  font-size: 0.95rem;
+}
+
+.grupo-form input[type="text"],
+.grupo-form input[type="date"],
+.grupo-form input[type="time"],
+.grupo-form input[type="email"],
+.grupo-form select,
+.grupo-form textarea {
+  width: 100%;
+  padding: 0.7rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-family: 'Segoe UI', sans-serif;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.grupo-form input[type="text"]:focus,
+.grupo-form input[type="date"]:focus,
+.grupo-form input[type="time"]:focus,
+.grupo-form input[type="email"]:focus,
+.grupo-form select:focus,
+.grupo-form textarea:focus {
+  border-color: #0077b6;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 119, 182, 0.1);
+}
+
+.grupo-form textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.grupo-form.checkbox {
   display: flex;
   align-items: center;
-  justify-content: center;
-  font-size: 24px;
-  color: #999;
+  margin-bottom: 2rem;
 }
 
-.form-header-title {
-  margin: 0;
-  font-size: 1.5rem;
-  color: #333;
+.grupo-form.checkbox label {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0;
+  gap: 0.5rem;
+  font-weight: 500;
+  cursor: pointer;
 }
 
-input, select, textarea {
-  width: 100%;
-  margin-bottom: 1rem;
-  padding: 0.75rem;
-  border: 1px solid #ccc;
+.grupo-form.checkbox input[type="checkbox"] {
+  width: auto;
+  cursor: pointer;
+}
+
+.grupo-botones {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.btn-submit,
+.btn-cancelar {
+  padding: 0.8rem 2rem;
+  border: none;
   border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
   font-size: 1rem;
+  transition: all 0.3s ease;
 }
 
-textarea {
-  resize: vertical;
-  min-height: 80px;
+.btn-submit {
+  background-color: #4caf50;
+  color: white;
+}
+
+.btn-submit:hover {
+  background-color: #45a049;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
+}
+
+.btn-cancelar {
+  background-color: #f44336;
+  color: white;
+}
+
+.btn-cancelar:hover {
+  background-color: #e53935;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(244, 67, 54, 0.3);
+}
+
+.mensaje {
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 6px;
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  border-left: 4px solid #4caf50;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .agregar-evento-layout {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    padding: 1rem;
+    border-right: none;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .contenido {
+    padding: 1rem;
+  }
+
+  .formulario-evento {
+    padding: 1.5rem;
+  }
+
+  .grupo-form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .grupo-botones {
+    flex-direction: column;
+  }
+
+  .btn-submit,
+  .btn-cancelar {
+    width: 100%;
+  }
 }
 
 button {

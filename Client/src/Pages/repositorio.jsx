@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Logo from './img/Logo.jpg';
@@ -8,14 +8,16 @@ import './repositorio.css';
 function Repositorio() {
   const navigate = useNavigate();
   const [documentos, setDocumentos] = useState([]);
+  const [eventosCalendario, setEventosCalendario] = useState([]);
+  const [menuDesplegableAbierto, setMenuDesplegableAbierto] = useState(false);
   const [filtros, setFiltros] = useState({ texto: '', dimension: '', materia: '' });
 
-  const buscarDocumentos = async () => {
+    const buscarDocumentos = useCallback(async () => {
     const params = new URLSearchParams(filtros);
     const res = await axios.get(`http://localhost:3000/api/documentos?${params}`);
     console.log("Documentos recibidos:", res.data);
     setDocumentos(res.data);
-  };
+    }, [filtros]);
   const [mostrarModal, setMostrarModal] = useState(false);
   const [form, setForm] = useState({
     nombre: '',
@@ -34,7 +36,26 @@ function Repositorio() {
 
   useEffect(() => {
     buscarDocumentos();
-  }, [filtros]);
+    }, [buscarDocumentos]);
+
+    useEffect(() => {
+      // Cargar eventos para el desplegable
+      axios.get('http://localhost:3000/api/listarEventos')
+        .then(res => {
+          const eventosFormateados = res.data.map(ev => ({
+            id: ev.Id,
+            title: ev.Titulo,
+            start: `${ev.FechaInicio}T${ev.HoraInicio}`,
+            end: `${ev.FechaFin}T${ev.HoraFin}`,
+          }));
+          setEventosCalendario(eventosFormateados);
+        })
+        .catch(() => console.error("Error al cargar eventos"));
+    }, []);
+
+    const irAlEvento = (eventoId) => {
+      navigate('/calendario', { state: { eventoId } });
+    };
 
   return (
     <div className="repositorio-layout">
@@ -63,6 +84,64 @@ function Repositorio() {
           <button className="menu-btn activo" onClick={() => navigate("/repositorio")}>
             📁 Repositorio<br /><span>Documento adjunto</span>
           </button>
+
+            {/* Desplegable de Eventos */}
+            <div className="menu-desplegable-wrapper">
+              <button 
+                className="menu-btn menu-desplegable-toggle" 
+                onClick={() => setMenuDesplegableAbierto(!menuDesplegableAbierto)}
+              >
+                📋 Eventos<br /><span>Ver y editar eventos</span>
+                <span className={`chevron ${menuDesplegableAbierto ? 'abierto' : ''}`}>▼</span>
+              </button>
+            
+              {menuDesplegableAbierto && (
+                <div className="menu-desplegable-contenido">
+                  {eventosCalendario.length === 0 ? (
+                    <div className="desplegable-vacio">
+                      <p>No hay eventos</p>
+                    </div>
+                  ) : (
+                    <ul className="eventos-lista">
+                      {eventosCalendario.slice(0, 5).map(ev => (
+                        <li key={ev.id} className="evento-item">
+                          <div className="evento-item-info">
+                            <p className="evento-item-titulo">{ev.title}</p>
+                            <span className="evento-item-fecha">{new Date(ev.start).toLocaleDateString()}</span>
+                          </div>
+                          <div className="evento-item-acciones">
+                            <button 
+                              className="btn-item-ver"
+                              onClick={() => {
+                                irAlEvento(ev.id);
+                                setMenuDesplegableAbierto(false);
+                              }}
+                              title="Ver evento"
+                            >
+                              👁️
+                            </button>
+                            <button 
+                              className="btn-item-editar"
+                              onClick={() => navigate("/agregar-evento")}
+                              title="Editar evento"
+                            >
+                              ✏️
+                            </button>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                  {eventosCalendario.length > 5 && (
+                    <div className="desplegable-footer">
+                      <button className="btn-ver-todos" onClick={() => navigate("/buscar-filtrar")}>
+                        Ver todos los eventos →
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
         </nav>
 
         <div className="usuario-sidebar">

@@ -1,15 +1,18 @@
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import Logo from './img/Logo.jpg';
 import './BuscarYFiltrar.css';
 
 function BuscarYFiltrar() {
   const navigate = useNavigate();
   const [eventos, setEventos] = useState([]);
+  const [eventosCalendario, setEventosCalendario] = useState([]);
+  const [menuDesplegableAbierto, setMenuDesplegableAbierto] = useState(false);
   const [filtros, setFiltros] = useState({
     texto: '',
     dimension: '',
-    responsable: ''
+    asignadoA: ''
   });
 
   const handleChange = (e) => {
@@ -17,37 +20,134 @@ function BuscarYFiltrar() {
     setFiltros({ ...filtros, [name]: value });
   };
 
-  const buscarEventos = async () => {
-    try {
-      const params = new URLSearchParams(filtros);
-      const res = await axios.get(`http://localhost:3000/api/filtrarEventos?${params}`);
-      setEventos(res.data);
-    } catch (error) {
-      console.error("❌ Error al buscar eventos:", error);
-    }
-  };
-
   const limpiarFiltros = () => {
-    setFiltros({ texto: '', dimension: '', responsable: '' });
+    setFiltros({ texto: '', dimension: '', asignadoA: '' });
     setEventos([]);
   };
 
+  const irAlEvento = (eventoId) => {
+    // Navega al calendario y guarda el ID del evento para destacarlo
+    navigate('/calendario', { state: { eventoId } });
+  };
+
   useEffect(() => {
+    const buscarEventos = async () => {
+      try {
+        const params = new URLSearchParams(filtros);
+        const res = await axios.get(`http://localhost:3000/api/filtrarEventos?${params}`);
+        setEventos(res.data);
+      } catch (error) {
+        console.error("❌ Error al buscar eventos:", error);
+      }
+    };
     buscarEventos();
   }, [filtros]);
+
+  useEffect(() => {
+    // Cargar eventos para el desplegable
+    axios.get('http://localhost:3000/api/listarEventos')
+      .then(res => {
+        const eventosFormateados = res.data.map(ev => ({
+          id: ev.Id,
+          title: ev.Titulo,
+          start: `${ev.FechaInicio}T${ev.HoraInicio}`,
+          end: `${ev.FechaFin}T${ev.HoraFin}`,
+        }));
+        setEventosCalendario(eventosFormateados);
+      })
+      .catch(() => console.error("Error al cargar eventos"));
+  }, []);
 
   return (
     <div className="buscar-filtrar-layout">
       <aside className="sidebar">
-        {/* Podés reemplazar esto por un componente Sidebar reutilizable */}
+        <div className="logo-container">
+          <img src={Logo} alt="Logo institucional" className="logo-img" />
+          <hr className="logo-divider" />
+        </div>
+
         <h2 className="rol-usuario">Director</h2>
+
         <nav className="menu-navegacion">
-          <button className="menu-btn" onClick={() => navigate("/calendario")}>Calendari</button>
-          <button className="menu-btn" onClick={() => navigate("/agregar-evento")}>Crear evento</button>
-          <button className="menu-btn activo" onClick={() => navigate("/buscar-filtrar")}>Buscar y filtrar</button>
-          <button className="menu-btn" onClick={() => navigate("/admin-panel")}>Gestión de usuarios</button>
-          <button className="menu-btn" onClick={() => navigate("/repositorio")}>Repositorio</button>
+          <button className="menu-btn" onClick={() => navigate("/calendario")}>
+            📅 Calendario<br /><span>Vista mensual y diaria</span>
+          </button>
+          <button className="menu-btn" onClick={() => navigate("/agregar-evento")}>
+            ➕ Crear evento<br /><span>Crear nuevo evento</span>
+          </button>
+          <button className="menu-btn activo" onClick={() => navigate("/buscar-filtrar")}>
+            🔍 Buscar y filtrar<br /><span>Buscar un evento específico</span>
+          </button>
+          <button className="menu-btn" onClick={() => navigate("/admin-panel")}>
+            ⚙️ Panel Admin<br /><span>Usuarios y permisos</span>
+          </button>
+          <button className="menu-btn" onClick={() => navigate("/repositorio")}>
+            📁 Repositorio<br /><span>Documento adjunto</span>
+          </button>
+
+          {/* Desplegable de Eventos */}
+          <div className="menu-desplegable-wrapper">
+            <button 
+              className="menu-btn menu-desplegable-toggle" 
+              onClick={() => setMenuDesplegableAbierto(!menuDesplegableAbierto)}
+            >
+              📋 Eventos<br /><span>Ver y editar eventos</span>
+              <span className={`chevron ${menuDesplegableAbierto ? 'abierto' : ''}`}>▼</span>
+            </button>
+            
+            {menuDesplegableAbierto && (
+              <div className="menu-desplegable-contenido">
+                {eventosCalendario.length === 0 ? (
+                  <div className="desplegable-vacio">
+                    <p>No hay eventos</p>
+                  </div>
+                ) : (
+                  <ul className="eventos-lista">
+                    {eventosCalendario.slice(0, 5).map(ev => (
+                      <li key={ev.id} className="evento-item">
+                        <div className="evento-item-info">
+                          <p className="evento-item-titulo">{ev.title}</p>
+                          <span className="evento-item-fecha">{new Date(ev.start).toLocaleDateString()}</span>
+                        </div>
+                        <div className="evento-item-acciones">
+                          <button 
+                            className="btn-item-ver"
+                            onClick={() => {
+                              irAlEvento(ev.id);
+                              setMenuDesplegableAbierto(false);
+                            }}
+                            title="Ver evento"
+                          >
+                            👁️
+                          </button>
+                          <button 
+                            className="btn-item-editar"
+                            onClick={() => navigate("/agregar-evento")}
+                            title="Editar evento"
+                          >
+                            ✏️
+                          </button>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                {eventosCalendario.length > 5 && (
+                  <div className="desplegable-footer">
+                    <button className="btn-ver-todos" onClick={() => navigate("/buscar-filtrar")}>
+                      Ver todos los eventos →
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         </nav>
+
+        <div className="usuario-sidebar">
+          <span>Pablo Gómez (admin)</span>
+          <button className="cerrar-sesion">Cerrar sesión</button>
+        </div>
       </aside>
 
       <main className="contenido">
@@ -71,10 +171,11 @@ function BuscarYFiltrar() {
               <option value="Pedadogica-Didactica">Pedagógica-Didáctica</option>
             </select>
 
-            <select name="responsable" value={filtros.responsable} onChange={handleChange} className="filtro-select">
-              <option value="">Cualquier responsable</option>
-              <option value="docente">Docente</option>
-              <option value="director">Director</option>
+            <select name="asignadoA" value={filtros.asignadoA} onChange={handleChange} className="filtro-select">
+              <option value="">Asignado a: Todos</option>
+              <option value="docente">Asignado a: Docente</option>
+              <option value="director">Asignado a: Director</option>
+              <option value="familia">Asignado a: Familia</option>
             </select>
 
             <button className="btn-limpiar" onClick={limpiarFiltros}>Limpiar Filtros</button>
@@ -96,8 +197,7 @@ function BuscarYFiltrar() {
                   <span className="evento-tag">{ev.Dimension}</span>
                 </div>
                 <div className="evento-acciones">
-                  <button className="btn-detalle">Ver detalle</button>
-                  <button className="btn-editar">Editar</button>
+                  <button className="btn-ir-evento" onClick={() => irAlEvento(ev.Id)}>🔗 Ir al Evento</button>
                 </div>
               </div>
             ))

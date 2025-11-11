@@ -1,163 +1,237 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import Logo from './img/Logo.jpg';
+import './AgregarEvento.css';
 
 function AgregarEvento() {
+    const navigate = useNavigate();
+    // estados relacionados con el sidebar/desplegable eliminados porque el formulario
+    // se renderiza dentro de la vista que contiene el menú lateral
+    const [form, setForm] = useState({
+        Titulo: '',
+        Fecha: '',
+        HoraInicio: '',
+        HoraFin: '',
+        Ubicacion: '',
+        Dimension: '',
+        DimensionOtro: '',
+        AsignarA: '',
+        Descripcion: '',
+        Materia: '',
+        PermisoVisualizacion: '',
+        PermisoEdicion: '',
+        Recordatorio: true
+    });
+    const [mensaje, setMensaje] = useState('');
 
-  const [form, setForm] = useState({
-    Titulo: '',
-    FechaInicio: '',
-    FechaFin: '',
-    HoraInicio: '',
-    HoraFin: '',
-    Ubicacion: '',
-    Dimension: '',
-    AsignarA: '',
-    Descripcion: '',
-    Materia: '',
-    PermisoVisualizacion: '',
-    PermisoEdicion: '',
-    Recordatorio: false
-  });
-  const [crearActivo, setCrearActivo] = useState(true);
-  const [usuarios, setUsuarios] = useState([]);
-  const navigate = useNavigate();
+    const usuario = JSON.parse(localStorage.getItem("usuario"));
+    const UsuarioId = usuario?.Id;
 
-  const [mensaje, setMensaje] = useState('');
+    // useEffect de carga de eventos removido (ya lo hace la vista principal si es necesario)
 
-  const usuario = JSON.parse(localStorage.getItem("usuario"));
-  const UsuarioId = usuario?.Id;
+    const handleChange = (e) => {
+        const { name, value, type, checked } = e.target;
+        setForm({ ...form, [name]: type === 'checkbox' ? checked : value });
+    };
 
-  useEffect(() => {
-    axios.get('http://localhost:3000/api/listarUsuarios')
-      .then(res => setUsuarios(res.data))
-      .catch(err => console.error("Error al cargar usuarios:", err));
-  }, []);
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const evento = {
+                ...form,
+                FechaInicio: form.Fecha,
+                FechaFin: form.Fecha,
+                Tipo: form.Dimension || 'evento',
+                UsuarioId
+            };
+            const res = await axios.post('http://localhost:3000/api/crearEvento', evento);
+            setMensaje(res.data.Mensaje);
+            setForm({
+                Titulo: '',
+                Fecha: '',
+                HoraInicio: '',
+                HoraFin: '',
+                Ubicacion: '',
+                Dimension: '',
+                DimensionOtro: '',
+                AsignarA: '',
+                Descripcion: '',
+                Materia: '',
+                PermisoVisualizacion: '',
+                PermisoEdicion: '',
+                Recordatorio: true
+            });
+        } catch (error) {
+            setMensaje(error.response?.data?.Error || 'Error desconocido');
+        }
+    };
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setForm({ ...form, [name]: type === 'checkbox' ? checked : value });
-  };
+    return (
+        <form onSubmit={handleSubmit} className="formulario-evento">
+                    <div className="grupo-form">
+                        <label>Título del evento *</label>
+                        <input 
+                            name="Titulo" 
+                            placeholder="Ej: Reunión de padres" 
+                            onChange={handleChange}
+                            value={form.Titulo}
+                            required 
+                        />
+                    </div>
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (form.FechaInicio > form.FechaFin) {
-      setMensaje("⚠️ La fecha de fin debe ser posterior a la de inicio");
-      return;
-    }
-    try {
-      const evento = {
-        ...form,
-        Tipo: form.Dimension || 'evento',
-        UsuarioId
-      };
+                    <div className="grupo-form">
+                        <label>Fecha *</label>
+                        <input 
+                            name="Fecha" 
+                            type="date" 
+                            onChange={handleChange}
+                            value={form.Fecha}
+                            required 
+                        />
+                    </div>
 
+                    <div className="grupo-form-row">
+                        <div className="grupo-form">
+                            <label>Hora de inicio *</label>
+                            <input 
+                                name="HoraInicio" 
+                                type="time" 
+                                onChange={handleChange}
+                                value={form.HoraInicio}
+                                required 
+                            />
+                        </div>
+                        <div className="grupo-form">
+                            <label>Hora de fin *</label>
+                            <input 
+                                name="HoraFin" 
+                                type="time" 
+                                onChange={handleChange}
+                                value={form.HoraFin}
+                                required 
+                            />
+                        </div>
+                    </div>
 
-      const res = await axios.post('http://localhost:3000/api/crearEvento', evento);
-      setMensaje(res.data.Mensaje);
-    } catch (error) {
-      setMensaje(error.response?.data?.Error || 'Error desconocido');
-    }
-  };
+                    <div className="grupo-form">
+                        <label>Ubicación</label>
+                        <input 
+                            name="Ubicacion" 
+                            placeholder="Aula, sala, patio, etc." 
+                            onChange={handleChange}
+                            value={form.Ubicacion}
+                        />
+                    </div>
 
-  return (
-    <form onSubmit={handleSubmit}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
-        <div style={{
-          width: '50px',
-          height: '50px',
-          backgroundColor: '#eee',
-          borderRadius: '8px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: '24px',
-          color: '#999'
-        }}></div>
-        <h2 style={{ margin: 0 }}>📝 Crear nuevo evento</h2>
-      </div>
+                    <div className="grupo-form">
+                        <label>Dimensión *</label>
+                        <select 
+                            name="Dimension" 
+                            onChange={handleChange}
+                            value={form.Dimension}
+                            required
+                        >
+                            <option value="">Seleccione una dimensión</option>
+                            <option value="Tecnico-Administrativa">Técnico-Administrativa</option>
+                            <option value="Socio-Comunitaria">Socio-Comunitaria</option>
+                            <option value="Pedadogica-Didactica">Pedagógica-Didáctica</option>
+                            <option value="Otro">Otro</option>
+                        </select>
+                    </div>
 
-      <label>Título del evento:</label>
-      <input name="Titulo" onChange={handleChange} required />
+                    {form.Dimension === 'Otro' && (
+                        <div className="grupo-form">
+                            <label>Especificar dimensión *</label>
+                            <input 
+                                name="DimensionOtro" 
+                                placeholder="Ingrese la dimensión personalizada" 
+                                onChange={handleChange}
+                                value={form.DimensionOtro}
+                                required 
+                            />
+                        </div>
+                    )}
 
-      <label>Fecha de inicio:</label>
-      <input name="FechaInicio" type="date" onChange={handleChange} required />
+                    <div className="grupo-form">
+                        <label>Asignar a</label>
+                        <select 
+                            name="AsignarA" 
+                            onChange={handleChange}
+                            value={form.AsignarA}
+                        >
+                            <option value="">Seleccione un rol</option>
+                            <option value="Docente">Docente</option>
+                            <option value="Director">Director</option>
+                            <option value="Familia">Familia</option>
+                        </select>
+                    </div>
 
-      <label>Fecha de fin:</label>
-      <input name="FechaFin" type="date" onChange={handleChange} required />
+                    <div className="grupo-form">
+                        <label>Descripción</label>
+                        <textarea 
+                            name="Descripcion" 
+                            placeholder="Descripción detallada del evento" 
+                            onChange={handleChange}
+                            value={form.Descripcion}
+                            rows="4"
+                        />
+                    </div>
 
-      <label>Hora de inicio:</label>
-      <input name="HoraInicio" type="time" onChange={handleChange} required />
+                    <div className="grupo-form">
+                        <label>Materia</label>
+                        <select 
+                            name="Materia" 
+                            onChange={handleChange}
+                            value={form.Materia}
+                        >
+                            <option value="">Sin materia</option>
+                            <option value="Matematicas">Matemáticas</option>
+                            <option value="Educacion Fisica">Educación Física</option>
+                            <option value="Practicas del Lenguaje">Prácticas del Lenguaje</option>
+                            <option value="Musica">Música</option>
+                            <option value="Ciencias Sociales">Ciencias Sociales</option>
+                            <option value="Ciencias Naturales">Ciencias Naturales</option>
+                            <option value="Ingles">Inglés</option>
+                        </select>
+                    </div>
 
-      <label>Hora de fin:</label>
-      <input name="HoraFin" type="time" onChange={handleChange} required />
+                    <div className="grupo-form">
+                        <label>Permisos de visualización</label>
+                        <input 
+                            name="PermisoVisualizacion" 
+                            placeholder="Ej: administrador, docentes" 
+                            onChange={handleChange}
+                            value={form.PermisoVisualizacion}
+                        />
+                    </div>
 
-      <label>Ubicación:</label>
-      <input name="Ubicacion" onChange={handleChange} />
+                    <div className="grupo-form">
+                        <label>Permisos de edición</label>
+                        <select 
+                            name="PermisoEdicion" 
+                            onChange={handleChange}
+                            value={form.PermisoEdicion}
+                        >
+                            <option value="">Seleccione un rol</option>
+                            <option value="Docente">Docente</option>
+                            <option value="Director">Director</option>
+                            <option value="Familia">Familia</option>
+                        </select>
+                    </div>
 
-      <label>Dimensión:</label>
-      <select name="Dimension" onChange={handleChange} required>
-        <option value="">Seleccione una dimensión</option>
-        <option value="Tecnico-Administrativa">Técnico-Administrativa</option>
-        <option value="Socio-Comunitaria">Socio-Comunitaria</option>
-        <option value="Pedadogica-Didactica">Pedagógica-Didáctica</option>
-      </select>
+                    <div className="grupo-botones">
+                        <button type="submit" className="btn-submit">Crear evento</button>
+                        <button type="button" className="btn-cancelar" onClick={() => navigate("/calendario")}>Cancelar</button>
+                    </div>
 
-      <label>Asignar a:</label>
-      <select name="AsignarA" onChange={handleChange} required>
-        <option value="">Asignar a...</option>
-        {usuarios.map(u => (
-          <option key={u.Id} value={u.Id}>
-            {u.Name} ({u.Rol})
-          </option>
-        ))}
-      </select>
+                    <div className="info-recordatorio">
+                        <p>ℹ️ Se enviará un recordatorio 2 días antes del evento</p>
+                    </div>
 
-      <label>Descripción:</label>
-      <textarea name="Descripcion" onChange={handleChange} />
-
-      <label>Materia:</label>
-      <select name="Materia" onChange={handleChange}>
-        <option value="">Sin materia</option>
-        <option value="Matematicas">Matemáticas</option>
-        <option value="Educacion Fisica">Educación Física</option>
-        <option value="Practicas del Lenguaje">Prácticas del Lenguaje</option>
-        <option value="Musica">Música</option>
-        <option value="Ciencias Sociales">Ciencias Sociales</option>
-        <option value="Ciencias Naturales">Ciencias Naturales</option>
-        <option value="Ingles">Inglés</option>
-      </select>
-
-      <label>Archivos adjuntos:</label>
-      <input type="file" name="Adjunto" onChange={(e) => setForm({ ...form, Adjunto: e.target.files[0] })} />
-
-      <label>Permisos de visualización:</label>
-      <input name="PermisoVisualizacion" onChange={handleChange} />
-
-      <label>Permisos de edición:</label>
-      <input name="PermisoEdicion" onChange={handleChange} />
-
-      <label>
-        <input
-          type="checkbox"
-          name="Recordatorio"
-          checked={form.Recordatorio}
-          onChange={handleChange}
-        />
-        Enviar recordatorio (2 días antes)
-      </label>
-
-
-
-      <button type="submit">Crear evento</button>
-      <button type="button" onClick={() => navigate(-1)}>Cancelar</button>
-
-
-      <p>{mensaje}</p>
-    </form>
-
-  );
+                    {mensaje && <p className="mensaje">{mensaje}</p>}
+                </form>
+    );
 }
-
 
 export default AgregarEvento;
