@@ -44,6 +44,8 @@
   color: #333;
   padding: 1rem;
   border-right: 1px solid #ddd;
+  overflow: visible;
+  position: relative;
 }
 
 .logo-container {
@@ -80,6 +82,159 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+}
+
+/* Desplegable de Eventos */
+.menu-desplegable-wrapper {
+  position: relative;
+}
+
+.menu-desplegable-toggle {
+  position: relative;
+  width: 100%;
+}
+
+.chevron {
+  display: inline-block;
+  margin-left: auto;
+  transition: transform 0.3s ease;
+  font-size: 0.7rem;
+}
+
+.chevron.abierto {
+  transform: rotate(180deg);
+}
+
+.menu-desplegable-contenido {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  left: 0;
+  right: 0;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  max-height: 400px;
+  overflow-y: auto;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.eventos-lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.evento-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid #f0f0f0;
+  transition: all 0.2s ease;
+}
+
+.evento-item:hover {
+  background-color: #f9f9f9;
+}
+
+.evento-item:last-child {
+  border-bottom: none;
+}
+
+.evento-item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.evento-item-titulo {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #003366;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.evento-item-fecha {
+  display: block;
+  font-size: 0.75rem;
+  color: #999;
+  margin-top: 0.2rem;
+}
+
+.evento-item-acciones {
+  display: flex;
+  gap: 0.4rem;
+  margin-left: 0.8rem;
+}
+
+.btn-item-ver,
+.btn-item-editar {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0.4rem;
+  transition: all 0.2s ease;
+  border-radius: 4px;
+}
+
+.btn-item-ver:hover {
+  background-color: #e3f2fd;
+  transform: scale(1.1);
+}
+
+.btn-item-editar:hover {
+  background-color: #fff3e0;
+  transform: scale(1.1);
+}
+
+.desplegable-vacio {
+  padding: 1.5rem 1rem;
+  text-align: center;
+  color: #999;
+}
+
+.desplegable-vacio p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.desplegable-footer {
+  padding: 0.8rem 1rem;
+  border-top: 1px solid #f0f0f0;
+  text-align: center;
+}
+
+.btn-ver-todos {
+  background: none;
+  border: none;
+  color: #0077b6;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.4rem 0.8rem;
+  transition: all 0.2s ease;
+  border-radius: 4px;
+}
+
+.btn-ver-todos:hover {
+  background-color: #e3f2fd;
+  color: #005a8f;
 }
 
 .menu-btn {

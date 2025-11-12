@@ -1,0 +1,5 @@
+-- database: c:\Users\Er3n\Desktop\Calendario 10-11-25\Calendario-main\Server\src\DataBase\DataBase.db
+
+-- Presione el botón ▷ en la esquina superior derecha de la ventana para ejecutar todo el archivo.
+
+SELECT * FROM Documentos;

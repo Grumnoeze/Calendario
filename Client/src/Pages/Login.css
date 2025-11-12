@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .login-container {
   display: flex;
   flex-direction: column;
@@ -221,4 +222,67 @@
   max-width: 400px;
   padding: 2rem;
   box-sizing: border-box;
+=======
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background-color: #f0f4f8;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+form {
+  background-color: #ffffff;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 320px;
+  display: flex;
+  flex-direction: column;
+}
+
+h2 {
+  text-align: center;
+  color: #00457F;
+  margin-bottom: 24px;
+}
+
+input {
+  padding: 12px;
+  margin-bottom: 16px;
+  border: 2px solid #00457F;
+  border-radius: 8px;
+  font-size: 15px;
+  background-color: #f7faff;
+  outline: none;
+}
+
+input:focus {
+  border-color: #EC6206;
+  box-shadow: 0 0 5px rgba(236, 98, 6, 0.3);
+}
+
+button {
+  background-color: #00457F;
+  color: white;
+  font-weight: bold;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #EC6206;
+}
+
+p {
+  text-align: center;
+  color: #EC6206;
+  font-size: 14px;
+  margin-top: 12px;
+>>>>>>> 75d59108e091a69d4a3e4a3ca0bc7ac5dc35f429
 }

@@ -18,19 +18,19 @@ function CrearEventoVista() {
         <h2 className="rol-usuario">Director</h2>
 
         <nav className="menu-navegacion">
-          <button className="menu-btn" onClick={() => navigate("/calendario")}>
+          <button className="menu-btn" onClick={() => navigate("/calendario") }>
             Calendario<br /><span>Vista mensual y diaria</span>
           </button>
-          <button className="menu-btn activo" onClick={() => navigate("/agregar-evento")}>
+          <button className="menu-btn activo" onClick={() => navigate("/agregar-evento") }>
             Crear evento<br /><span>Crear nuevo evento</span>
           </button>
-          <button className="menu-btn" onClick={() => navigate("/buscar-filtrar")}>
+          <button className="menu-btn" onClick={() => navigate("/buscar-filtrar") }>
             Buscar y filtrar<br /><span>Buscar un evento específico</span>
           </button>
-          <button className="menu-btn" onClick={() => navigate("/admin-panel")}>
+          <button className="menu-btn" onClick={() => navigate("/admin-panel") }>
             Gestión de usuarios<br /><span>Usuarios y permisos</span>
           </button>
-          <button className="menu-btn" onClick={() => navigate("/repositorio")}>
+          <button className="menu-btn" onClick={() => navigate("/repositorio") }>
             Repositorio<br /><span>Documento adjunto</span>
           </button>
         </nav>

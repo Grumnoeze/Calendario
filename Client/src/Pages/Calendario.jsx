@@ -31,9 +31,9 @@ const esConMayusculas = {
 
 function Calendario() {
   const [eventos, setEventos] = useState([]);
-  const [estadoSeleccionado, setEstadoSeleccionado] = useState('Todos');
   const [eventoHover, setEventoHover] = useState(null);
   const [eventoSeleccionado, setEventoSeleccionado] = useState(null);
+  const [menuDesplegableAbierto, setMenuDesplegableAbierto] = useState(false);
   const calendarRef = useRef(null);
   const guardarEstadoEnBD = async (id, estado) => {
     try {
@@ -107,9 +107,13 @@ function Calendario() {
 
 
   const handleMouseEnter = (info) => {
+    // Guardamos start y end (si existe). Preferimos objetos Date cuando estén disponibles
+    const startIso = info.event.start ? info.event.start.toISOString() : info.event.startStr;
+    const endIso = info.event.end ? info.event.end.toISOString() : (info.event.endStr || startIso);
     setEventoHover({
       title: info.event.title,
-      start: info.event.startStr,
+      start: startIso,
+      end: endIso,
       x: info.jsEvent.pageX,
       y: info.jsEvent.pageY
     });
@@ -145,6 +149,64 @@ function Calendario() {
           <button className="menu-btn" onClick={() => navigate("/repositorio")}>
             📁 Repositorio<br /><span>Documento adjunto</span>
           </button>
+
+          {/* Desplegable de Eventos */}
+          <div className="menu-desplegable-wrapper">
+            <button 
+              className="menu-btn menu-desplegable-toggle" 
+              onClick={() => setMenuDesplegableAbierto(!menuDesplegableAbierto)}
+            >
+              📋 Eventos<br /><span>Ver y editar eventos</span>
+              <span className={`chevron ${menuDesplegableAbierto ? 'abierto' : ''}`}>▼</span>
+            </button>
+            
+            {menuDesplegableAbierto && (
+              <div className="menu-desplegable-contenido">
+                {eventos.length === 0 ? (
+                  <div className="desplegable-vacio">
+                    <p>No hay eventos</p>
+                  </div>
+                ) : (
+                  <ul className="eventos-lista">
+                    {eventos.slice(0, 5).map(ev => (
+                      <li key={ev.id} className="evento-item">
+                        <div className="evento-item-info">
+                          <p className="evento-item-titulo">{ev.title}</p>
+                          <span className="evento-item-fecha">{new Date(ev.start).toLocaleDateString()}</span>
+                        </div>
+                        <div className="evento-item-acciones">
+                          <button 
+                            className="btn-item-ver"
+                            onClick={() => {
+                              setEventoSeleccionado(ev);
+                              setMenuDesplegableAbierto(false);
+                            }}
+                            title="Ver evento"
+                          >
+                            👁️
+                          </button>
+                          <button 
+                            className="btn-item-editar"
+                            onClick={() => navigate("/agregar-evento")}
+                            title="Editar evento"
+                          >
+                            ✏️
+                          </button>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                {eventos.length > 5 && (
+                  <div className="desplegable-footer">
+                    <button className="btn-ver-todos" onClick={() => navigate("/buscar-filtrar")}>
+                      Ver todos los eventos →
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         </nav>
 
         <div className="usuario-sidebar">
@@ -169,6 +231,9 @@ function Calendario() {
           events={eventos}
           locale={esConMayusculas}
           height="auto"
+          /* Hacer que la vista horaria comience a las 08:00 y que el scroll inicial muestre esa franja */
+          slotMinTime="08:00:00"
+          scrollTime="08:00:00"
           eventMouseEnter={handleMouseEnter}
           eventMouseLeave={handleMouseLeave}
         />
@@ -182,7 +247,9 @@ function Calendario() {
             }}
           >
             <strong>{eventoHover.title}</strong><br />
-            <span>{new Date(eventoHover.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+            <span>
+              {new Date(eventoHover.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - {new Date(eventoHover.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            </span>
           </div>
         )}
 
