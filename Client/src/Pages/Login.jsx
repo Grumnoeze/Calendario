@@ -1,15 +1,16 @@
 import { useState } from 'react';
 import axios from 'axios';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import Baner from './img/Baner.png';
 import './Login.css';
-import Logo2 from './img/Logo2.png';
 
 function Login() {
   const [form, setForm] = useState({
-    Email: '',
-    Password: '',
-    showPassword: false
+    User: '',
+    Password: ''
   });
+
+  const [showPassword, setShowPassword] = useState(false);
   const [mensaje, setMensaje] = useState('');
   const navigate = useNavigate();
 
@@ -19,81 +20,79 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!form.User.trim() || !form.Password.trim()) {
+      setMensaje('Por favor completá todos los campos');
+      return;
+    }
+
     try {
-      const res = await axios.post('http://localhost:3000/api/iniciarSesion', form);
+      const res = await axios.post('/api/iniciarSesion', form);
       const usuario = res.data;
       localStorage.setItem('usuario', JSON.stringify(usuario));
 
-      if (usuario.Rol === 'admin') navigate('/admin-panel');
-      else if (usuario.Rol === 'docente') navigate('/agregar-evento');
-      else if (usuario.Rol === 'familia') navigate('/calendario');
+      switch (usuario.Rol) {
+        case 'admin':
+          navigate('/admin-panel');
+          break;
+        case 'docente':
+          navigate('/agregar-evento');
+          break;
+        case 'familia':
+          navigate('/calendario');
+          break;
+        default:
+          setMensaje('Rol desconocido');
+      }
     } catch (error) {
-      setMensaje(error.response?.data?.Error || 'Error desconocido');
+      const msg = error.response?.data?.Error || 'Error desconocido';
+      setMensaje(msg);
     }
   };
 
   return (
-    <div className="login-layout">
-      <div className="estrella-fondo"></div>
-
-      <div className="login-form">
-        <h2>Iniciar sesión</h2>
-        <form onSubmit={handleSubmit}>
-          <label htmlFor="Email">Correo electrónico:</label>
-          <input
-            name="Email"
-            id="Email"
-            type="email"
-            placeholder="ejemplo@gmail.com"
-            onChange={handleChange}
-            required
-          />
-
-          <label htmlFor="Password">Contraseña:</label>
-          <div className="password-wrapper">
-            <input
-              name="Password"
-              id="Password"
-              type={form.showPassword ? 'text' : 'password'}
-              placeholder="Ingrese su contraseña"
-              onChange={handleChange}
-              required
-            />
-            <span
-              className="password-icon"
-              onClick={() => setForm({ ...form, showPassword: !form.showPassword })}
-            >
-              {form.showPassword ? '🙈' : '👁️'}
-            </span>
-          </div>
-
-          <div className="login-links">
-            <a href="#">¿Olvidaste tu contraseña?</a>
-          </div>
-
-          <button type="submit">Ingresar</button>
-          <p className="login-error">{mensaje}</p>
-        </form>
-
-        <p className="registro-link">
-          ¿No tienes una cuenta? <Link to="/registro">Regístrate aquí</Link>
-        </p>
+    <div className="login-container">
+      <div className="login-banner">
+        <img src={Baner} alt="Banner Colegio San Agustín" className="login-logo" />
+        <h1 className="login-title">Colegio San Agustín</h1>
       </div>
 
-      <div className="login-banner">
-  <img src={Logo2} alt="Logo Colegio" className="login-logo" />
- <p className="login-subtitulo animado">
-  🎓 Educación con valores 
-  🌟 Excelencia 
-  🤝 Comunidad
-</p>
+      <form className="login-form" onSubmit={handleSubmit}>
+        <h2>Iniciar sesión</h2>
 
-</div>
+        <input
+          name="User"
+          type="text"
+          placeholder="Nombre de usuario"
+          value={form.User}
+          onChange={handleChange}
+          required
+          className="animated-input"
+        />
 
+        <div className="password-wrapper">
+          <input
+            name="Password"
+            type={showPassword ? 'text' : 'password'}
+            placeholder="Contraseña"
+            value={form.Password}
+            onChange={handleChange}
+            required
+            className="animated-input password-input"
+          />
+          <span
+            className="eye-icon"
+            onClick={() => setShowPassword(!showPassword)}
+          >
+            {showPassword ? '🙈' : '👁️'}
+          </span>
+        </div>
+
+        <button type="submit">Entrar</button>
+        {mensaje && <p className="login-error">{mensaje}</p>}
+      </form>
     </div>
   );
 }
 
 export default Login;
-
-

@@ -1,297 +1,95 @@
-/* ===== Login.css ===== */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
-
-body {
-  margin: 0;
-  font-family: 'Poppins', sans-serif;
-  background-color: #1a94e0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-}
-
-form {
-  display: flex;
-  flex-direction: column;
-  background-color: #FFFFFF;
-  border-radius: 16px;
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-  padding: 40px 50px;
-  width: 360px;
-  border-left: 8px solid #00457F;
-}
-
-h2 {
-  text-align: center;
-  color: #00457F;
-  margin-bottom: 25px;
-  font-weight: 700;
-}
-
-input,
-select {
-  padding: 12px;
-  margin-bottom: 18px;
-  border: 2px solid #00457F;
-  border-radius: 8px;
-  font-size: 15px;
-  outline: none;
-  background-color: #F7FAFC;
-  transition: 0.2s;
-}
-
-input:focus,
-select:focus {
-  border-color: #EC6206;
-  box-shadow: 0px 0px 5px rgba(236, 98, 6, 0.4);
-}
-
-button {
-  background-color: #00457F;
-  color: #FFFFFF;
-  font-weight: 600;
-  border: none;
-  padding: 12px;
-  border-radius: 8px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-button:hover {
-  background-color: #EC6206;
-  transform: translateY(-2px);
-}
-
-p {
-  text-align: center;
-  color: #EC6206;
-  font-size: 14px;
-  margin-top: 12px;
-}
-
-/* Para enlaces de recuperación de contraseña */
-form a {
-  text-align: right;
-  color: #00457F;
-  text-decoration: none;
-  font-size: 13px;
-  margin-bottom: 18px;
-}
-
-form a:hover {
-  color: #EC6206;
-}
-
-/* Sección visual combinada (para cuando agregues diseño con logo) */
 .login-container {
   display: flex;
-  width: 800px;
-  height: 500px;
-  background-color: #EDF5FA;
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
-}
-
-.login-left {
-  flex: 1;
-  background-color: #EDF5FA;
-  display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
+  background-color: #f2f2f2;
+  min-height: 100vh;
+  padding-top: 2rem;
 }
 
-.login-right {
-  flex: 1;
-  background-color: #00457F;
-  color: #EAC56E;
+.login-banner {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
+  background-color: #003366;
+  color: gold;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
 }
 
-.login-right h1 {
-  font-size: 28px;
-  color: #EAC56E;
-  margin-top: 20px;
+.login-logo {
+  width: 100px;
+  margin-bottom: 0.5rem;
 }
 
-.logo {
-  width: 140px;
-  height: auto;
-  margin-bottom: 15px;
+.login-title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  text-align: center;
 }
 
-/* Animaciones base */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes slideInRight {
-  from { opacity: 0; transform: translateX(40px); }
-  to { opacity: 1; transform: translateX(0); }
-}
-
-@keyframes slideInLeft {
-  from { opacity: 0; transform: translateX(-40px); }
-  to { opacity: 1; transform: translateX(0); }
-}
-
-/* Layout general */
-.login-layout {
-  display: flex;
-  height: 100vh;
-  background-color: #f5f5f5;
-  font-family: 'Segoe UI', sans-serif;
-}
-
-/* Formulario */
 .login-form {
-  flex: 1;
-  padding: 3rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
   background-color: #ffffff;
-  animation: slideInLeft 0.8s ease-out;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
 }
 
 .login-form h2 {
-  font-size: 2rem;
   margin-bottom: 1.5rem;
-  color: #333;
-  animation: fadeIn 1s ease-out;
-}
-
-.login-form label,
-.login-form input,
-.login-links,
-.login-form button {
-  animation: fadeIn 1s ease-out;
-  animation-fill-mode: backwards;
-}
-
-.login-form label {
-  font-weight: bold;
-  margin-top: 1rem;
-  display: block;
+  text-align: center;
 }
 
 .login-form input {
-  padding: 0.5rem;
-  font-size: 1rem;
-  margin-top: 0.3rem;
+  width: 100%;
+  padding: 0.7rem;
+  margin-bottom: 1rem;
   border: 1px solid #ccc;
   border-radius: 4px;
-  width: 100%;
-  transition: border-color 0.3s ease;
 }
 
-.login-form input:focus {
-  border-color: #064385;
-  outline: none;
-}
-
-/* Enlace */
-.login-links {
-  margin-top: 0.5rem;
-}
-
-.login-links a {
-  font-size: 0.9rem;
-  color: #007bff;
-  text-decoration: none;
-  transition: color 0.3s ease;
-}
-
-.login-links a:hover {
-  text-decoration: underline;
-  color: #0056b3;
-}
-
-/* Botón */
 .login-form button {
-  margin-top: 1.5rem;
+  width: 100%;
   padding: 0.7rem;
-  font-size: 1rem;
   background-color: #007bff;
   color: white;
   border: none;
   border-radius: 4px;
+  font-size: 1rem;
   cursor: pointer;
-  transition: transform 0.2s ease, background-color 0.3s ease;
 }
 
 .login-form button:hover {
   background-color: #0056b3;
-  transform: scale(1.03);
 }
 
-/* Error */
 .login-error {
   color: red;
   margin-top: 1rem;
-  animation: fadeIn 0.5s ease-out;
-}
-
-/* Banner derecho */
-.login-banner {
-  flex: 1;
-  background-color: #003366;
-  color: gold;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  animation: slideInRight 0.8s ease-out;
-}
-
-.login-logo {
-  width: 120px;
-  margin-bottom: 1rem;
-  animation: fadeIn 1s ease-out;
-}
-
-.login-nombre {
-  font-size: 2rem;
-  font-weight: bold;
   text-align: center;
-  animation: fadeIn 1s ease-out;
 }
-
-.password-wrapper {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+.login-success {
+  color: green;
+  margin-top: 1rem;
+  text-align: center;
 }
-
-.toggle-visibility {
-  background: none;
-  border: none;
-  font-size: 1.2rem;
-  cursor: pointer;
-}
+/* 👁️ Estilo para el campo de contraseña con ícono */
 .password-wrapper {
   position: relative;
-  width: 100%;
+  margin-bottom: 1rem;
 }
 
 .password-wrapper input {
   width: 100%;
-  padding-right: 2.5rem; /* espacio para el ícono */
-  padding-left: 0.5rem;
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
-  font-size: 1rem;
+  padding: 0.7rem 2.5rem 0.7rem 0.7rem; /* espacio para el ícono */
   border: 1px solid #ccc;
   border-radius: 4px;
 }
 
-.password-icon {
+.eye-icon {
   position: absolute;
   right: 0.8rem;
   top: 50%;
@@ -299,208 +97,128 @@ form a:hover {
   cursor: pointer;
   font-size: 1.2rem;
   color: #555;
-  transition: transform 0.2s ease;
+  transition: transform 0.3s ease;
 }
 
-.password-icon:hover {
+.eye-icon:hover {
   transform: translateY(-50%) scale(1.2);
 }
 
-
-/* Campo con animación al enfocar */
-.login-form input:focus {
-  border-color: #007bff;
-  box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
-  outline: none;
-  animation: sparkle 0.6s ease-out;
-  position: relative;
+/* ✨ Animación en los inputs */
+.animated-input {
+  animation: fadeInInput 0.6s ease;
+  transition: box-shadow 0.3s ease;
 }
 
-/* Estrellitas animadas */
-@keyframes sparkle {
-  0% {
-    box-shadow: 0 0 0 rgba(0, 123, 255, 0);
+.animated-input:focus {
+  box-shadow: 0 0 5px #007bff;
+}
+
+/* Keyframes */
+@keyframes fadeInInput {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
   }
-  50% {
-    box-shadow: 0 0 12px rgba(0, 123, 255, 0.3);
-  }
-  100% {
-    box-shadow: 0 0 12px rgba(0, 123, 255, 0.3);
-  }
-}
-
-/* Opcional: fondo animado sutil al escribir */
-.login-form input:focus::placeholder {
-  color: #aaa;
-  transition: color 0.3s ease;
-}
-
-/* Estrellitas decorativas (pseudo-elemento) */
-.login-form input:focus::after {
-  content: '✨';
-  position: absolute;
-  right: -1.5rem;
-  top: -0.5rem;
-  font-size: 1.2rem;
-  animation: fadeStar 0.6s ease-out;
-}
-
-@keyframes fadeStar {
-  0% { opacity: 0; transform: scale(0.5); }
-  50% { opacity: 1; transform: scale(1.2); }
-  100% { opacity: 0; transform: scale(0.8); }
-}
-/* Fondo animado con lluvia de estrellas */
-.login-form {
-  position: relative;
-  overflow: hidden;
-  background-color: #e6f0ff; /* celeste suave */
-}
-
-/* Contenedor de estrellas */
-.login-form::before {
-  content: '';
-  position: absolute;
-  top: -100%;
-  left: 0;
-  width: 100%;
-  height: 300%;
-  background-image: radial-gradient(#fff 1px, transparent 1px),
-                    radial-gradient(#fff 1px, transparent 1px);
-  background-size: 3px 3px, 4px 4px;
-  background-position: 0 0, 50% 50%;
-  animation: lluviaEstrellas 10s linear infinite;
-  opacity: 0.4;
-  pointer-events: none;
-  z-index: 0;
-}
-
-/* Animación de caída */
-@keyframes lluviaEstrellas {
-  0% { transform: translateY(0); }
-  100% { transform: translateY(100%); }
-}
-
-/* Aseguramos que el contenido esté por encima */
-.login-form form {
-  position: relative;
-  z-index: 1;
-}
-
-.login-layout {
-  position: relative;
-  display: flex;
-  height: 100vh;
-  background-color: #e6f0ff; /* celeste suave */
-  overflow: hidden;
-}
-
-/* Fondo animado con lluvia de estrellas */
-.login-layout::before {
-  content: '';
-  position: absolute;
-  top: -100%;
-  left: 0;
-  width: 100%;
-  height: 300%;
-  background-image: radial-gradient(#ffffff 1px, transparent 1px),
-                    radial-gradient(#ffffff 1px, transparent 1px);
-  background-size: 3px 3px, 4px 4px;
-  background-position: 0 0, 50% 50%;
-  animation: lluviaEstrellas 12s linear infinite;
-  opacity: 0.3;
-  pointer-events: none;
-  z-index: 0;
-}
-
-/* Animación de caída */
-@keyframes lluviaEstrellas {
-  0% { transform: translateY(0); }
-  100% { transform: translateY(100%); }
-}
-
-/* Aseguramos que el contenido esté por encima */
-.login-form,
-.login-banner {
-  position: relative;
-  z-index: 1;
-}
-
-.estrella-fondo {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: transparent;
-  pointer-events: none;
-  z-index: 0;
-  overflow: hidden;
-}
-
-.estrella-fondo::before {
-  content: '';
-  position: absolute;
-  width: 200%;
-  height: 200%;
-  background-image: radial-gradient(#fff 1px, transparent 1px),
-                    radial-gradient(#fff 1px, transparent 1px);
-  background-size: 3px 3px, 4px 4px;
-  background-position: 0 0, 50% 50%;
-  animation: lluviaEstrellas 20s linear infinite;
-  opacity: 0.3;
-}
-
-@keyframes lluviaEstrellas {
-  0% { transform: translateY(0); }
-  100% { transform: translateY(100%); }
-}
-
-/* Aseguramos que el contenido esté por encima */
-.login-form,
-.login-banner {
-  position: relative;
-  z-index: 1;
-}
-.registro-link {
-  margin-top: 1rem;
-  text-align: center;
-  font-size: 0.95rem;
-}
-
-.registro-link a {
-  color: #007bff;
-  text-decoration: none;
-  font-weight: bold;
-}
-
-.registro-link a:hover {
-  text-decoration: underline;
-}
-
-.login-subtitulo {
-  margin-top: 0.5rem;
-  font-size: 1rem;
-  color: #f0f0f0;
-  text-align: center;
-  font-weight: 500;
-  letter-spacing: 0.5px;
-}
-.login-subtitulo {
-  font-size: 1rem;
-  color: #f0f0f0;
-  text-align: center;
-  font-weight: 500;
-  letter-spacing: 0.5px;
-  margin-top: 0.5rem;
-  opacity: 0;
-  transform: translateY(10px);
-  animation: fadeSubtitulo 1.5s ease-out forwards;
-}
-
-@keyframes fadeSubtitulo {
   to {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* Contenedor relativo para posicionar el ícono */
+.password-wrapper {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+/* Altura consistente y espacio para el ícono a la derecha */
+.password-input {
+  height: 44px; /* fija una altura clara para centrar mejor */
+  padding-right: 42px; /* deja espacio para el ícono */
+  box-sizing: border-box;
+}
+
+/* Ícono perfectamente centrado vertical y horizontalmente dentro del input */
+.eye-icon {
+  position: absolute;
+  right: 10px;      /* separación del borde derecho */
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 18px;  /* tamaño del emoji/ícono */
+  color: #555;
+  padding: 0;
+}
+
+/* Feedback visual sutil al interactuar */
+.eye-icon:hover {
+  filter: brightness(1.1);
+}
+
+.eye-icon:focus {
+  outline: 2px solid #007bff44;
+  border-radius: 4px;
+}
+
+/* Mantener animación ligera en inputs */
+.animated-input {
+  transition: box-shadow 0.2s ease;
+}
+
+.animated-input:focus {
+  box-shadow: 0 0 5px #007bff;
+}
+
+.input-group,
+.password-group {
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.animated-input {
+  width: 100%;
+  padding: 0.75rem 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  box-sizing: border-box; /* ✅ clave para que el padding no rompa el ancho */
+}
+
+/* Campo de contraseña con ícono */
+.password-group input {
+  padding-right: 42px; /* espacio para el ícono */
+}
+
+.eye-button {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #555;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+
+.login-form {
+  width: 100%;
+  max-width: 400px;
+  padding: 2rem;
+  box-sizing: border-box;
 }
