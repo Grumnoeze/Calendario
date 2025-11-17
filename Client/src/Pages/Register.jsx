@@ -2,12 +2,13 @@ import { useState } from 'react';
 import axios from 'axios';
 
 function Register() {
- const [form, setForm] = useState({
-  User: '',
-  Password: '',
-  Name: '',
-  Rol: ''
-});
+  const [form, setForm] = useState({
+    Mail: '',
+    Password: '',
+    Name: '',
+    Rol: ''
+  });
+
 
   const [mensaje, setMensaje] = useState('');
 
@@ -18,7 +19,7 @@ function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-    const res = await axios.post('http://localhost:3000/api/registrarUsuario', form);
+      const res = await axios.post('http://localhost:3000/api/registrarUsuario', form);
 
       setMensaje(res.data.Mensaje || 'Registro exitoso');
     } catch (error) {
@@ -29,17 +30,14 @@ function Register() {
   return (
     <form onSubmit={handleSubmit}>
       <h2>Crear cuenta</h2>
-   <input
-  name="User"
-  type="text"
-  placeholder="Nombre de usuario"
-  value={form.User}
-  onChange={handleChange}
-  required
-/>
-
-
-
+      <input
+        name="Mail"
+        type="email"
+        placeholder="Correo electrónico"
+        value={form.Mail}
+        onChange={handleChange}
+        required
+      />
       <input
         name="Password"
         type="password"

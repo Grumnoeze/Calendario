@@ -1,85 +1,73 @@
-// Importamos hooks de React para manejar estado y efectos
-import { useEffect, useState, useRef } from 'react';
-
-// Importamos useNavigate para redireccionar entre vistas
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-
 import axios from 'axios';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
+import esLocale from '@fullcalendar/core/locales/es';
 import Logo from './img/Logo.jpg';
 import './Calendario.css';
-import esLocaleOriginal from '@fullcalendar/core/locales/es';
-
-const esConMayusculas = {
-  ...esLocaleOriginal,
-  options: {
-    ...esLocaleOriginal.options,
-    monthNames: [
-      'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
-    ],
-    monthNamesShort: [
-      'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun',
-      'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'
-    ]
-  }
-};
-
 
 function Calendario() {
+  const navigate = useNavigate();
+  const calendarRef = useRef(null);
+
+  const [eventoEditable, setEventoEditable] = useState(null);
   const [eventos, setEventos] = useState([]);
   const [eventoHover, setEventoHover] = useState(null);
   const [eventoSeleccionado, setEventoSeleccionado] = useState(null);
   const [menuDesplegableAbierto, setMenuDesplegableAbierto] = useState(false);
-  const calendarRef = useRef(null);
-  const guardarEstadoEnBD = async (id, estado) => {
-    try {
-      await axios.put(`http://localhost:3000/api/actualizarEstado/${id}`, { estado });
-    } catch (error) {
-      console.error("Error al guardar el estado:", error);
-    }
+  const [mostrarDetalles, setMostrarDetalles] = useState(false);
+  const prepararEventoEditable = (evento) => {
+  const fechaInicio = new Date(evento.start);
+  const fechaFin = new Date(evento.end);
+
+  return {
+    id: evento.id,
+    title: evento.title,
+    startDate: fechaInicio.toISOString().slice(0, 10), // yyyy-mm-dd
+    startTime: fechaInicio.toISOString().slice(11, 16), // hh:mm
+    endDate: fechaFin.toISOString().slice(0, 10),
+    endTime: fechaFin.toISOString().slice(11, 16),
+    ubicacion: evento.extendedProps?.ubicacion || '',
+    materia: evento.extendedProps?.materia || '',
+    descripcion: evento.extendedProps?.descripcion || '',
+    estado: evento.extendedProps?.estado || 'Pendiente'
   };
+};
 
 
 
-  // Estado para el horario del evento
-  const [horaEvento, setHoraEvento] = useState('09:00');
   const actualizarColorEvento = (id, estado) => {
-    const nuevoColor =
+    const color =
       estado === "Pendiente" ? "#ffeb3b" :
         estado === "Cancelado" ? "#f44336" :
           estado === "Realizado" ? "#4caf50" : "#2196f3";
 
-    // Actualizamos el estado local
-    setEventos(prev => {
-      const actualizados = prev.map(ev =>
-        ev.id === id
-          ? {
-            ...ev,
-            backgroundColor: nuevoColor,
-            extendedProps: { ...ev.extendedProps, estado }
-          }
-          : ev
-      );
-      return [...actualizados];
-    });
+    setEventos(prev =>
+      prev.map(ev =>
+        ev.id === id ? { ...ev, backgroundColor: color, extendedProps: { ...ev.extendedProps, estado } } : ev
+      )
+    );
+    setEventoEditable({ ...eventoSeleccionado });
 
-    // Actualizamos directamente en el calendario
     const calendarApi = calendarRef.current?.getApi();
     const evento = calendarApi?.getEventById(id);
     if (evento) {
-      evento.setProp('backgroundColor', nuevoColor);
+      evento.setProp('backgroundColor', color);
       evento.setExtendedProp('estado', estado);
     }
   };
+  
 
-
-
-  // Hook para redireccionar entre rutas
-  const navigate = useNavigate();
+  const guardarEstadoEnBD = async (id, estado) => {
+    try {
+      await axios.put(`http://localhost:3000/api/actualizarEstado/${id}`, { estado });
+    } catch (error) {
+      console.error("❌ Error al actualizar estado:", error);
+    }
+  };
 
   useEffect(() => {
     axios.get('http://localhost:3000/api/listarEventos')
@@ -105,23 +93,17 @@ function Calendario() {
       .catch(err => console.error(err));
   }, []);
 
-
   const handleMouseEnter = (info) => {
-    // Guardamos start y end (si existe). Preferimos objetos Date cuando estén disponibles
-    const startIso = info.event.start ? info.event.start.toISOString() : info.event.startStr;
-    const endIso = info.event.end ? info.event.end.toISOString() : (info.event.endStr || startIso);
     setEventoHover({
       title: info.event.title,
-      start: startIso,
-      end: endIso,
+      start: info.event.startStr,
+      end: info.event.endStr,
       x: info.jsEvent.pageX,
       y: info.jsEvent.pageY
     });
   };
 
-  const handleMouseLeave = () => {
-    setEventoHover(null);
-  };
+  const handleMouseLeave = () => setEventoHover(null);
 
   return (
     <div className="calendario-layout">
@@ -150,16 +132,15 @@ function Calendario() {
             📁 Repositorio<br /><span>Documento adjunto</span>
           </button>
 
-          {/* Desplegable de Eventos */}
           <div className="menu-desplegable-wrapper">
-            <button 
-              className="menu-btn menu-desplegable-toggle" 
+            <button
+              className="menu-btn menu-desplegable-toggle"
               onClick={() => setMenuDesplegableAbierto(!menuDesplegableAbierto)}
             >
               📋 Eventos<br /><span>Ver y editar eventos</span>
               <span className={`chevron ${menuDesplegableAbierto ? 'abierto' : ''}`}>▼</span>
             </button>
-            
+
             {menuDesplegableAbierto && (
               <div className="menu-desplegable-contenido">
                 {eventos.length === 0 ? (
@@ -175,17 +156,17 @@ function Calendario() {
                           <span className="evento-item-fecha">{new Date(ev.start).toLocaleDateString()}</span>
                         </div>
                         <div className="evento-item-acciones">
-                          <button 
+                          <button
                             className="btn-item-ver"
                             onClick={() => {
-                              setEventoSeleccionado(ev);
+                              irAlEvento(ev.id);
                               setMenuDesplegableAbierto(false);
                             }}
                             title="Ver evento"
                           >
                             👁️
                           </button>
-                          <button 
+                          <button
                             className="btn-item-editar"
                             onClick={() => navigate("/agregar-evento")}
                             title="Editar evento"
@@ -214,13 +195,11 @@ function Calendario() {
           <button className="cerrar-sesion">Cerrar sesión</button>
         </div>
       </aside>
-
       <main className="contenido">
-        <header className="encabezado">
-          <h2>📅 Calendario Institucional</h2>
-        </header>
+        <h2>📅 Calendario Institucional</h2>
 
         <FullCalendar
+          ref={calendarRef}
           plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
           initialView="dayGridMonth"
           headerToolbar={{
@@ -229,90 +208,129 @@ function Calendario() {
             right: 'dayGridMonth,timeGridWeek,timeGridDay'
           }}
           events={eventos}
-          locale={esConMayusculas}
+          locale={esLocale}
           height="auto"
-          /* Hacer que la vista horaria comience a las 08:00 y que el scroll inicial muestre esa franja */
           slotMinTime="08:00:00"
           scrollTime="08:00:00"
           eventMouseEnter={handleMouseEnter}
           eventMouseLeave={handleMouseLeave}
+          eventClick={(info) => {
+            const evento = info.event;
+            const estado = evento.extendedProps.estado || "Pendiente";
+            setEventoSeleccionado({
+              id: evento.id,
+              title: evento.title,
+              start: evento.startStr,
+              end: evento.endStr,
+              estado
+            });
+          }}
         />
 
         {eventoHover && (
-          <div
-            className="popup-evento"
-            style={{
-              top: eventoHover.y + 10,
-              left: eventoHover.x + 10
-            }}
-          >
+          <div className="popup-evento" style={{ top: eventoHover.y + 10, left: eventoHover.x + 10 }}>
             <strong>{eventoHover.title}</strong><br />
-            <span>
-              {new Date(eventoHover.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - {new Date(eventoHover.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-            </span>
+            <span>{new Date(eventoHover.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - {new Date(eventoHover.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
           </div>
         )}
 
         {eventoSeleccionado && (
           <div className="evento-flotante">
             <div className="evento-flotante-contenido">
-              <div className="evento-info">
-                <h3 className="evento-titulo">Técnico-administrativo</h3>
-
-                <div className="evento-hora-estado">
-                  <label htmlFor="hora">🕒 Horario:</label>
-                  <input
-                    type="time"
-                    id="hora"
-                    value={horaEvento}
-                    onChange={(e) => setHoraEvento(e.target.value)}
-                    className="hora-input"
-                  />
-
-                  <label>🕒 Hora de inicio:</label>
-                  <input
-                    type="time"
-                    value={eventoSeleccionado.start?.slice(11, 16) || ""}
-                    readOnly
-                    className="hora-input"
-                  />
-
-                  <label>Estado:</label>
-                  <select
-                    value={eventoSeleccionado.estado}
-                    onChange={async (e) => {
-                      const nuevoEstado = e.target.value;
-                      setEventoSeleccionado({ ...eventoSeleccionado, estado: nuevoEstado });
-                      actualizarColorEvento(eventoSeleccionado.id, nuevoEstado);
-                      await guardarEstadoEnBD(eventoSeleccionado.id, nuevoEstado);
-                    }}
-                    className="estado-dropdown"
-                  >
-                    <option value="Pendiente">🕒 Pendiente</option>
-                    <option value="Realizado">✅ Realizado</option>
-                    <option value="Cancelado">❌ Cancelado</option>
-                  </select>
-
-                  <label>
-                    <input type="checkbox" checked={eventoSeleccionado.estado === "Realizado"} readOnly />
-                    Evento marcado como realizado
-                  </label>
-
-                  <div className="evento-descripcion">
-                    <p>{eventoSeleccionado.title}</p>
-                  </div>
-                </div>
-
-                <div className="evento-acciones">
-                  <button onClick={() => setEventoSeleccionado(null)}>Cancelar</button>
-                  <button className="detalles-btn">Detalles</button>
-                </div>
+              <h3>{eventoSeleccionado.title}</h3>
+              <label>Estado:</label>
+              <select
+                value={eventoSeleccionado.estado}
+                onChange={async (e) => {
+                  const nuevoEstado = e.target.value;
+                  setEventoSeleccionado({ ...eventoSeleccionado, estado: nuevoEstado });
+                  actualizarColorEvento(eventoSeleccionado.id, nuevoEstado);
+                  await guardarEstadoEnBD(eventoSeleccionado.id, nuevoEstado);
+                }}
+              >
+                <option value="Pendiente">🕒 Pendiente</option>
+                <option value="Realizado">✅ Realizado</option>
+                <option value="Cancelado">❌ Cancelado</option>
+              </select>
+              <div className="botones-panel">
+                <button onClick={() => setEventoSeleccionado(null)}>Cerrar</button>
+                <button onClick={() => setMostrarDetalles(true)}>Detalles</button>
               </div>
             </div>
           </div>
         )}
+        {mostrarDetalles && eventoEditable && (
+          <div className="modal-overlay">
+            <div className="modal-detalles">
+              <h3>✏️ Editar Evento</h3>
 
+              <label>Título:</label>
+              <input
+                type="text"
+                value={eventoEditable.title}
+                onChange={(e) => setEventoEditable({ ...eventoEditable, title: e.target.value })}
+              />
 
+              <label>Fecha de inicio:</label>
+              <input
+                type="datetime-local"
+                value={eventoEditable.start}
+                onChange={(e) => setEventoEditable({ ...eventoEditable, start: e.target.value })}
+              />
+
+              <label>Fecha de fin:</label>
+              <input
+                type="datetime-local"
+                value={eventoEditable.end}
+                onChange={(e) => setEventoEditable({ ...eventoEditable, end: e.target.value })}
+              />
+
+              <label>Ubicación:</label>
+              <input
+                type="text"
+                value={eventoEditable.ubicacion || ''}
+                onChange={(e) => setEventoEditable({ ...eventoEditable, ubicacion: e.target.value })}
+              />
+
+              <label>Materia:</label>
+              <input
+                type="text"
+                value={eventoEditable.materia || ''}
+                onChange={(e) => setEventoEditable({ ...eventoEditable, materia: e.target.value })}
+              />
+
+              <label>Descripción:</label>
+              <textarea
+                value={eventoEditable.descripcion || ''}
+                onChange={(e) => setEventoEditable({ ...eventoEditable, descripcion: e.target.value })}
+              />
+
+              <label>Estado:</label>
+              <select
+                value={eventoEditable.estado}
+                onChange={(e) => setEventoEditable({ ...eventoEditable, estado: e.target.value })}
+              >
+                <option value="Pendiente">🕒 Pendiente</option>
+                <option value="Realizado">✅ Realizado</option>
+                <option value="Cancelado">❌ Cancelado</option>
+              </select>
+
+              <div className="botones-modal">
+                <button
+                  onClick={async () => {
+                    await axios.put(`http://localhost:3000/api/actualizarEvento/${eventoEditable.id}`, eventoEditable);
+                    setMostrarDetalles(false);
+                    setEventoSeleccionado(null);
+                    buscarEventosDesdeBD(); // refresca el calendario
+                  }}
+                >
+                  Guardar cambios
+                </button>
+                <button onClick={() => setMostrarDetalles(false)}>Cancelar</button>
+              </div>
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );

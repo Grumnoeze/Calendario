@@ -80,16 +80,23 @@ function AgregarEvento() {
                         />
                     </div>
 
+        
                     <div className="grupo-form">
                         <label>Fecha *</label>
                         <input 
                             name="Fecha" 
                             type="date" 
                             onChange={handleChange}
-                            value={form.Fecha}
+                            value={form.FechaInicio}
                             required 
                         />
+                        <label htmlFor="">fecha fin</label>
+                        <input
+                        
+                         type="date" 
+                        />
                     </div>
+
 
                     <div className="grupo-form-row">
                         <div className="grupo-form">
