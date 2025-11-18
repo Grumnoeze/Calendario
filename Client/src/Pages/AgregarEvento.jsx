@@ -164,6 +164,7 @@ function AgregarEvento() {
         </select>
       </div>
 
+<<<<<<< HEAD
       {form.Dimension === 'Otro' && (
         <div className="grupo-form">
           <label>Especificar dimensión *</label>
@@ -192,6 +193,48 @@ function AgregarEvento() {
           ))}
         </select>
       </div>
+=======
+        
+                    <div className="grupo-form">
+                        <label>Fecha *</label>
+                        <input 
+                            name="Fecha" 
+                            type="date" 
+                            onChange={handleChange}
+                            value={form.FechaInicio}
+                            required 
+                        />
+                        <label htmlFor="">fecha fin</label>
+                        <input
+                        
+                         type="date" 
+                        />
+                    </div>
+
+
+                    <div className="grupo-form-row">
+                        <div className="grupo-form">
+                            <label>Hora de inicio *</label>
+                            <input 
+                                name="HoraInicio" 
+                                type="time" 
+                                onChange={handleChange}
+                                value={form.HoraInicio}
+                                required 
+                            />
+                        </div>
+                        <div className="grupo-form">
+                            <label>Hora de fin *</label>
+                            <input 
+                                name="HoraFin" 
+                                type="time" 
+                                onChange={handleChange}
+                                value={form.HoraFin}
+                                required 
+                            />
+                        </div>
+                    </div>
+>>>>>>> 9ec4b02af1c4c8cf81ce49fc672456abd0024303
 
       <div className="grupo-form">
         <label>Descripción</label>

@@ -7,18 +7,18 @@ const RegistrarUsuario = async (req, res) => {
     try {
         const { Mail, Password, Name, Rol } = req.body;
         if (!Mail || !Password || !Name || !Rol) {
-            return res.status(404).json({ Error: "Faltan datos obligatorios" });
-
+            return res.status(400).json({ Error: "Faltan datos obligatorios" });
         }
 
         const Verificar_Usuario = `SELECT * FROM Usuarios WHERE Mail = ?`;
 
-        db.get(Verificar_Usuario, [Mail], async (error, Tabla) => {
+        db.get(Verificar_Usuario, [Mail], async (error, usuarioExistente) => {
             if (error) {
                 console.error("❌ Error al verificar el usuario:", error.message);
-                return res.status(404).json({ Error: "Error al verificar el usuario" });
+                return res.status(500).json({ Error: "Error al verificar el usuario" });
             }
-            if (Tabla) {
+
+            if (usuarioExistente) {
                 return res.status(409).json({ Error: "El usuario ya existe" });
             }
 
@@ -28,30 +28,9 @@ const RegistrarUsuario = async (req, res) => {
             db.run(Insertar_Usuario, [Mail, Hash, Name, Rol], function (error) {
                 if (error) {
                     console.error("❌ Error al registrar el usuario:", error.message);
-                    return res.status(404).json({ Error: "Error al registrar el usuario" });
-                } else {
-                    return res.status(201).json({
-                        Mensaje: "Usuario registrado correctamente",
-                        Id: this.lastID,
-                        Mail,
-                        Name,
-                        Rol
-                    });
+                    return res.status(500).json({ Error: "Error al registrar el usuario" });
                 }
-            });
-        });
 
-
-
-        const Hash = await EncriptarPassword(Password);
-        const Insertar_Usuario = `INSERT INTO Usuarios (Mail, Password, Name, Rol) VALUES (?, ?, ?, ?)`;
-
-        db.run(Insertar_Usuario, [Mail, Hash, Name, Rol], function (error) {
-            if (error) {
-                console.error("❌ Error al registrar el usuario:", error.message);
-                return res.status(404).json({ Error: "Error al registrar el usuario" });
-            }
-            else {
                 return res.status(201).json({
                     Mensaje: "Usuario registrado correctamente",
                     Id: this.lastID,
@@ -59,13 +38,13 @@ const RegistrarUsuario = async (req, res) => {
                     Name,
                     Rol
                 });
-            }
-        })
-    }
-    catch (error) {
+            });
+        });
+    } catch (error) {
+        console.error("❌ Error inesperado:", error.message);
         return res.status(500).json({ Error: "Error del servidor" });
     }
-}
+};
 
 const Bcrypt = require('bcrypt');
 

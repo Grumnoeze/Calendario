@@ -21,6 +21,38 @@ Rutas.put('/actualizarEstado/:id', async (req, res) => {
         res.status(500).json({ Error: 'Error al actualizar el estado' });
     }
 });
+Rutas.put('/actualizarEvento/:id', (req, res) => {
+  const { id } = req.params;
+  const {
+    Titulo, FechaInicio, FechaFin, HoraInicio, HoraFin,
+    Ubicacion, Dimension, AsignarA, Descripcion, Materia,
+    PermisoVisualizacion, PermisoEdicion, Recordatorio, Tipo, Estado
+  } = req.body;
+
+  const query = `
+    UPDATE Eventos SET
+      Titulo = ?, FechaInicio = ?, FechaFin = ?, HoraInicio = ?, HoraFin = ?,
+      Ubicacion = ?, Dimension = ?, AsignarA = ?, Descripcion = ?, Materia = ?,
+      PermisoVisualizacion = ?, PermisoEdicion = ?, Recordatorio = ?, Tipo = ?, Estado = ?
+    WHERE Id = ?
+  `;
+
+  const valores = [
+    Titulo, FechaInicio, FechaFin, HoraInicio, HoraFin,
+    Ubicacion, Dimension, AsignarA, Descripcion, Materia,
+    PermisoVisualizacion, PermisoEdicion, Recordatorio ? 1 : 0, Tipo, Estado, id
+  ];
+
+  db.run(query, valores, function (error) {
+    if (error) {
+      console.error("❌ Error al actualizar evento:", error.message);
+      return res.status(500).json({ Error: "Error al actualizar evento" });
+    }
+    res.status(200).json({ Mensaje: "Evento actualizado correctamente" });
+  });
+});
+
+
 
 Rutas.post('/crearEvento', CrearEvento);
 Rutas.get('/listarEventos', ListarEventos);
