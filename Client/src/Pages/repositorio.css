@@ -1,166 +1,266 @@
-/* Tarjetas de documentos */
-.lista-documentos {
+/* ======= Layout principal: sidebar + contenido ======= */
+.repositorio-layout {
+  display: flex;
+  min-height: 100vh;
+  background: var(--color-fondo, #f6f7f9);
+  box-sizing: border-box;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 280px;
+  background: var(--color-azul, #1f2937);
+  color: #fff;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-  background-color: #f0f2f5; /* Fondo suave para que las tarjetas resalten */
-  padding: 1rem;
-  border-radius: 8px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  padding: 18px 16px;
+  box-shadow: 2px 0 12px rgba(0,0,0,0.06);
+  z-index: 5;
+  box-sizing: border-box;
 }
 
-.tarjeta-documento {
-  background-color: #ffffff;
-  border: 1px solid #ddd;
-  border-left: 6px solid #0077b6;
-  padding: 1.2rem 1rem;
-  border-radius: 10px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08); /* Sombra suave */
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  transition: transform 0.2s ease;
-}
-
-.tarjeta-documento:hover {
-  transform: translateY(-2px); /* Efecto sutil al pasar el mouse */
-}
-
-.documento-info {
-  max-width: 75%;
-}
-
-.documento-info h4 {
-  margin: 0;
-  font-size: 1.1rem;
-  color: #003366;
-}
-
-.documento-info p {
-  margin: 0.3rem 0;
-  color: #555;
-  font-size: 0.95rem;
-}
-
-.etiqueta {
-  display: inline-block;
-  padding: 0.3rem 0.7rem;
-  border-radius: 4px;
-  font-size: 0.8rem;
-  font-weight: bold;
-  margin-bottom: 0.5rem;
-  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1);
-}
-
-/* Colores por dimensión */
-.etiqueta.tecnico {
-  background-color: #ffeb3b;
-  color: #333;
-}
-
-.etiqueta.socio {
-  background-color: #2196f3;
-  color: white;
-}
-
-.etiqueta.pedagogico {
-  background-color: #4caf50;
-  color: white;
-}
-
-/* Botón de descarga */
-.btn-descargar {
-  background-color: #0077b6;
-  color: white;
-  border: none;
-  padding: 0.6rem 1rem;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: bold;
-  align-self: center;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-  transition: background-color 0.2s ease;
-}
-
-.btn-descargar:hover {
-  background-color: #005f91;
-}
-
-
-.tarjeta-documento {
-  background-color: white;
-  border: 1px solid #ccc;
-  border-radius: 12px;
-  padding: 1.2rem 1rem;
-  margin-bottom: 1.5rem;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.documento-cuerpo {
+/* Contenido principal */
+.repositorio-panel {
   flex: 1;
-  padding-right: 1rem;
-}
-
-.documento-encabezado {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 18px;
+  padding: 24px;
+  box-sizing: border-box;
+  align-items: stretch;
+}
+
+/* Sección superior: filtros + botón subir */
+.repositorio-superior {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+/* Filtros */
+.filtros-repositorio {
+  display: flex;
+  gap: 12px;
   align-items: center;
-  margin-bottom: 0.6rem;
+  flex: 1 1 480px;
+  min-width: 220px;
+}
+.input-busqueda {
+  flex: 1;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  box-sizing: border-box;
+}
+.grupo-filtros {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.filtro-select {
+  padding: 9px 10px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
 }
 
-.documento-nombre {
-  font-size: 1.1rem;
-  font-weight: bold;
-  color: #003366;
-  margin: 0;
-}
-
-.documento-evento {
-  font-weight: 500;
-  margin-bottom: 0.5rem;
-}
-
-.documento-meta {
-  margin: 0.2rem 0;
-  font-size: 0.9rem;
-  color: #555;
-}
-
-.etiqueta {
-  padding: 0.3rem 0.6rem;
-  border-radius: 6px;
-  font-size: 0.8rem;
-  font-weight: bold;
-  white-space: nowrap;
-}
-
-.etiqueta.tecnico {
-  background-color: #ffeb3b;
-  color: #333;
-}
-
-.etiqueta.socio {
-  background-color: #2196f3;
-  color: white;
-}
-
-.etiqueta.pedagogico {
-  background-color: #4caf50;
-  color: white;
-}
-
-.btn-descargar {
-  background-color: #0077b6;
-  color: white;
+/* Botón subir */
+.btn-subir {
+  background: var(--color-azul, #2563eb);
+  color: #fff;
   border: none;
-  padding: 0.6rem 1rem;
-  border-radius: 6px;
-  font-weight: bold;
+  padding: 10px 14px;
+  border-radius: 8px;
   cursor: pointer;
-  white-space: nowrap;
+  font-weight: 700;
+  align-self: flex-start;
 }
-.btn-descargar:hover {
-  background-color: #005f91;
+
+/* Lista de documentos: usa grid pero con tarjetas horizontales */
+.lista-documentos {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  width: 100%;
+  margin-top: 6px;
 }
+
+/* Tarjeta horizontal (única definición) */
+.tarjeta-documento {
+  display: flex;
+  gap: 16px;
+  align-items: stretch;
+  background: #fff;
+  border: 1px solid #e6e7eb;
+  border-radius: 10px;
+  padding: 12px;
+  box-shadow: 0 6px 18px rgba(17,24,39,0.04);
+  min-height: 110px;
+  box-sizing: border-box;
+}
+
+/* Preview (imagen o icono) */
+.tarjeta-preview {
+  width: 140px;
+  min-width: 140px;
+  height: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  background: linear-gradient(180deg,#f3f4f6,#fff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.tarjeta-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Contenido principal de la tarjeta */
+.tarjeta-contenido {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  justify-content: space-between;
+}
+
+/* Info y meta */
+.documento-info { display: flex; flex-direction: column; gap: 6px; }
+.documento-info h4 { margin: 0; font-size: 1rem; color: #111827; }
+.documento-meta {
+  display: flex;
+  gap: 12px;
+  font-size: 13px;
+  color: #4b5563;
+  flex-wrap: wrap;
+}
+
+/* Badge */
+.etiqueta {
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  background: #f3f8ff;
+  color: #05527a;
+}
+
+/* Acciones */
+.tarjeta-acciones {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: flex-end;
+}
+.btn-descargar {
+  background: #f3f4f6;
+  color: #111827;
+  padding: 8px 12px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+/* Estilo cuando no hay preview */
+.tarjeta-no-preview .tarjeta-preview {
+  background: #f9fafb;
+  font-size: 32px;
+  color: #9ca3af;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(2,6,23,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+.modal-contenido {
+  background: #fff;
+  padding: 18px;
+  border-radius: 10px;
+  width: 420px;
+  max-width: calc(100% - 40px);
+}
+
+/* Ajustes verticales */
+.repositorio-panel, .repositorio-superior, .lista-documentos {
+  align-items: flex-start;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .repositorio-panel { padding: 18px; }
+  .tarjeta-preview { width: 120px; min-width: 120px; }
+}
+@media (max-width: 720px) {
+  .repositorio-layout { flex-direction: column; }
+  .sidebar { width: 100%; height: auto; position: relative; }
+  .repositorio-panel { padding: 16px; }
+  .repositorio-superior { flex-direction: column; align-items: stretch; gap: 12px; }
+  .lista-documentos { grid-template-columns: 1fr; }
+  .tarjeta-documento { flex-direction: column; min-height: auto; }
+  .tarjeta-preview { width: 100%; min-width: auto; height: 160px; }
+  .tarjeta-acciones { justify-content: flex-start; }
+}
+
+/* Si quitás la preview: centrado vertical y pequeño ajuste */
+.tarjeta-documento.no-preview {
+  padding-left: 16px;
+}
+/* Oculta solo las imágenes dentro de las tarjetas sin tocar lógica JSX */
+.tarjeta-preview img { display: none !important; }
+
+/* si querés ocultar toda la columna preview */
+.tarjeta-preview { display: none; }
+
+/* Mini-títulos y layout de meta */
+.documento-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 14px;
+  margin-top: 6px;
+  align-items: start;
+}
+
+.meta-item { display: flex; flex-direction: column; gap: 4px; }
+
+/* Mini-título */
+.meta-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #6b7280;           /* tono secundario */
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* Valor debajo del mini-título */
+.meta-value {
+  font-size: 13px;
+  color: #0f172a;
+  font-weight: 600;
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+}
+
+/* Si querés los íconos más discretos */
+.meta-value svg, .meta-value img { opacity: 0.9; width: 16px; height: 16px; }
+
+/* En pantallas chicas, apilar en 1 columna */
+@media (max-width: 720px) {
+  .documento-meta-grid { grid-template-columns: 1fr; }
+}
+
+
