@@ -10,17 +10,16 @@ function AdminPanel() {
   const [mensaje, setMensaje] = useState('');
   const [menuDesplegableAbierto, setMenuDesplegableAbierto] = useState(false);
 
+  const usuarioLocal = JSON.parse(localStorage.getItem("usuario"));
+  const esAdmin = usuarioLocal?.Rol === "admin";
+
   useEffect(() => {
-    // Trae la lista de usuarios (ajustá el endpoint si tu API usa otro)
     axios.get('http://localhost:3000/api/listarUsuarios')
-      .then(response => {
-        setUsuarios(response.data);
-      })
+      .then(response => setUsuarios(response.data))
       .catch(err => console.error(err));
   }, []);
 
   const aceptarUsuario = (id) => {
-    // Ajustá la ruta/verb HTTP según tu API real
     axios.post(`http://localhost:3000/api/aceptarUsuario/${id}`)
       .then(() => {
         setUsuarios(prev => prev.filter(u => u.Id !== id));
@@ -35,7 +34,6 @@ function AdminPanel() {
   };
 
   const rechazarUsuario = (id) => {
-    // Ajustá la ruta/verb HTTP según tu API real
     axios.post(`http://localhost:3000/api/rechazarUsuario/${id}`)
       .then(() => {
         setUsuarios(prev => prev.filter(u => u.Id !== id));
@@ -94,7 +92,7 @@ function AdminPanel() {
         </nav>
 
         <div className="usuario-sidebar">
-          <span>Pablo Gómez (admin)</span>
+          <span>{usuarioLocal?.Name} ({usuarioLocal?.Rol})</span>
           <button className="cerrar-sesion">Cerrar sesión</button>
         </div>
       </aside>
@@ -109,12 +107,20 @@ function AdminPanel() {
         <section className="admin-seccion">
           <h3>👥 Gestión de Usuarios</h3>
 
+          {esAdmin && (
+            <div className="boton-agregar-usuario">
+              <button className="btn-agregar" onClick={() => navigate("/crear-usuario")}>
+                ➕ Agregar nuevo usuario
+              </button>
+            </div>
+          )}
+
           <div className="tabla-contenedor">
             <table className="admin-tabla">
               <thead>
                 <tr>
                   <th>Nombre</th>
-                  <th>Usuario</th>
+                  <th>Email</th>
                   <th>Rol</th>
                   <th>Acciones</th>
                 </tr>
@@ -130,7 +136,8 @@ function AdminPanel() {
                   usuarios.map(u => (
                     <tr key={u.Id}>
                       <td>{u.Name}</td>
-                      <td>{u.User}</td>
+                   <td>{u.Mail}</td>
+
                       <td><span className="badge role">{u.Rol}</span></td>
                       <td className="acciones-tabla">
                         <button

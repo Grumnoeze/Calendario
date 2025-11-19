@@ -20,22 +20,22 @@ function Calendario() {
   const [menuDesplegableAbierto, setMenuDesplegableAbierto] = useState(false);
   const [mostrarDetalles, setMostrarDetalles] = useState(false);
   const prepararEventoEditable = (evento) => {
-  const fechaInicio = new Date(evento.start);
-  const fechaFin = new Date(evento.end);
+    const fechaInicio = new Date(evento.start);
+    const fechaFin = new Date(evento.end);
 
-  return {
-    id: evento.id,
-    title: evento.title,
-    startDate: fechaInicio.toISOString().slice(0, 10), // yyyy-mm-dd
-    startTime: fechaInicio.toISOString().slice(11, 16), // hh:mm
-    endDate: fechaFin.toISOString().slice(0, 10),
-    endTime: fechaFin.toISOString().slice(11, 16),
-    ubicacion: evento.extendedProps?.ubicacion || '',
-    materia: evento.extendedProps?.materia || '',
-    descripcion: evento.extendedProps?.descripcion || '',
-    estado: evento.extendedProps?.estado || 'Pendiente'
+    return {
+      id: evento.id,
+      title: evento.title,
+      startDate: fechaInicio.toISOString().slice(0, 10), // yyyy-mm-dd
+      startTime: fechaInicio.toISOString().slice(11, 16), // hh:mm
+      endDate: fechaFin.toISOString().slice(0, 10),
+      endTime: fechaFin.toISOString().slice(11, 16),
+      ubicacion: evento.extendedProps?.ubicacion || '',
+      materia: evento.extendedProps?.materia || '',
+      descripcion: evento.extendedProps?.descripcion || '',
+      estado: evento.extendedProps?.estado || 'Pendiente'
+    };
   };
-};
 
 
 
@@ -59,7 +59,7 @@ function Calendario() {
       evento.setExtendedProp('estado', estado);
     }
   };
-  
+
 
   const guardarEstadoEnBD = async (id, estado) => {
     try {
@@ -84,14 +84,24 @@ function Calendario() {
                   ev.Tipo === 'clase' ? '#4caf50' :
                     ev.Tipo === 'reunion' ? '#2196f3' : '#f44336',
           extendedProps: {
+            estado: ev.Estado || 'Pendiente',
+            ubicacion: ev.Ubicacion,
+            dimension: ev.Dimension,
+            asignarA: ev.AsignarA,
+            descripcion: ev.Descripcion,
+            materia: ev.Materia,
+            permisoVisualizacion: ev.PermisoVisualizacion,
+            permisoEdicion: ev.PermisoEdicion,
+            recordatorio: ev.Recordatorio,
             tipo: ev.Tipo,
-            estado: ev.Estado || 'Pendiente'
+            usuarioId: ev.UsuarioId
           }
         }));
         setEventos(eventosFormateados);
       })
       .catch(err => console.error(err));
   }, []);
+
 
   const handleMouseEnter = (info) => {
     setEventoHover({
@@ -104,6 +114,30 @@ function Calendario() {
   };
 
   const handleMouseLeave = () => setEventoHover(null);
+  const prepararEventoDetalles = (evento) => {
+    const fechaInicio = new Date(evento.start);
+    const fechaFin = new Date(evento.end);
+
+    return {
+      id: evento.id,
+      title: evento.title,
+      fechaInicio: fechaInicio.toLocaleDateString(),
+      horaInicio: fechaInicio.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      fechaFin: fechaFin.toLocaleDateString(),
+      horaFin: fechaFin.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      ubicacion: evento.extendedProps?.ubicacion || 'Sin ubicación',
+      dimension: evento.extendedProps?.dimension || 'Sin dimensión',
+      asignarA: evento.extendedProps?.asignarA || 'No asignado',
+      descripcion: evento.extendedProps?.descripcion || 'Sin descripción',
+      materia: evento.extendedProps?.materia || 'Sin materia',
+      permisoVisualizacion: evento.extendedProps?.permisoVisualizacion || 'N/A',
+      permisoEdicion: evento.extendedProps?.permisoEdicion || 'N/A',
+      recordatorio: evento.extendedProps?.recordatorio || "Sí",
+      estado: evento.extendedProps?.estado || 'Pendiente',
+      tipo: evento.extendedProps?.tipo || 'General'
+    };
+  };
+
 
   return (
     <div className="calendario-layout">
@@ -131,63 +165,6 @@ function Calendario() {
           <button className="menu-btn" onClick={() => navigate("/repositorio")}>
             📁 Repositorio<br /><span>Documento adjunto</span>
           </button>
-
-          <div className="menu-desplegable-wrapper">
-            <button
-              className="menu-btn menu-desplegable-toggle"
-              onClick={() => setMenuDesplegableAbierto(!menuDesplegableAbierto)}
-            >
-              📋 Eventos<br /><span>Ver y editar eventos</span>
-              <span className={`chevron ${menuDesplegableAbierto ? 'abierto' : ''}`}>▼</span>
-            </button>
-
-            {menuDesplegableAbierto && (
-              <div className="menu-desplegable-contenido">
-                {eventos.length === 0 ? (
-                  <div className="desplegable-vacio">
-                    <p>No hay eventos</p>
-                  </div>
-                ) : (
-                  <ul className="eventos-lista">
-                    {eventos.slice(0, 5).map(ev => (
-                      <li key={ev.id} className="evento-item">
-                        <div className="evento-item-info">
-                          <p className="evento-item-titulo">{ev.title}</p>
-                          <span className="evento-item-fecha">{new Date(ev.start).toLocaleDateString()}</span>
-                        </div>
-                        <div className="evento-item-acciones">
-                          <button
-                            className="btn-item-ver"
-                            onClick={() => {
-                              irAlEvento(ev.id);
-                              setMenuDesplegableAbierto(false);
-                            }}
-                            title="Ver evento"
-                          >
-                            👁️
-                          </button>
-                          <button
-                            className="btn-item-editar"
-                            onClick={() => navigate("/agregar-evento")}
-                            title="Editar evento"
-                          >
-                            ✏️
-                          </button>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-                {eventos.length > 5 && (
-                  <div className="desplegable-footer">
-                    <button className="btn-ver-todos" onClick={() => navigate("/buscar-filtrar")}>
-                      Ver todos los eventos →
-                    </button>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
         </nav>
 
         <div className="usuario-sidebar">
@@ -254,83 +231,49 @@ function Calendario() {
               </select>
               <div className="botones-panel">
                 <button onClick={() => setEventoSeleccionado(null)}>Cerrar</button>
-                <button onClick={() => setMostrarDetalles(true)}>Detalles</button>
+                <button
+                  onClick={() => {
+                    const calendarApi = calendarRef.current?.getApi();
+                    const evento = calendarApi?.getEventById(eventoSeleccionado.id);
+                    if (evento) {
+                      const detalles = prepararEventoDetalles(evento);
+                      setEventoEditable(detalles);
+                      setMostrarDetalles(true);
+                    }
+                  }}
+                >
+                  Detalles
+                </button>
               </div>
             </div>
           </div>
         )}
+
         {mostrarDetalles && eventoEditable && (
           <div className="modal-overlay">
             <div className="modal-detalles">
-              <h3>✏️ Editar Evento</h3>
-
-              <label>Título:</label>
-              <input
-                type="text"
-                value={eventoEditable.title}
-                onChange={(e) => setEventoEditable({ ...eventoEditable, title: e.target.value })}
-              />
-
-              <label>Fecha de inicio:</label>
-              <input
-                type="datetime-local"
-                value={eventoEditable.start}
-                onChange={(e) => setEventoEditable({ ...eventoEditable, start: e.target.value })}
-              />
-
-              <label>Fecha de fin:</label>
-              <input
-                type="datetime-local"
-                value={eventoEditable.end}
-                onChange={(e) => setEventoEditable({ ...eventoEditable, end: e.target.value })}
-              />
-
-              <label>Ubicación:</label>
-              <input
-                type="text"
-                value={eventoEditable.ubicacion || ''}
-                onChange={(e) => setEventoEditable({ ...eventoEditable, ubicacion: e.target.value })}
-              />
-
-              <label>Materia:</label>
-              <input
-                type="text"
-                value={eventoEditable.materia || ''}
-                onChange={(e) => setEventoEditable({ ...eventoEditable, materia: e.target.value })}
-              />
-
-              <label>Descripción:</label>
-              <textarea
-                value={eventoEditable.descripcion || ''}
-                onChange={(e) => setEventoEditable({ ...eventoEditable, descripcion: e.target.value })}
-              />
-
-              <label>Estado:</label>
-              <select
-                value={eventoEditable.estado}
-                onChange={(e) => setEventoEditable({ ...eventoEditable, estado: e.target.value })}
-              >
-                <option value="Pendiente">🕒 Pendiente</option>
-                <option value="Realizado">✅ Realizado</option>
-                <option value="Cancelado">❌ Cancelado</option>
-              </select>
-
+              <h3>📋 Detalles del evento</h3>
+              <p><strong>Título:</strong> {eventoEditable.title}</p>
+              <p><strong>Fecha inicio:</strong> {eventoEditable.fechaInicio} {eventoEditable.horaInicio}</p>
+              <p><strong>Fecha fin:</strong> {eventoEditable.fechaFin} {eventoEditable.horaFin}</p>
+              <p><strong>Ubicación:</strong> {eventoEditable.ubicacion}</p>
+              <p><strong>Dimensión:</strong> {eventoEditable.dimension}</p>
+              <p><strong>Asignado a:</strong> {eventoEditable.asignarA}</p>
+              <p><strong>Materia:</strong> {eventoEditable.materia}</p>
+              <p><strong>Descripción:</strong> {eventoEditable.descripcion}</p>
+              <p><strong>Permiso visualización:</strong> {eventoEditable.permisoVisualizacion}</p>
+              <p><strong>Permiso edición:</strong> {eventoEditable.permisoEdicion}</p>
+              <p><strong>Recordatorio:</strong> {eventoEditable.recordatorio}</p>
+              <p><strong>Estado:</strong> {eventoEditable.estado}</p>
+              <p><strong>Tipo:</strong> {eventoEditable.tipo}</p>
               <div className="botones-modal">
-                <button
-                  onClick={async () => {
-                    await axios.put(`http://localhost:3000/api/actualizarEvento/${eventoEditable.id}`, eventoEditable);
-                    setMostrarDetalles(false);
-                    setEventoSeleccionado(null);
-                    buscarEventosDesdeBD(); // refresca el calendario
-                  }}
-                >
-                  Guardar cambios
-                </button>
-                <button onClick={() => setMostrarDetalles(false)}>Cancelar</button>
+                <button onClick={() => setMostrarDetalles(false)}>Cerrar</button>
               </div>
             </div>
           </div>
         )}
+
+
       </main>
     </div>
   );
