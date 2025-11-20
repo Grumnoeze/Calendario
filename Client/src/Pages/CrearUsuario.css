@@ -1,0 +1,253 @@
+.crear-usuario-panel {
+  background: #fff;
+  padding: 24px;
+  border-radius: 12px;
+  max-width: 600px;
+  margin: 0 auto;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+
+.formulario-admin {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+input, select {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+fieldset {
+  border: none;
+  padding: 0;
+}
+
+.grupo-permisos {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.botones-formulario {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button[type="submit"] {
+  background: #2563eb;
+  color: white;
+}
+
+button[type="button"] {
+  background: #e5e7eb;
+  color: #111827;
+}
+
+
+.crear-usuario-panel {
+  background: #fff;
+  padding: 32px;
+  border-radius: 12px;
+  max-width: 700px;
+  margin: 0 auto;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+}
+
+.titulo-formulario {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  color: #111827;
+}
+
+.formulario-admin {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.grupo-formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+input, select {
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.seccion-permisos {
+  border: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.grupo-permisos {
+  background: #f9fafb;
+  padding: 12px;
+  border-radius: 8px;
+}
+
+.permiso-titulo {
+  font-weight: 600;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.permiso-opciones {
+  display: flex;
+  gap: 16px;
+}
+
+.botones-formulario {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button[type="submit"] {
+  background: #2563eb;
+  color: white;
+}
+
+button[type="button"] {
+  background: #e5e7eb;
+  color: #111827;
+}
+
+/* Fondo general con textura suave */
+body {
+  background: linear-gradient(to bottom right, #f0f4f8, #dbeafe);
+  min-height: 100vh;
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* Panel centrado con sombra */
+.crear-usuario-panel {
+  background: #ffffff;
+  padding: 32px;
+  border-radius: 12px;
+  max-width: 720px;
+  margin: 40px auto;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+/* Título destacado */
+.titulo-formulario {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  color: #1f2937;
+  text-align: center;
+}
+
+/* Campos del formulario */
+.formulario-admin {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.grupo-formulario label {
+  font-weight: 600;
+  color: #374151;
+}
+
+input, select {
+  padding: 10px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 14px;
+  background: #f9fafb;
+}
+
+/* Sección de permisos */
+.seccion-permisos {
+  border: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.grupo-permisos {
+  background: #f3f4f6;
+  padding: 14px;
+  border-radius: 8px;
+  border-left: 4px solid #2563eb;
+}
+
+/* Subrayado y color por dimensión */
+.permiso-titulo {
+  font-weight: 700;
+  font-size: 15px;
+  margin-bottom: 8px;
+  display: inline-block;
+  border-bottom: 2px solid #2563eb;
+  padding-bottom: 2px;
+  color: #1e3a8a;
+}
+
+.permiso-opciones {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.permiso-opciones label {
+  font-size: 14px;
+  color: #374151;
+}
+
+/* Botones */
+.botones-formulario {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button[type="submit"] {
+  background: #2563eb;
+  color: white;
+}
+
+button[type="button"] {
+  background: #e5e7eb;
+  color: #111827;
+}

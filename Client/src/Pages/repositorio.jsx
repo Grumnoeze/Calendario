@@ -204,57 +204,33 @@ function Repositorio() {
         </section>
 
         <section className="lista-documentos">
-          {documentos.length === 0 ? (
-            <p>No se encontraron documentos</p>
-          ) : (
-            documentos.map(doc => (
-              <div key={doc.Id} className={`tarjeta-documento ${doc.Ruta ? '' : 'tarjeta-no-preview'}`}>
-                <div className="tarjeta-preview">
-                  {doc.Ruta ? (
-                    <img src={`http://localhost:3000/uploads/${doc.Ruta}`} alt={doc.Nombre} />
-                  ) : (
-                    <span>📄</span>
-                  )}
-                </div>
-
-                <div className="tarjeta-contenido">
-                  <div className="documento-info">
-  <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', gap: '12px'}}>
-    <h4>{doc.Nombre}</h4>
-    <span className="etiqueta">{doc.Dimension}</span>
-  </div>
-
-  <div className="documento-meta-grid">
-    <div className="meta-item">
-      <div className="meta-label">Fecha</div>
-      <div className="meta-value">📅 {doc.FechaSubida}</div>
-    </div>
-
-    <div className="meta-item">
-      <div className="meta-label">Materia</div>
-      <div className="meta-value">📚 {doc.Materia}</div>
-    </div>
-
-    <div className="meta-item">
-      <div className="meta-label">Evento</div>
-      <div className="meta-value">🔗 {doc.EventoId}</div>
-    </div>
-
-    <div className="meta-item">
-      <div className="meta-label">Archivo</div>
-      <div className="meta-value">{doc.Ruta ? doc.Ruta : '—'}</div>
-    </div>
-  </div>
+  {documentos.length === 0 ? (
+    <p>No se encontraron documentos</p>
+  ) : (
+    documentos.map(doc => (
+      <div key={doc.Id} className="tarjeta-documento">
+        <div className="tarjeta-contenido-horizontal">
+          <div className="tarjeta-info-principal">
+            <h4 className="doc-nombre">{doc.Nombre}</h4>
+            <span className={`etiqueta-dimension ${doc.Dimension?.toLowerCase().replace(/\s/g, '-')}`}>
+              {doc.Dimension}
+            </span>
+          </div>
+<div className="doc-detalles-grid">
+  <div><strong>📅 Evento:</strong> {doc.EventoNombre || '—'}</div>
+  <div><strong>📚 Materia:</strong> {doc.Materia || '—'}</div>
+  <div><strong>👤 Subido por:</strong> {doc.SubidoPor || '—'}</div>
+  <div><strong>📄 Tipo:</strong> PDF</div>
+  <div><strong>📦 Tamaño:</strong> {doc.Tamano || '—'}</div>
 </div>
 
-
-                  <div className="tarjeta-acciones">
-                    <a
-                      href={`http://localhost:3000/uploads/${doc.Ruta}`}
-                      className="btn-descargar"
-                      download
-                    >
-                      ⬇️ Descargar
+          <div className="doc-acciones">
+            <a
+              href={`http://localhost:3000/uploads/${doc.Ruta}`}
+              className="btn-descargar"
+              download
+            >
+              ⬇️ Descargar
                     </a>
                   </div>
                 </div>

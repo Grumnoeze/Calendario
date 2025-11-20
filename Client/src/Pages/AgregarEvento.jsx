@@ -1,8 +1,11 @@
+
+
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Logo from './img/Logo.jpg';
 import './AgregarEvento.css';
+
 
 function AgregarEvento() {
     const navigate = useNavigate();
@@ -100,6 +103,9 @@ function AgregarEvento() {
     };
 
     return (
+
+
+        
         <form onSubmit={handleSubmit} className="formulario-evento">
             <div className="grupo-form">
                 <label>Título del evento *</label>
@@ -234,6 +240,12 @@ function AgregarEvento() {
                     rows="4"
                 />
             </div>
+
+
+
+
+
+            
 
             <div className="grupo-form">
                 <label>Materia</label>

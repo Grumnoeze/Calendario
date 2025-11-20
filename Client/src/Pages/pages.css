@@ -216,3 +216,26 @@
   flex-direction: column;
   gap: 12px;            
 }
+
+/* Botón para agregar nuevo usuario */
+.boton-agregar-usuario {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 16px;
+}
+
+.btn-agregar {
+  background: var(--color-naranja, #2563eb);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.btn-agregar:hover {
+  background: #1e40af;
+}
