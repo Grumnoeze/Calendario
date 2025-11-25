@@ -1,125 +1,29 @@
-<<<<<<< HEAD
+/* CONTENEDOR GENERAL */
 .login-container {
   display: flex;
-  flex-direction: column;
+  justify-content: center;
   align-items: center;
-  background-color: #f2f2f2;
-  min-height: 100vh;
-  padding-top: 2rem;
+  height: 100vh;
+  background: linear-gradient(135deg, #1e3c72, #2a5298);
+  padding: 20px;
 }
 
-.login-banner {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-color: #003366;
-  color: gold;
-  padding: 1rem 2rem;
-  border-radius: 8px;
-  margin-bottom: 2rem;
-}
-
-.login-logo {
-  width: 100px;
-  margin-bottom: 0.5rem;
-}
-
-.login-title {
-  font-size: 1.8rem;
-  font-weight: bold;
-  text-align: center;
-}
-
-.login-form {
-  background-color: #ffffff;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+/* CAJA DEL LOGIN */
+.login-box {
   width: 100%;
-  max-width: 400px;
+  max-width: 380px;
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 18px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+  animation: fadeIn 0.6s ease;
 }
 
-.login-form h2 {
-  margin-bottom: 1.5rem;
-  text-align: center;
-}
-
-.login-form input {
-  width: 100%;
-  padding: 0.7rem;
-  margin-bottom: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.login-form button {
-  width: 100%;
-  padding: 0.7rem;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  font-size: 1rem;
-  cursor: pointer;
-}
-
-.login-form button:hover {
-  background-color: #0056b3;
-}
-
-.login-error {
-  color: red;
-  margin-top: 1rem;
-  text-align: center;
-}
-.login-success {
-  color: green;
-  margin-top: 1rem;
-  text-align: center;
-}
-/* 👁️ Estilo para el campo de contraseña con ícono */
-.password-wrapper {
-  position: relative;
-  margin-bottom: 1rem;
-}
-
-.password-wrapper input {
-  width: 100%;
-  padding: 0.7rem 2.5rem 0.7rem 0.7rem; /* espacio para el ícono */
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.eye-icon {
-  position: absolute;
-  right: 0.8rem;
-  top: 50%;
-  transform: translateY(-50%);
-  cursor: pointer;
-  font-size: 1.2rem;
-  color: #555;
-  transition: transform 0.3s ease;
-}
-
-.eye-icon:hover {
-  transform: translateY(-50%) scale(1.2);
-}
-
-/* ✨ Animación en los inputs */
-.animated-input {
-  animation: fadeInInput 0.6s ease;
-  transition: box-shadow 0.3s ease;
-}
-
-.animated-input:focus {
-  box-shadow: 0 0 5px #007bff;
-}
-
-/* Keyframes */
-@keyframes fadeInInput {
+/* ANIMACIÓN DE APARICIÓN */
+@keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(-10px);
+    transform: translateY(15px);
   }
   to {
     opacity: 1;
@@ -127,162 +31,255 @@
   }
 }
 
-/* Contenedor relativo para posicionar el ícono */
-.password-wrapper {
-  position: relative;
-  margin-bottom: 1rem;
+/* TÍTULO */
+.login-title {
+  text-align: center;
+  margin-bottom: 25px;
+  font-size: 26px;
+  font-weight: 700;
+  color: #1e3c72;
 }
 
-/* Altura consistente y espacio para el ícono a la derecha */
-.password-input {
-  height: 44px; /* fija una altura clara para centrar mejor */
-  padding-right: 42px; /* deja espacio para el ícono */
-  box-sizing: border-box;
-}
-
-/* Ícono perfectamente centrado vertical y horizontalmente dentro del input */
-.eye-icon {
-  position: absolute;
-  right: 10px;      /* separación del borde derecho */
-  top: 50%;
-  transform: translateY(-50%);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  font-size: 18px;  /* tamaño del emoji/ícono */
-  color: #555;
-  padding: 0;
-}
-
-/* Feedback visual sutil al interactuar */
-.eye-icon:hover {
-  filter: brightness(1.1);
-}
-
-.eye-icon:focus {
-  outline: 2px solid #007bff44;
-  border-radius: 4px;
-}
-
-/* Mantener animación ligera en inputs */
-.animated-input {
-  transition: box-shadow 0.2s ease;
-}
-
-.animated-input:focus {
-  box-shadow: 0 0 5px #007bff;
-}
-
-.input-group,
-.password-group {
-  position: relative;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.animated-input {
-  width: 100%;
-  padding: 0.75rem 0.75rem;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 1rem;
-  box-sizing: border-box; /* ✅ clave para que el padding no rompa el ancho */
-}
-
-/* Campo de contraseña con ícono */
-.password-group input {
-  padding-right: 42px; /* espacio para el ícono */
-}
-
-.eye-button {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  color: #555;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  height: 100%;
-  box-sizing: border-box;
-}
-
-
-.login-form {
-  width: 100%;
-  max-width: 400px;
-  padding: 2rem;
-  box-sizing: border-box;
-=======
-body {
-  margin: 0;
-  font-family: 'Poppins', sans-serif;
-  background-color: #f0f4f8;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-}
-
-form {
-  background-color: #ffffff;
-  padding: 40px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  width: 320px;
+/* GRUPOS DE INPUTS */
+.input-group {
   display: flex;
   flex-direction: column;
+  margin-bottom: 18px;
 }
 
-h2 {
-  text-align: center;
-  color: #00457F;
-  margin-bottom: 24px;
+.input-group label {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #333;
 }
 
-input {
+.input-group input {
   padding: 12px;
-  margin-bottom: 16px;
-  border: 2px solid #00457F;
-  border-radius: 8px;
+  border-radius: 10px;
+  border: 2px solid #ccc;
   font-size: 15px;
-  background-color: #f7faff;
+  transition: 0.2s;
+}
+
+.input-group input:focus {
+  border-color: #1e3c72;
   outline: none;
+  box-shadow: 0 0 6px rgba(30, 60, 114, 0.3);
 }
 
-input:focus {
-  border-color: #EC6206;
-  box-shadow: 0 0 5px rgba(236, 98, 6, 0.3);
-}
-
-button {
-  background-color: #00457F;
-  color: white;
-  font-weight: bold;
-  border: none;
+/* BOTÓN */
+.login-btn {
+  width: 100%;
   padding: 12px;
-  border-radius: 8px;
+  background: #1e3c72;
+  color: white;
+  border: none;
+  border-radius: 10px;
   font-size: 16px;
   cursor: pointer;
+  margin-top: 10px;
+  transition: 0.2s;
 }
 
-button:hover {
-  background-color: #EC6206;
+.login-btn:hover {
+  background: #244c8b;
+  transform: scale(1.03);
 }
 
-p {
+/* MENSAJE DE ERROR */
+.login-error {
+  margin-top: 15px;
+  color: #d93025;
   text-align: center;
-  color: #EC6206;
-  font-size: 14px;
-  margin-top: 12px;
->>>>>>> 75d59108e091a69d4a3e4a3ca0bc7ac5dc35f429
+  font-weight: 600;
+}
+
+/* ----------- BANNER SUPERIOR ----------- */
+.login-banner {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.login-banner-img {
+  width: 120px;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+}
+
+/* ----------- INPUT PASSWORD CON OJO ----------- */
+.password-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-wrapper input {
+  width: 100%;
+  padding-right: 40px;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 5px;
+  user-select: none;
+}
+
+.toggle-password:hover {
+  transform: scale(1.1);
+}
+
+/* Contenedor general */
+.login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-top: 40px;
+  animation: fadeIn 1s ease-in-out;
+}
+
+/* Banner + Logo */
+.header-banner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 25px;
+  gap: 10px;
+}
+
+/* Banner */
+.banner-img {
+  width: 90%;
+  max-width: 380px;
+  animation: float 4s ease-in-out infinite;
+}
+
+/* LOGO MÁS GRANDE + ANIMADO */
+.logo-animated {
+  width: 200px;           /* 🔥 Aumentá esto si lo querés aún más grande */
+  animation: bounce 2s infinite;
+  filter: drop-shadow(0 0 6px rgba(0,0,0,0.4));
+}
+
+/* FORM */
+.login-form {
+  width: 320px;
+  padding: 25px;
+  background: white;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  animation: fadeUp 1s ease-in-out;
+}
+
+/* Password con ojito */
+.password-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 12px;
+  cursor: pointer;
+  font-size: 20px;
+  user-select: none;
+}
+
+/* Animaciones */
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+/* Contenedor general */
+.login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-top: 40px;
+  animation: fadeIn 1s ease-in-out;
+}
+
+/* Contenedor del Banner */
+.header-banner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 25px;
+  gap: 10px;
+}
+
+/* Banner grande animado */
+.logo-animated {
+  width: 250px;        /* 🔥 Ajusta acá si lo querés más grande */
+  animation: bounce 2s infinite;
+  filter: drop-shadow(0 0 8px rgba(0,0,0,0.5));
+}
+
+/* Formulario */
+.login-form {
+  width: 320px;
+  padding: 25px;
+  background: white;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  animation: fadeUp 1s ease-in-out;
+}
+
+/* Password con ojito */
+.password-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 12px;
+  cursor: pointer;
+  font-size: 20px;
+  user-select: none;
+}
+
+/* Animaciones */
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }

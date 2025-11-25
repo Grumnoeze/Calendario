@@ -750,3 +750,250 @@ p {
 .botones-modal button:hover {
   opacity: 0.9;
 }
+
+/* --- SIDEBAR MODERNA COLAPSABLE --- */
+
+.toggle-sidebar-btn {
+  position: absolute;
+  top: 15px;
+  left: 235px;
+  background-color: #1A3D64;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 2000;
+}
+
+.sidebar.colapsada ~ .toggle-sidebar-btn {
+  left: 80px; 
+}
+
+.toggle-sidebar-btn:hover {
+  background-color: #003366;
+}
+
+/* Sidebar colapsada */
+.sidebar.colapsada {
+  width: 70px;
+  transition: width 0.3s ease;
+}
+
+/* Ocultar textos en modo colapsado */
+.sidebar.colapsada .menu-btn span,
+.sidebar.colapsada .rol-usuario,
+.sidebar.colapsada .logo-container,
+.sidebar.colapsada .usuario-sidebar,
+.sidebar.colapsada hr {
+  display: none !important;
+}
+
+/* Contenido expandido cuando sidebar está colapsada */
+.contenido.expandido {
+  margin-left: 70px;
+  transition: margin-left 0.3s ease;
+}
+
+.sidebar.cerrada .menu-btn {
+  font-size: 0 !important;      /* Oculta TODO el texto/emoji */
+  padding: 16px 0 !important;
+}
+
+.sidebar.cerrada .menu-btn::after {
+  content: "" !important;
+}
+/* Botón hamburguesa bien ubicado */
+.btn-hamburguesa {
+  position: fixed;
+  top: 20px;
+  left: 250px; /* posición cuando sidebar está abierta */
+  background-color: #1A3D64;
+  color: white;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 1.3rem;
+  cursor: pointer;
+  z-index: 3000;
+  transition: all 0.3s ease;
+}
+
+/* Cuando sidebar está cerrada */
+.calendario-layout.colapsado .btn-hamburguesa {
+  left: 20px;
+}
+
+
+/* Mover cuando está colapsada */
+.calendario-layout.colapsado .btn-hamburguesa {
+  left: 20px;
+}
+
+/* ANIMACIÓN SIDEBAR */
+.sidebar {
+  transition: width 0.3s ease;
+}
+
+/* Sidebar colapsada */
+.sidebar.cerrada {
+  width: 70px !important;
+}
+
+/* Ocultar todo dentro cuando está colapsada */
+.sidebar.cerrada .menu-btn,
+.sidebar.cerrada .rol-usuario,
+.sidebar.cerrada .logo-container,
+.sidebar.cerrada .usuario-sidebar,
+.sidebar.cerrada hr {
+  display: none !important;
+}
+
+/* Evitar que queden iconos visibles */
+.sidebar.cerrada .menu-btn {
+  font-size: 0 !important;
+}
+
+/* Mover contenido cuando sidebar está colapsada */
+.calendario-layout.colapsado .contenido {
+  margin-left: 80px !important;
+  transition: margin-left 0.3s ease;
+}
+
+/* ---------- HEADER + HAMBURGER DENTRO DEL HEADER ---------- */
+
+.encabezado {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  background-color: #003366; /* mantiene tu color */
+  color: white;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  position: relative;
+}
+
+/* contenedor izquierdo: botón + título */
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* botón hamburguesa integrado al header (no flotante) */
+.header-hamburger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  color: white;
+  border: 1px solid rgba(255,255,255,0.12);
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 18px;
+  transition: background 0.18s, transform 0.18s;
+}
+
+.header-hamburger:hover {
+  background-color: rgba(255,255,255,0.06);
+  transform: translateY(-1px);
+}
+
+/* título principal */
+.main-title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: white;
+}
+
+/* menú desplegable (derecha) — queda pegado al header */
+.menu-desplegable {
+  position: relative;
+  display: inline-block;
+}
+
+.menu-btn-top {
+  padding: 8px 12px;
+  background-color: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.menu-btn-top:hover {
+  background-color: rgba(255,255,255,0.12);
+}
+
+.menu-desplegable-contenido {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 44px; /* baja justo debajo del header */
+  background: #fff;
+  color: #222;
+  min-width: 170px;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+  padding: 6px 0;
+  z-index: 1500;
+}
+
+.menu-desplegable:hover .menu-desplegable-contenido {
+  display: block;
+}
+
+.menu-desplegable-contenido button {
+  width: 100%;
+  background: none;
+  border: none;
+  text-align: left;
+  padding: 10px 14px;
+  cursor: pointer;
+}
+
+.menu-desplegable-contenido button:hover {
+  background-color: #f2f2f2;
+}
+
+/* ---------- SIDEBAR COLAPSADA: ocultar contenido y ajustar ancho ---------- */
+
+.sidebar {
+  width: 220px;
+  transition: width 0.28s ease;
+}
+
+.sidebar.colapsada {
+  width: 70px;
+}
+
+/* ocultar textos e iconos cuando esté colapsada */
+.sidebar.colapsada .menu-btn,
+.sidebar.colapsada .rol-usuario,
+.sidebar.colapsada .logo-container,
+.sidebar.colapsada .usuario-sidebar,
+.sidebar.colapsada hr,
+.sidebar.colapsada .menu-btn span {
+  display: none !important;
+}
+
+/* cuando colapsa, el área del contenido se corre */
+.calendario-layout.colapsado .contenido {
+  margin-left: 80px !important;
+  transition: margin-left 0.28s ease;
+}
+
+/* si necesitas que el botón cambie visual con el estado, opcional */
+
+  /* estilo si está cerrado */
+
+/* quitar reglas de botón fijo/float en caso que existan */
+.toggle-sidebar-btn,
+.btn-hamburguesa {
+  display: none !important;
+}

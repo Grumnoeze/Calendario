@@ -7,6 +7,7 @@ import Logo from './img/Logo.jpg';
 import './AgregarEvento.css';
 
 
+
 function AgregarEvento() {
     const navigate = useNavigate();
     const [form, setForm] = useState({
@@ -106,6 +107,7 @@ function AgregarEvento() {
 
 
         
+        
         <form onSubmit={handleSubmit} className="formulario-evento">
             <div className="grupo-form">
                 <label>Título del evento *</label>
@@ -177,6 +179,7 @@ function AgregarEvento() {
                     <option value="Biblioteca">Biblioteca</option>
                 </select>
             </div>
+
 
 
             <div className="grupo-form">

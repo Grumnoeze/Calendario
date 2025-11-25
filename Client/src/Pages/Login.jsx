@@ -1,15 +1,17 @@
-import { useState } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import "./Login.css";
+import Logo2 from "./img/Baner.png";
 
 function Login() {
   const [form, setForm] = useState({
-    Mail: '',
-    Password: ''
+    Mail: "",
+    Password: "",
   });
 
-
-  const [mensaje, setMensaje] = useState('');
+  const [mostrarPassword, setMostrarPassword] = useState(false);
+  const [mensaje, setMensaje] = useState("");
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -19,65 +21,91 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validación básica antes de enviar
     if (!form.Mail.trim() || !form.Password.trim()) {
-      setMensaje('Por favor completá todos los campos');
+      setMensaje("Por favor completá todos los campos");
       return;
     }
 
-
     try {
-      console.log("📤 Enviando datos de login:", form);
-      const res = await axios.post('http://localhost:3000/api/iniciarSesion', form);
-
-      console.log("📥 Respuesta recibida:", res.data);
+      const res = await axios.post(
+        "http://localhost:3000/api/iniciarSesion",
+        form
+      );
 
       const usuario = res.data;
-      localStorage.setItem('usuario', JSON.stringify(usuario));
+      localStorage.setItem("usuario", JSON.stringify(usuario));
 
       switch (usuario.Rol) {
-        case 'admin':
-          navigate('/admin-panel');
+        case "admin":
+          navigate("/admin-panel");
           break;
-        case 'docente':
-          navigate('/agregar-evento');
+        case "docente":
+          navigate("/agregar-evento");
           break;
-        case 'familia':
-          navigate('/calendario');
+        case "familia":
+          navigate("/calendario");
           break;
         default:
-          setMensaje('Rol desconocido');
+          setMensaje("Rol desconocido");
       }
     } catch (error) {
-      console.error("❌ Error en login:", error);
-      const msg = error.response?.data?.Error || 'Error desconocido';
+      const msg = error.response?.data?.Error || "Error desconocido";
       setMensaje(msg);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>Iniciar sesión</h2>
-      <input
-        name="Mail"
-        type="email"
-        placeholder="Correo electrónico"
-        value={form.Mail}
-        onChange={handleChange}
-        required
-      />
+    <div className="login-container">
 
-      <input
-        name="Password"
-        type="password"
-        placeholder="Contraseña"
-        value={form.Password}
-        onChange={handleChange}
-        required
-      />
-      <button type="submit">Entrar</button>
-      {mensaje && <p style={{ color: 'red' }}>{mensaje}</p>}
-    </form>
+      {/* BANNER DEL LOGO */}
+      <div className="login-banner">
+        <img src={Logo2} alt="Logo Institucional" className="login-banner-img" />
+      </div>
+
+      <form className="login-box" onSubmit={handleSubmit}>
+        <h2 className="login-title">🔐 Iniciar sesión</h2>
+
+        <div className="input-group">
+          <label>Correo electrónico</label>
+          <input
+            name="Mail"
+            type="email"
+            placeholder="ejemplo@correo.com"
+            value={form.Mail}
+            onChange={handleChange}
+          />
+        </div>
+
+        {/* INPUT DE CONTRASEÑA CON OJO */}
+        <div className="input-group">
+          <label>Contraseña</label>
+
+          <div className="password-wrapper">
+            <input
+              name="Password"
+              type={mostrarPassword ? "text" : "password"}
+              placeholder="••••••••"
+              value={form.Password}
+              onChange={handleChange}
+            />
+
+            <button
+              type="button"
+              className="toggle-password"
+              onClick={() => setMostrarPassword(!mostrarPassword)}
+            >
+              {mostrarPassword ? "🙈" : "👁️"}
+            </button>
+          </div>
+        </div>
+
+        <button className="login-btn" type="submit">
+          Entrar
+        </button>
+
+        {mensaje && <p className="login-error">{mensaje}</p>}
+      </form>
+    </div>
   );
 }
 
