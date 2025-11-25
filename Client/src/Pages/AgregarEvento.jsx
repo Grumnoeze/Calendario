@@ -7,7 +7,6 @@ import Logo from './img/Logo.jpg';
 import './AgregarEvento.css';
 
 
-
 function AgregarEvento() {
     const navigate = useNavigate();
     const [form, setForm] = useState({
