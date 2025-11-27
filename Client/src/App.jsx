@@ -31,7 +31,7 @@ function App() {
     </PrivateRoute>
   } />
   <Route path="/admin-panel" element={
-    <PrivateRoute roles={["admin"]}>
+    <PrivateRoute roles={["admin, docente"]}>
       <AdminPanel />
     </PrivateRoute>
   } />

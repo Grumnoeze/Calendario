@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import Logo from './img/Logo.jpg';
 import AgregarEvento from './AgregarEvento';
-import './Calendario.css'; 
+import './Calendario.css';
 
 function CrearEventoVista() {
   const navigate = useNavigate();
@@ -18,22 +18,32 @@ function CrearEventoVista() {
         <h2 className="rol-usuario">Director</h2>
 
         <nav className="menu-navegacion">
-          <button className="menu-btn" onClick={() => navigate("/calendario") }>
-            Calendario<br /><span>Vista mensual y diaria</span>
+          <button className="menu-btn" onClick={() => navigate("/calendario")}>
+            📅 Calendario<br /><span>Vista mensual y diaria</span>
           </button>
-          <button className="menu-btn activo" onClick={() => navigate("/agregar-evento") }>
-            Crear evento<br /><span>Crear nuevo evento</span>
+          <button className="menu-btn" onClick={() => navigate("/agregar-evento")}>
+            ➕ Crear evento<br /><span>Crear nuevo evento</span>
           </button>
-          <button className="menu-btn" onClick={() => navigate("/buscar-filtrar") }>
-            Buscar y filtrar<br /><span>Buscar un evento específico</span>
+          <button className="menu-btn" onClick={() => navigate("/buscar-filtrar")}>
+            🔍 Buscar y filtrar<br /><span>Buscar un evento específico</span>
           </button>
-          <button className="menu-btn" onClick={() => navigate("/admin-panel") }>
-            Gestión de usuarios<br /><span>Usuarios y permisos</span>
+          <button className="menu-btn" onClick={() => navigate("/admin-panel")}>
+            ⚙️ Panel Admin<br /><span>Usuarios y permisos</span>
           </button>
-          <button className="menu-btn" onClick={() => navigate("/repositorio") }>
-            Repositorio<br /><span>Documento adjunto</span>
+          <button className="menu-btn activo" onClick={() => navigate("/repositorio")}>
+            📁 Repositorio<br /><span>Documento adjunto</span>
           </button>
         </nav>
+
+        <div className="usuario-sidebar">
+          <span>👤 Pablo Gómez (admin)</span>
+          <button className="cerrar-sesion" onClick={() => {
+            localStorage.removeItem("usuario");
+            navigate("/login");
+          }}>
+            Cerrar sesión
+          </button>
+        </div>
       </aside>
 
       {/* 🟨 Área principal con el formulario */}

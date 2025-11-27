@@ -22,12 +22,15 @@ const db_crear = new SQLite3.Database(SQLite3_Ubicacion, (error) => {
       db_crear.run(
         `
         CREATE TABLE IF NOT EXISTS Usuarios(
-          Id INTEGER PRIMARY KEY AUTOINCREMENT,
-          Mail TEXT UNIQUE,
+          Mail TEXT PRIMARY KEY,
           Password TEXT,
           Name TEXT,
-          Rol TEXT
-        )
+          Rol TEXT,
+          PermisoVisualizacion TEXT,
+          PermisoEdicion TEXT,
+          Estado TEXT DEFAULT 'pendiente'
+        );
+
         `,
         (error) => {
           if (error) {

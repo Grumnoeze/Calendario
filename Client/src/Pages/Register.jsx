@@ -8,10 +8,10 @@ import "./Register.css";
 function Register() {
   const [form, setForm] = useState({
     Mail: "",
-    Password: "",
     Name: "",
     Rol: "",
   });
+
 
   const [showPassword, setShowPassword] = useState(false);
   const [mensaje, setMensaje] = useState("");
@@ -26,14 +26,25 @@ function Register() {
     try {
       const res = await axios.post(
         "http://localhost:3000/api/registrarUsuario",
-        form
+        {
+          Mail: form.Mail,
+          Name: form.Name,
+          Rol: form.Rol
+        }
       );
 
       setMensaje(res.data.Mensaje || "Registro exitoso");
+      setForm({ Mail: "", Name: "", Rol: "" });
     } catch (error) {
       setMensaje(error.response?.data?.Error || "Error desconocido");
     }
   };
+
+  // const usuarioLocal = JSON.parse(localStorage.getItem("usuario"));
+
+  // if (usuarioLocal?.Rol !== "director") {
+  //   return <p className="text-red-600 text-center mt-10">❌ No tienes permiso para crear usuarios</p>;
+  // }
 
   return (
     <div className="w-full max-w-6xl mx-auto animate-fade-in-up">
@@ -42,9 +53,9 @@ function Register() {
         {/* Panel Izquierdo - Formulario */}
         <div className="p-8 md:p-12 bg-gradient-to-b from-slate-50 to-white animate-scale-in">
           <div className="text-center mb-8">
-         <div className="register-banner-container">
-  <img src={Baner} alt="Logo" className="register-logo" />
-</div>
+            <div className="register-banner-container">
+              <img src={Baner} alt="Logo" className="register-logo" />
+            </div>
             <h2 className="text-3xl font-bold text-blue-900">
               Crear nueva cuenta
             </h2>
@@ -68,36 +79,6 @@ function Register() {
                   className="w-full pl-12 pr-4 py-3 rounded-lg border-2 border-gray-200 focus:border-blue-600 bg-gray-50 hover:bg-white transition-all"
                   required
                 />
-              </div>
-            </div>
-
-            {/* Contraseña */}
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">
-                Contraseña
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-4 top-3.5 w-5 h-5 text-gray-400" />
-                <input
-                  type={showPassword ? "text" : "password"}
-                  name="Password"
-                  value={form.Password}
-                  onChange={handleChange}
-                  placeholder="Crea una contraseña"
-                  className="w-full pl-12 pr-12 py-3 rounded-lg border-2 border-gray-200 focus:border-blue-600 bg-gray-50 hover:bg-white transition-all"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-3.5 text-gray-400 hover:text-gray-600"
-                >
-                  {showPassword ? (
-                    <EyeOff className="w-5 h-5" />
-                  ) : (
-                    <Eye className="w-5 h-5" />
-                  )}
-                </button>
               </div>
             </div>
 
@@ -135,10 +116,11 @@ function Register() {
                   required
                 >
                   <option value="">Seleccionar rol</option>
-                  <option value="admin">Administrador</option>
                   <option value="docente">Docente</option>
+                  <option value="preceptor">Preceptor</option>
                   <option value="familia">Familia</option>
                 </select>
+
               </div>
             </div>
 

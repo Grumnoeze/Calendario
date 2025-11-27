@@ -16,6 +16,9 @@ App.use(Express.json());
 const EventoRouter = require('./src/Router/Evento.Router');
 const Router = require('./src/Router/Login.Router');
 const RepositorioRouter = require('./src/Router/Repositorio.Router');
+const path = require('path');
+
+App.use('/uploads', Express.static(path.join(__dirname, 'src/uploads')));
 
 App.use('/api', RepositorioRouter);
 App.use('/api', EventoRouter);

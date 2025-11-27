@@ -102,60 +102,6 @@ function Repositorio() {
           <button className="menu-btn activo" onClick={() => navigate("/repositorio")}>
             📁 Repositorio<br /><span>Documento adjunto</span>
           </button>
-
-          <div className="menu-desplegable-wrapper">
-            <button
-              className="menu-btn menu-desplegable-toggle"
-              onClick={() => setMenuDesplegableAbierto(!menuDesplegableAbierto)}
-            >
-              📋 Eventos<br /><span>Ver y editar eventos</span>
-              <span className={`chevron ${menuDesplegableAbierto ? 'abierto' : ''}`}>▼</span>
-            </button>
-
-            {menuDesplegableAbierto && (
-              <div className="menu-desplegable-contenido">
-                {eventosCalendario.length === 0 ? (
-                  <div className="desplegable-vacio">
-                    <p>No hay eventos</p>
-                  </div>
-                ) : (
-                  <ul className="eventos-lista">
-                    {eventosCalendario.slice(0, 5).map(ev => (
-                      <li key={ev.id} className="evento-item">
-                        <div className="evento-item-info">
-                          <p className="evento-item-titulo">{ev.title}</p>
-                          <span className="evento-item-fecha">{new Date(ev.start).toLocaleDateString()}</span>
-                        </div>
-                        <div className="evento-item-acciones">
-                          <button
-                            className="btn-item-ver"
-                            onClick={() => { irAlEvento(ev.id); setMenuDesplegableAbierto(false); }}
-                            title="Ver evento"
-                          >
-                            👁️
-                          </button>
-                          <button
-                            className="btn-item-editar"
-                            onClick={() => navigate("/agregar-evento")}
-                            title="Editar evento"
-                          >
-                            ✏️
-                          </button>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-                {eventosCalendario.length > 5 && (
-                  <div className="desplegable-footer">
-                    <button className="btn-ver-todos" onClick={() => navigate("/buscar-filtrar")}>
-                      Ver todos los eventos →
-                    </button>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
         </nav>
 
         <div className="usuario-sidebar">
@@ -204,33 +150,33 @@ function Repositorio() {
         </section>
 
         <section className="lista-documentos">
-  {documentos.length === 0 ? (
-    <p>No se encontraron documentos</p>
-  ) : (
-    documentos.map(doc => (
-      <div key={doc.Id} className="tarjeta-documento">
-        <div className="tarjeta-contenido-horizontal">
-          <div className="tarjeta-info-principal">
-            <h4 className="doc-nombre">{doc.Nombre}</h4>
-            <span className={`etiqueta-dimension ${doc.Dimension?.toLowerCase().replace(/\s/g, '-')}`}>
-              {doc.Dimension}
-            </span>
-          </div>
-<div className="doc-detalles-grid">
-  <div><strong>📅 Evento:</strong> {doc.EventoNombre || '—'}</div>
-  <div><strong>📚 Materia:</strong> {doc.Materia || '—'}</div>
-  <div><strong>👤 Subido por:</strong> {doc.SubidoPor || '—'}</div>
-  <div><strong>📄 Tipo:</strong> PDF</div>
-  <div><strong>📦 Tamaño:</strong> {doc.Tamano || '—'}</div>
-</div>
+          {documentos.length === 0 ? (
+            <p>No se encontraron documentos</p>
+          ) : (
+            documentos.map(doc => (
+              <div key={doc.Id} className="tarjeta-documento">
+                <div className="tarjeta-contenido-horizontal">
+                  <div className="tarjeta-info-principal">
+                    <h4 className="doc-nombre">{doc.Nombre}</h4>
+                    <span className={`etiqueta-dimension ${doc.Dimension?.toLowerCase().replace(/\s/g, '-')}`}>
+                      {doc.Dimension}
+                    </span>
+                  </div>
+                  <div className="doc-detalles-grid">
+                    <div><strong>📅 Evento:</strong> {doc.EventoNombre || '—'}</div>
+                    <div><strong>📚 Materia:</strong> {doc.Materia || '—'}</div>
+                    <div><strong>👤 Subido por:</strong> {doc.SubidoPor || '—'}</div>
+                    {/* <div><strong>📄 Tipo:</strong> PDF</div> */}
+                    {/* <div><strong>📦 Tamaño:</strong> {doc.Tamano || '—'}</div> */}
+                  </div>
 
-          <div className="doc-acciones">
-            <a
-              href={`http://localhost:3000/uploads/${doc.Ruta}`}
-              className="btn-descargar"
-              download
-            >
-              ⬇️ Descargar
+                  <div className="doc-acciones">
+                    <a
+                      href={`http://localhost:3000/uploads/${doc.Ruta}`}
+                      className="btn-descargar"
+                      download
+                    >
+                      ⬇️ Descargar
                     </a>
                   </div>
                 </div>
@@ -259,7 +205,7 @@ function Repositorio() {
                 </select>
                 <input type="number" placeholder="ID del evento" onChange={(e) => setForm({ ...form, eventoId: e.target.value })} required />
                 <input type="file" onChange={(e) => setForm({ ...form, archivo: e.target.files[0] })} required />
-                <div style={{display:'flex', gap:8, marginTop:12}}>
+                <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
                   <button type="submit">Subir</button>
                   <button type="button" onClick={() => setMostrarModal(false)}>Cancelar</button>
                 </div>
