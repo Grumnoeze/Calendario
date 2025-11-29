@@ -1,9 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
-import { Eye, EyeOff, User, Mail, Lock, Shield } from "lucide-react";
-import Baner from "../Pages/img/Baner.png"; // AJUSTA ESTA RUTA SI ES NECESARIO
 import "./Register.css";
-
+import Logo2 from "./img/logo2.png";
 
 function Register() {
   const [form, setForm] = useState({
@@ -12,8 +10,6 @@ function Register() {
     Rol: "",
   });
 
-
-  const [showPassword, setShowPassword] = useState(false);
   const [mensaje, setMensaje] = useState("");
 
   const handleChange = (e) => {
@@ -40,123 +36,77 @@ function Register() {
     }
   };
 
-  // const usuarioLocal = JSON.parse(localStorage.getItem("usuario"));
-
-  // if (usuarioLocal?.Rol !== "director") {
-  //   return <p className="text-red-600 text-center mt-10">❌ No tienes permiso para crear usuarios</p>;
-  // }
-
   return (
-    <div className="w-full max-w-6xl mx-auto animate-fade-in-up">
-      <div className="grid grid-cols-1 md:grid-cols-2 rounded-2xl shadow-2xl overflow-hidden bg-white">
+    <div className="register-wrapper">
+      {/* COLUMNA IZQUIERDA: FORMULARIO */}
+      <div className="register-left">
+        <h1 className="titulo-registro">Crear nueva cuenta</h1>
 
-        {/* Panel Izquierdo - Formulario */}
-        <div className="p-8 md:p-12 bg-gradient-to-b from-slate-50 to-white animate-scale-in">
-          <div className="text-center mb-8">
-            <div className="register-banner-container">
-              <img src={Baner} alt="Logo" className="register-logo" />
-            </div>
-            <h2 className="text-3xl font-bold text-blue-900">
-              Crear nueva cuenta
-            </h2>
+        <form className="register-form" onSubmit={handleSubmit}>
+          <div className="input-group">
+            <label>Correo Electrónico</label>
+            <input
+              name="Mail"
+              type="email"
+              placeholder="Ingresa tu correo electrónico"
+              value={form.Mail}
+              onChange={handleChange}
+              required
+            />
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="input-group">
+            <label>Contraseña</label>
+            <input
+              name="Password"
+              type="password"
+              placeholder="Ingresa tu contraseña"
+              value={form.Password}
+              onChange={handleChange}
+              required
+            />
+          </div>
 
-            {/* Email */}
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">
-                Correo Electrónico
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-4 top-3.5 w-5 h-5 text-gray-400" />
-                <input
-                  type="email"
-                  name="Mail"
-                  value={form.Mail}
-                  onChange={handleChange}
-                  placeholder="Ingresa tu correo"
-                  className="w-full pl-12 pr-4 py-3 rounded-lg border-2 border-gray-200 focus:border-blue-600 bg-gray-50 hover:bg-white transition-all"
-                  required
-                />
-              </div>
-            </div>
 
-            {/* Nombre */}
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">
-                Nombre completo
-              </label>
-              <div className="relative">
-                <User className="absolute left-4 top-3.5 w-5 h-5 text-gray-400" />
-                <input
-                  type="text"
-                  name="Name"
-                  value={form.Name}
-                  onChange={handleChange}
-                  placeholder="Tu nombre completo"
-                  className="w-full pl-12 pr-4 py-3 rounded-lg border-2 border-gray-200 focus:border-blue-600 bg-gray-50 hover:bg-white transition-all"
-                  required
-                />
-              </div>
-            </div>
 
-            {/* Rol */}
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">
-                Rol del usuario
-              </label>
-              <div className="relative">
-                <Shield className="absolute left-4 top-3.5 w-5 h-5 text-gray-400" />
-                <select
-                  name="Rol"
-                  value={form.Rol}
-                  onChange={handleChange}
-                  className="w-full pl-12 pr-4 py-3 rounded-lg border-2 border-gray-200 bg-gray-50 hover:bg-white focus:border-blue-600 transition-all"
-                  required
-                >
-                  <option value="">Seleccionar rol</option>
-                  <option value="docente">Docente</option>
-                  <option value="preceptor">Preceptor</option>
-                  <option value="familia">Familia</option>
-                </select>
+          <div className="input-group">
+            <label>Nombre completo</label>
+            <input
+              name="Name"
+              type="text"
+              placeholder="Ingresa tu nombre completo"
+              value={form.Name}
+              onChange={handleChange}
+              required
+            />
+          </div>
 
-              </div>
-            </div>
-
-            {/* Botón */}
-            <button
-              type="submit"
-              className="w-full bg-blue-900 text-white py-3 font-bold rounded-lg shadow-md hover:bg-blue-800 transition-all hover:shadow-xl"
+          <div className="input-group">
+            <label>Rol del usuario</label>
+            <select
+              name="Rol"
+              value={form.Rol}
+              onChange={handleChange}
+              required
             >
-              Registrar
-            </button>
-
-            {mensaje && (
-              <p className="text-center text-blue-700 font-semibold mt-2 animate-fade-in-up">
-                {mensaje}
-              </p>
-            )}
-          </form>
-        </div>
-
-        {/* Panel derecho */}
-        <div className="hidden md:flex flex-col items-center justify-center bg-gradient-to-b from-blue-900 to-blue-800 p-12 relative overflow-hidden">
-          <div className="absolute inset-0 opacity-10">
-            <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-white rounded-full blur-3xl"></div>
-            <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-yellow-300 rounded-full blur-3xl"></div>
+              <option value="">Seleccionar rol</option>
+              <option value="admin">Admin</option>
+              <option value="docente">Docente</option>
+              <option value="familia">Familia</option>
+            </select>
           </div>
 
-          <div className="relative z-10 text-center text-white animate-fade-in-up">
-            <h2 className="text-5xl font-bold mb-4">Bienvenido</h2>
-            <p className="text-blue-100 mb-6 text-lg">
-              Registrá un nuevo usuario para el sistema
-            </p>
-            <p className="text-blue-200">✓ Roles personalizados</p>
-            <p className="text-blue-200">✓ Accesos seguros</p>
-            <p className="text-blue-200">✓ Gestión completa</p>
-          </div>
-        </div>
+          <button className="register-btn" type="submit">
+            Registrar
+          </button>
+
+          {mensaje && <p className="register-message">{mensaje}</p>}
+        </form>
+      </div>
+
+      {/* COLUMNA DERECHA: LOGO */}
+      <div className="register-right">
+        <img src={Logo2} alt="Logo" className="banner-logo" />
       </div>
     </div>
   );

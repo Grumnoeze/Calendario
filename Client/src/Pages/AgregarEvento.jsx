@@ -16,6 +16,7 @@ function AgregarEvento() {
         HoraInicio: '',
         HoraFin: '',
         Ubicacion: '',
+        UbicacionOtro: '',
         Dimension: '',
         AsignarA: '',
         Descripcion: '',
@@ -66,7 +67,7 @@ function AgregarEvento() {
                 FechaFin: form.FechaFin || form.Fecha,
                 HoraInicio: form.HoraInicio,
                 HoraFin: form.HoraFin,
-                Ubicacion: form.Ubicacion,
+                Ubicacion: form.Ubicacion === 'Otro' ? form.UbicacionOtro : form.Ubicacion,
                 Dimension: form.Dimension,
                 AsignarA: form.AsignarA,
                 Descripcion: form.Descripcion,
@@ -89,6 +90,7 @@ function AgregarEvento() {
                 HoraInicio: '',
                 HoraFin: '',
                 Ubicacion: '',
+                UbicacionOtro: '',
                 Dimension: '',
                 AsignarA: '',
                 Descripcion: '',
@@ -176,8 +178,22 @@ function AgregarEvento() {
                     <option value="Aula 1">Aula 1</option>
                     <option value="Aula 2">Aula 2</option>
                     <option value="Biblioteca">Biblioteca</option>
+                    <option value="Otro">Otro</option>
                 </select>
             </div>
+
+            {form.Ubicacion === 'Otro' && (
+                <div className="grupo-form">
+                    <label>Especificar ubicación</label>
+                    <input
+                        name="UbicacionOtro"
+                        placeholder="Ingrese la ubicación"
+                        onChange={handleChange}
+                        value={form.UbicacionOtro}
+                        required
+                    />
+                </div>
+            )}
 
 
 

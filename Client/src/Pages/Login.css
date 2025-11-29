@@ -1,50 +1,44 @@
-/* CONTENEDOR GENERAL */
-.login-container {
+/* =============================
+   CONTENEDOR PRINCIPAL DIVIDIDO
+   ============================= */
+.login-wrapper {
   display: flex;
-  justify-content: center;
-  align-items: center;
   height: 100vh;
-  background: linear-gradient(135deg, #1e3c72, #2a5298);
-  padding: 20px;
-}
-
-/* CAJA DEL LOGIN */
-.login-box {
   width: 100%;
-  max-width: 380px;
-  background: #ffffff;
-  padding: 30px;
-  border-radius: 18px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
-  animation: fadeIn 0.6s ease;
+  background: #fff;
+  overflow: hidden;
 }
 
-/* ANIMACIÓN DE APARICIÓN */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(15px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* =============================
+   COLUMNA IZQUIERDA (FORM)
+   ============================= */
+.login-left {
+  width: 50%;
+  padding: 0 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
-/* TÍTULO */
-.login-title {
-  text-align: center;
-  margin-bottom: 25px;
-  font-size: 26px;
+.titulo-colegio {
+  font-size: 32px;
   font-weight: 700;
-  color: #1e3c72;
+  color: #063a93;
+  text-align: center;
+  margin-bottom: 35px;
 }
 
-/* GRUPOS DE INPUTS */
+/* FORMULARIO */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
 .input-group {
   display: flex;
   flex-direction: column;
-  margin-bottom: 18px;
+  margin-bottom: 22px;
 }
 
 .input-group label {
@@ -55,60 +49,20 @@
 }
 
 .input-group input {
-  padding: 12px;
-  border-radius: 10px;
-  border: 2px solid #ccc;
+  padding: 14px;
+  border-radius: 8px;
+  border: 1px solid #bbb;
   font-size: 15px;
+  outline: none;
   transition: 0.2s;
 }
 
 .input-group input:focus {
-  border-color: #1e3c72;
-  outline: none;
-  box-shadow: 0 0 6px rgba(30, 60, 114, 0.3);
+  border-color: #063a93;
+  box-shadow: 0 0 6px rgba(6, 58, 147, 0.25);
 }
 
-/* BOTÓN */
-.login-btn {
-  width: 100%;
-  padding: 12px;
-  background: #1e3c72;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  font-size: 16px;
-  cursor: pointer;
-  margin-top: 10px;
-  transition: 0.2s;
-}
-
-.login-btn:hover {
-  background: #244c8b;
-  transform: scale(1.03);
-}
-
-/* MENSAJE DE ERROR */
-.login-error {
-  margin-top: 15px;
-  color: #d93025;
-  text-align: center;
-  font-weight: 600;
-}
-
-/* ----------- BANNER SUPERIOR ----------- */
-.login-banner {
-  text-align: center;
-  margin-bottom: 25px;
-}
-
-.login-banner-img {
-  width: 120px;
-  height: auto;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-}
-
-/* ----------- INPUT PASSWORD CON OJO ----------- */
+/* PASSWORD CON OJO */
 .password-wrapper {
   position: relative;
   display: flex;
@@ -117,169 +71,296 @@
 
 .password-wrapper input {
   width: 100%;
-  padding-right: 40px;
+  padding-right: 10px;
 }
 
 .toggle-password {
   position: absolute;
-  right: 10px;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
   background: none;
   border: none;
   font-size: 20px;
-  cursor: pointer;
-  padding: 5px;
-  user-select: none;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
 }
 
 .toggle-password:hover {
-  transform: scale(1.1);
+  opacity: 1;
 }
 
-/* Contenedor general */
-.login-container {
+
+
+/* BOTÓN */
+.login-btn {
+  width: 100%;
+  padding: 14px;
+  background: #0b2fae;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: 600;
+  margin-top: 5px;
+}
+
+.login-btn:hover {
+  background: #08298a;
+}
+
+/* ERROR Y MENSAJES */
+.login-error {
+  margin-top: 15px;
+  color: #d93025;
+  text-align: center;
+  font-weight: 600;
+  padding: 10px;
+  background: #ffebee;
+  border-radius: 6px;
+}
+
+.login-message {
+  margin-top: 15px;
+  padding: 10px;
+  border-radius: 6px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.login-message.error {
+  color: #d93025;
+  background: #ffebee;
+}
+
+.login-message.success {
+  color: #2e7d32;
+  background: #e8f5e9;
+}
+
+/* BOTÓN OLVIDASTE CONTRASEÑA */
+.forgot-password-btn {
+  background: none;
+  border: none;
+  color: #063a93;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 15px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.forgot-password-btn:hover {
+  color: #0b2fae;
+  text-decoration: underline;
+}
+
+/* =============================
+   MODAL: RECUPERAR CONTRASEÑA
+   ============================= */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  padding-top: 40px;
-  animation: fadeIn 1s ease-in-out;
-}
-
-/* Banner + Logo */
-.header-banner {
-  display: flex;
-  flex-direction: column;
   align-items: center;
-  margin-bottom: 25px;
-  gap: 10px;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
 }
 
-/* Banner */
-.banner-img {
+.modal-content {
+  background: white;
+  border-radius: 12px;
+  padding: 35px;
+  max-width: 400px;
   width: 90%;
-  max-width: 380px;
-  animation: float 4s ease-in-out infinite;
-}
-
-/* LOGO MÁS GRANDE + ANIMADO */
-.logo-animated {
-  width: 200px;           /* 🔥 Aumentá esto si lo querés aún más grande */
-  animation: bounce 2s infinite;
-  filter: drop-shadow(0 0 6px rgba(0,0,0,0.4));
-}
-
-/* FORM */
-.login-form {
-  width: 320px;
-  padding: 25px;
-  background: white;
-  border-radius: 15px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  animation: fadeUp 1s ease-in-out;
-}
-
-/* Password con ojito */
-.password-container {
-  display: flex;
-  align-items: center;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
   position: relative;
+  animation: slideUp 0.3s ease;
 }
 
-.toggle-password {
-  position: absolute;
-  right: 12px;
-  cursor: pointer;
-  font-size: 20px;
-  user-select: none;
-}
-
-/* Animaciones */
-@keyframes bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-/* Contenedor general */
-.login-container {
+.modal-close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #999;
+  transition: color 0.2s ease;
+  padding: 0;
+  width: 30px;
+  height: 30px;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding-top: 40px;
-  animation: fadeIn 1s ease-in-out;
 }
 
-/* Contenedor del Banner */
-.header-banner {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 25px;
-  gap: 10px;
+.modal-close:hover {
+  color: #333;
 }
 
-/* Banner grande animado */
-.logo-animated {
-  width: 250px;        /* 🔥 Ajusta acá si lo querés más grande */
-  animation: bounce 2s infinite;
-  filter: drop-shadow(0 0 8px rgba(0,0,0,0.5));
+.modal-content h2 {
+  color: #063a93;
+  text-align: center;
+  margin-bottom: 12px;
+  font-size: 24px;
 }
 
-/* Formulario */
-.login-form {
-  width: 320px;
-  padding: 25px;
-  background: white;
-  border-radius: 15px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  animation: fadeUp 1s ease-in-out;
+.modal-content p {
+  color: #666;
+  text-align: center;
+  font-size: 14px;
+  margin-bottom: 20px;
 }
 
-/* Password con ojito */
-.password-container {
-  display: flex;
-  align-items: center;
-  position: relative;
+.modal-content .input-group {
+  margin-bottom: 20px;
 }
 
-.toggle-password {
-  position: absolute;
-  right: 12px;
+.modal-content input {
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #bbb;
+  font-size: 15px;
+  outline: none;
+  transition: 0.2s;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.modal-content input:focus {
+  border-color: #063a93;
+  box-shadow: 0 0 6px rgba(6, 58, 147, 0.25);
+}
+
+.modal-message {
+  margin-bottom: 15px;
+  padding: 10px;
+  border-radius: 6px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.modal-message.error {
+  color: #d93025;
+  background: #ffebee;
+}
+
+.modal-message.success {
+  color: #2e7d32;
+  background: #e8f5e9;
+}
+
+.modal-btn {
+  width: 100%;
+  padding: 12px;
+  background: #0b2fae;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
   cursor: pointer;
-  font-size: 20px;
-  user-select: none;
+  font-weight: 600;
+  transition: all 0.2s ease;
 }
 
-/* Animaciones */
-@keyframes bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-12px); }
+.modal-btn:hover {
+  background: #08298a;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+/* =============================
+   COLUMNA DERECHA (LOGO)
+   ============================= */
+.login-right {
+  width: 50%;
+  background: #07285d;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+.titulo-banner {
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 25px;
+}
+
+@keyframes logoHover {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-10px) scale(1.05);
+  }
+  100% {
+    transform: translateY(-10px) scale(1.05);
+  }
+}
+
+.banner-logo {
+  width: 350px;
+  height: auto;
+  transition: all 0.5s ease;
+  filter: drop-shadow(0 0 6px rgba(0,0,0,0.4));
+  cursor: pointer;
+}
+
+.banner-logo:hover {
+  animation: logoHover 0.6s ease forwards;
+  filter: drop-shadow(0 8px 20px rgba(255, 193, 7, 0.6)) drop-shadow(0 0 15px rgba(255, 193, 7, 0.4));
+}
+
+/* =============================
+   RESPONSIVE
+   ============================= */
+@media (max-width: 900px) {
+  .login-wrapper {
+    flex-direction: column;
+  }
+
+  .login-left, .login-right {
+    width: 100%;
+    padding: 90px;
+  }
+
+  .banner-logo {
+    width: 500px;
+  }
 }

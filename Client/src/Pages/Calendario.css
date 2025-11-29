@@ -625,15 +625,50 @@ p {
 
 .popup-evento {
   position: absolute;
-  background-color: white;
-  border: 1px solid #ccc;
-  padding: 0.75rem;
-  border-radius: 6px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border: 2px solid #0077b6;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 119, 182, 0.2);
   z-index: 1000;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   pointer-events: none;
   animation: fadeIn 0.3s ease-in-out;
+  min-width: 220px;
+  max-width: 300px;
+}
+
+.popup-evento strong {
+  display: block;
+  font-size: 1.1rem;
+  color: #003366;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+}
+
+.popup-tiempo {
+  display: block;
+  color: #0077b6;
+  font-weight: 600;
+  margin: 0.3rem 0;
+}
+
+.popup-fecha {
+  display: block;
+  color: #666;
+  font-size: 0.85rem;
+  margin: 0.3rem 0;
+}
+
+.popup-info {
+  display: block;
+  color: #555;
+  font-size: 0.85rem;
+  margin: 0.3rem 0;
+  padding: 0.3rem 0.5rem;
+  background-color: rgba(0, 119, 182, 0.08);
+  border-left: 3px solid #0077b6;
+  padding-left: 0.7rem;
 }
 
 @keyframes fadeIn {
@@ -996,4 +1031,113 @@ p {
 .toggle-sidebar-btn,
 .btn-hamburguesa {
   display: none !important;
+}
+
+/* 📌 NUEVO: Estilos para el modal de edición */
+.modal-edicion {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  width: 90%;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
+  animation: slideInModal 0.3s ease-out;
+}
+
+@keyframes slideInModal {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-edicion h3 {
+  margin-top: 0;
+  font-size: 1.5rem;
+  color: #003366;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+}
+
+.form-grupo {
+  margin-bottom: 1.2rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-grupo label {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #333;
+  font-size: 0.95rem;
+}
+
+.form-grupo input,
+.form-grupo textarea,
+.form-grupo select {
+  padding: 0.7rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-family: 'Segoe UI', sans-serif;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-grupo input:focus,
+.form-grupo textarea:focus,
+.form-grupo select:focus {
+  outline: none;
+  border-color: #0077b6;
+  box-shadow: 0 0 0 3px rgba(0, 119, 182, 0.1);
+}
+
+.form-grupo textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.botones-modal-edicion {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 2rem;
+}
+
+.btn-cancelar,
+.btn-guardar {
+  padding: 0.7rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+}
+
+.btn-cancelar {
+  background-color: #f44336;
+  color: white;
+}
+
+.btn-cancelar:hover {
+  background-color: #e53935;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(244, 67, 54, 0.3);
+}
+
+.btn-guardar {
+  background-color: #4caf50;
+  color: white;
+}
+
+.btn-guardar:hover {
+  background-color: #45a049;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
 }

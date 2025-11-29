@@ -9,6 +9,11 @@ function BuscarYFiltrar() {
   const [eventos, setEventos] = useState([]);
   const [eventosCalendario, setEventosCalendario] = useState([]);
   const [menuDesplegableAbierto, setMenuDesplegableAbierto] = useState(false);
+
+  // 🔹 Rol del usuario (para controlar visibilidad del botón)
+  const rolUsuario = "Director"; 
+  const esAdminODocente = rolUsuario.toLowerCase() === "admin" || rolUsuario.toLowerCase() === "docente";
+
   const [filtros, setFiltros] = useState({
     texto: '',
     dimension: '',
@@ -26,7 +31,6 @@ function BuscarYFiltrar() {
   };
 
   const irAlEvento = (eventoId) => {
-    // Navega al calendario y guarda el ID del evento para destacarlo
     navigate('/calendario', { state: { eventoId } });
   };
 
@@ -44,7 +48,6 @@ function BuscarYFiltrar() {
   }, [filtros]);
 
   useEffect(() => {
-    // Cargar eventos para el desplegable
     axios.get('http://localhost:3000/api/listarEventos')
       .then(res => {
         const eventosFormateados = res.data.map(ev => ({
@@ -66,26 +69,30 @@ function BuscarYFiltrar() {
           <hr className="logo-divider" />
         </div>
 
-        <h2 className="rol-usuario">Director</h2>
+        <h2 className="rol-usuario">{rolUsuario}</h2>
 
         <nav className="menu-navegacion">
           <button className="menu-btn" onClick={() => navigate("/calendario")}>
             📅 Calendario<br /><span>Vista mensual y diaria</span>
           </button>
+
           <button className="menu-btn" onClick={() => navigate("/agregar-evento")}>
             ➕ Crear evento<br /><span>Crear nuevo evento</span>
           </button>
+
           <button className="menu-btn activo" onClick={() => navigate("/buscar-filtrar")}>
             🔍 Buscar y filtrar<br /><span>Buscar un evento específico</span>
           </button>
+
           <button className="menu-btn" onClick={() => navigate("/admin-panel")}>
             ⚙️ Panel Admin<br /><span>Usuarios y permisos</span>
           </button>
+
           <button className="menu-btn" onClick={() => navigate("/repositorio")}>
             📁 Repositorio<br /><span>Documento adjunto</span>
           </button>
 
-          {/* Desplegable de Eventos */}
+          {/* 📌 MENÚ DESPLEGABLE */}
           <div className="menu-desplegable-wrapper">
             <button 
               className="menu-btn menu-desplegable-toggle" 
@@ -109,6 +116,7 @@ function BuscarYFiltrar() {
                           <p className="evento-item-titulo">{ev.title}</p>
                           <span className="evento-item-fecha">{new Date(ev.start).toLocaleDateString()}</span>
                         </div>
+
                         <div className="evento-item-acciones">
                           <button 
                             className="btn-item-ver"
@@ -116,22 +124,33 @@ function BuscarYFiltrar() {
                               irAlEvento(ev.id);
                               setMenuDesplegableAbierto(false);
                             }}
-                            title="Ver evento"
                           >
                             👁️
                           </button>
+
                           <button 
                             className="btn-item-editar"
                             onClick={() => navigate("/agregar-evento")}
-                            title="Editar evento"
                           >
                             ✏️
                           </button>
+
+                          {/* 📌 NUEVO: BOTÓN VISUAL “ELIMINAR EVENTO” */}
+                          {esAdminODocente && (
+                            <button 
+                              className="btn-item-eliminar"
+                              title="Eliminar evento (visual)"
+                            >
+                              🗑️
+                            </button>
+                          )}
+
                         </div>
                       </li>
                     ))}
                   </ul>
                 )}
+
                 {eventosCalendario.length > 5 && (
                   <div className="desplegable-footer">
                     <button className="btn-ver-todos" onClick={() => navigate("/buscar-filtrar")}>
@@ -150,6 +169,7 @@ function BuscarYFiltrar() {
         </div>
       </aside>
 
+      {/* 🔍 CONTENIDO PRINCIPAL */}
       <main className="contenido">
         <h2 className="titulo-vista">🔍 Buscar Evento</h2>
 
@@ -196,8 +216,19 @@ function BuscarYFiltrar() {
                   <span className="evento-rango">{ev.FechaInicio} - {ev.FechaFin}</span>
                   <span className="evento-tag">{ev.Dimension}</span>
                 </div>
+
                 <div className="evento-acciones">
-                  <button className="btn-ir-evento" onClick={() => irAlEvento(ev.Id)}>🔗 Ir al Evento</button>
+                  <button className="btn-ir-evento" onClick={() => irAlEvento(ev.Id)}>
+                    🔗 Ir al Evento
+                  </button>
+
+                  {/* 📌 NUEVO: botón visual de eliminar también en las tarjetas */}
+                  {esAdminODocente && (
+                    <button className="btn-eliminar-visual">
+                      🗑️ Eliminar
+                    </button>
+                  )}
+
                 </div>
               </div>
             ))

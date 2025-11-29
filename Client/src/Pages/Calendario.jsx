@@ -17,8 +17,24 @@ function Calendario() {
   const [eventoHover, setEventoHover] = useState(null);
   const [eventoSeleccionado, setEventoSeleccionado] = useState(null);
   const [sidebarColapsada, setSidebarColapsada] = useState(false);
-  const [mostrarDetalles, setMostrarDetalles] = useState(false);
-  const [eventoEditable, setEventoEditable] = useState(null);
+
+  // 📌 NUEVO: Estados para el modal de edición
+  const [mostrarModalEdicion, setMostrarModalEdicion] = useState(false);
+  const [eventoEnEdicion, setEventoEnEdicion] = useState(null);
+  const [formEdicion, setFormEdicion] = useState({
+    titulo: '',
+    descripcion: '',
+    fechaInicio: '',
+    horaInicio: '',
+    fechaFin: '',
+    horaFin: '',
+    ubicacion: '',
+    dimension: '',
+    asignarA: '',
+    materia: '',
+    tipo: '',
+    estado: 'Pendiente',
+  });
 
   const actualizarColorEvento = (id, estado) => {
     const color =
@@ -58,6 +74,71 @@ function Calendario() {
       );
     } catch (error) {
       console.error("❌ Error al actualizar estado:", error);
+    }
+  };
+
+  // 📌 NUEVO: Función para abrir modal de edición
+  const abrirModalEdicion = (evento) => {
+    const fechaInicio = new Date(evento.start);
+    const fechaFin = new Date(evento.end);
+
+    setEventoEnEdicion(evento);
+    setFormEdicion({
+      titulo: evento.title,
+      descripcion: evento.extendedProps?.descripcion || '',
+      fechaInicio: fechaInicio.toISOString().split('T')[0],
+      horaInicio: fechaInicio.toTimeString().slice(0, 5),
+      fechaFin: fechaFin.toISOString().split('T')[0],
+      horaFin: fechaFin.toTimeString().slice(0, 5),
+      ubicacion: evento.extendedProps?.ubicacion || '',
+      dimension: evento.extendedProps?.dimension || '',
+      asignarA: evento.extendedProps?.asignarA || '',
+      materia: evento.extendedProps?.materia || '',
+      tipo: evento.extendedProps?.tipo || '',
+      estado: evento.extendedProps?.estado || 'Pendiente',
+    });
+    setMostrarModalEdicion(true);
+  };
+
+  // 📌 NUEVO: Función para manejar cambios en el formulario de edición
+  const manejarCambioEdicion = (e) => {
+    const { name, value } = e.target;
+    setFormEdicion(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  // 📌 NUEVO: Función para guardar cambios del evento
+  // ⚠️ COMENTADO: Esta función necesitaría un endpoint en el backend para actualizar eventos
+  const guardarCambiosEvento = async () => {
+    try {
+      // Descomenta cuando el endpoint esté disponible:
+      // await axios.put(
+      //   `http://localhost:3000/api/actualizarEvento/${eventoEnEdicion.id}`,
+      //   {
+      //     titulo: formEdicion.titulo,
+      //     descripcion: formEdicion.descripcion,
+      //     fechaInicio: formEdicion.fechaInicio,
+      //     horaInicio: formEdicion.horaInicio,
+      //     fechaFin: formEdicion.fechaFin,
+      //     horaFin: formEdicion.horaFin,
+      //     ubicacion: formEdicion.ubicacion,
+      //     dimension: formEdicion.dimension,
+      //     asignarA: formEdicion.asignarA,
+      //     materia: formEdicion.materia,
+      //     tipo: formEdicion.tipo,
+      //     estado: formEdicion.estado,
+      //   }
+      // );
+      
+      console.log("✅ Evento actualizado (simulado):", formEdicion);
+      setMostrarModalEdicion(false);
+      
+      // Aquí se podría recargar el calendario o actualizar eventos localmente
+      // window.location.reload(); // O actualizar estado localmente
+    } catch (error) {
+      console.error("❌ Error al guardar cambios:", error);
     }
   };
 
@@ -112,37 +193,6 @@ function Calendario() {
   };
 
   const handleMouseLeave = () => setEventoHover(null);
-
-  const prepararEventoDetalles = (evento) => {
-    const fechaInicio = new Date(evento.start);
-    const fechaFin = new Date(evento.end);
-
-    return {
-      id: evento.id,
-      title: evento.title,
-      fechaInicio: fechaInicio.toLocaleDateString(),
-      horaInicio: fechaInicio.toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-      fechaFin: fechaFin.toLocaleDateString(),
-      horaFin: fechaFin.toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-      ubicacion: evento.extendedProps?.ubicacion || "Sin ubicación",
-      dimension: evento.extendedProps?.dimension || "Sin dimensión",
-      asignarA: evento.extendedProps?.asignarA || "No asignado",
-      descripcion: evento.extendedProps?.descripcion || "Sin descripción",
-      materia: evento.extendedProps?.materia || "Sin materia",
-      permisoVisualizacion:
-        evento.extendedProps?.permisoVisualizacion || "N/A",
-      permisoEdicion: evento.extendedProps?.permisoEdicion || "N/A",
-      recordatorio: evento.extendedProps?.recordatorio || "Sí",
-      estado: evento.extendedProps?.estado || "Pendiente",
-      tipo: evento.extendedProps?.tipo || "General",
-    };
-  };
 
   return (
     <div className={`calendario-layout ${sidebarColapsada ? "colapsado" : ""}`}>
@@ -302,19 +352,25 @@ function Calendario() {
                       eventoSeleccionado.id
                     );
                     if (evento) {
-                      const detalles = prepararEventoDetalles(evento);
-                      setEventoEditable(detalles);
-                      setMostrarDetalles(true);
+                      // 📌 NUEVO: Abre modal de edición
+                      abrirModalEdicion(evento);
+                      setEventoSeleccionado(null);
+                      
+                      // ⚠️ CÓDIGO ANTERIOR COMENTADO (detalles de lectura solo):
+                      // const detalles = prepararEventoDetalles(evento);
+                      // setEventoEditable(detalles);
+                      // setMostrarDetalles(true);
                     }
                   }}
                 >
-                  Detalles
+                  Editar
                 </button>
               </div>
             </div>
           </div>
         )}
 
+        {/* ⚠️ CÓDIGO ANTERIOR COMENTADO (modal de detalles solo lectura):
         {mostrarDetalles && eventoEditable && (
           <div className="modal-overlay">
             <div className="modal-detalles">
@@ -369,6 +425,159 @@ function Calendario() {
                   Cerrar
                 </button>
               </div>
+            </div>
+          </div>
+        )}
+        */}
+
+        {/* 📌 NUEVO: MODAL DE EDICIÓN CON FORMULARIO */}
+        {mostrarModalEdicion && eventoEnEdicion && (
+          <div className="modal-overlay">
+            <div className="modal-edicion">
+              <h3>✏️ Editar Evento</h3>
+
+              <form onSubmit={(e) => { e.preventDefault(); guardarCambiosEvento(); }}>
+                <div className="form-grupo">
+                  <label>Título:</label>
+                  <input
+                    type="text"
+                    name="titulo"
+                    value={formEdicion.titulo}
+                    onChange={manejarCambioEdicion}
+                    required
+                  />
+                </div>
+
+                <div className="form-grupo">
+                  <label>Descripción:</label>
+                  <textarea
+                    name="descripcion"
+                    value={formEdicion.descripcion}
+                    onChange={manejarCambioEdicion}
+                    rows="3"
+                  ></textarea>
+                </div>
+
+                <div className="form-grupo">
+                  <label>Fecha Inicio:</label>
+                  <input
+                    type="date"
+                    name="fechaInicio"
+                    value={formEdicion.fechaInicio}
+                    onChange={manejarCambioEdicion}
+                    required
+                  />
+                </div>
+
+                <div className="form-grupo">
+                  <label>Hora Inicio:</label>
+                  <input
+                    type="time"
+                    name="horaInicio"
+                    value={formEdicion.horaInicio}
+                    onChange={manejarCambioEdicion}
+                    required
+                  />
+                </div>
+
+                <div className="form-grupo">
+                  <label>Fecha Fin:</label>
+                  <input
+                    type="date"
+                    name="fechaFin"
+                    value={formEdicion.fechaFin}
+                    onChange={manejarCambioEdicion}
+                    required
+                  />
+                </div>
+
+                <div className="form-grupo">
+                  <label>Hora Fin:</label>
+                  <input
+                    type="time"
+                    name="horaFin"
+                    value={formEdicion.horaFin}
+                    onChange={manejarCambioEdicion}
+                    required
+                  />
+                </div>
+
+                <div className="form-grupo">
+                  <label>Ubicación:</label>
+                  <input
+                    type="text"
+                    name="ubicacion"
+                    value={formEdicion.ubicacion}
+                    onChange={manejarCambioEdicion}
+                  />
+                </div>
+
+                <div className="form-grupo">
+                  <label>Dimensión:</label>
+                  <select
+                    name="dimension"
+                    value={formEdicion.dimension}
+                    onChange={manejarCambioEdicion}
+                  >
+                    <option value="">Selecciona dimensión</option>
+                    <option value="Tecnico-Administrativa">Técnico-Administrativa</option>
+                    <option value="Socio-Comunitaria">Socio-Comunitaria</option>
+                    <option value="Pedagogica-Didactica">Pedagógica-Didáctica</option>
+                  </select>
+                </div>
+
+                <div className="form-grupo">
+                  <label>Asignar A:</label>
+                  <input
+                    type="text"
+                    name="asignarA"
+                    value={formEdicion.asignarA}
+                    onChange={manejarCambioEdicion}
+                  />
+                </div>
+
+                <div className="form-grupo">
+                  <label>Materia:</label>
+                  <input
+                    type="text"
+                    name="materia"
+                    value={formEdicion.materia}
+                    onChange={manejarCambioEdicion}
+                  />
+                </div>
+
+                <div className="form-grupo">
+                  <label>Tipo:</label>
+                  <input
+                    type="text"
+                    name="tipo"
+                    value={formEdicion.tipo}
+                    onChange={manejarCambioEdicion}
+                  />
+                </div>
+
+                <div className="form-grupo">
+                  <label>Estado:</label>
+                  <select
+                    name="estado"
+                    value={formEdicion.estado}
+                    onChange={manejarCambioEdicion}
+                  >
+                    <option value="Pendiente">🕒 Pendiente</option>
+                    <option value="Realizado">✅ Realizado</option>
+                    <option value="Cancelado">❌ Cancelado</option>
+                  </select>
+                </div>
+
+                <div className="botones-modal-edicion">
+                  <button type="button" onClick={() => setMostrarModalEdicion(false)} className="btn-cancelar">
+                    Cancelar
+                  </button>
+                  <button type="submit" className="btn-guardar">
+                    Guardar Cambios
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         )}
