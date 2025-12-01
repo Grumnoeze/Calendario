@@ -1,0 +1,74 @@
+.sidebar {
+width: 220px;
+background: #fff;
+border-right: 1px solid #ddd;
+padding: 1rem;
+height: 100vh;
+transition: width .25s;
+position: relative;
+z-index: 2000;
+}
+
+.sidebar.colapsada {
+width: 70px;
+}
+
+
+.logo-img {
+width: 120px;
+}
+
+
+.rol-usuario {
+background: #c9a86b;
+color: #fff;
+padding: .5rem;
+text-align: center;
+border-radius: 6px;
+margin-bottom: 1rem;
+}
+
+
+.menu-navegacion {
+display: flex;
+flex-direction: column;
+gap: .4rem;
+}
+
+
+.menu-btn {
+background: #f2f2f2;
+border: none;
+padding: .6rem;
+cursor: pointer;
+border-left: 4px solid transparent;
+border-radius: 4px;
+font-size: .95rem;
+text-align: left;
+}
+
+
+.menu-btn.activo {
+background: #d0e8ff;
+border-left-color: #0077b6;
+font-weight: bold;
+}
+
+
+.usuario-sidebar {
+margin-top: 2rem;
+border-top: 1px solid #ccc;
+padding-top: 1rem;
+text-align: center;
+}
+
+
+.cerrar-sesion {
+margin-top: .5rem;
+background: #0077b6;
+color: #fff;
+border: none;
+padding: .5rem .8rem;
+border-radius: 6px;
+cursor: pointer;
+}

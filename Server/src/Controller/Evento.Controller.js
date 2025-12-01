@@ -1,104 +1,106 @@
+const db = require('../DataBase/db');
 
-const db = require('../DataBase/DB');
-
-const CrearEvento = (req, res) => {
+// Crear evento
+exports.crear = (req, res) => {
   const {
-    Titulo,
-    FechaInicio,
-    FechaFin,
-    HoraInicio,
-    HoraFin,
-    Ubicacion,
-    Dimension,
-    AsignarA,
-    Descripcion,
-    Materia,
-    PermisoVisualizacion,
-    PermisoEdicion,
-    Recordatorio,
-    Tipo,
-    UsuarioId
+    Titulo, FechaInicio, FechaFin, HoraInicio, HoraFin,
+    Ubicacion, Dimension, AsignarA, Descripcion, Materia,
+    PermisoVisualizacion, PermisoEdicion, Recordatorio, Tipo
   } = req.body;
 
-
-  if (!Titulo || !FechaInicio || !FechaFin || !UsuarioId) {
+  if (!Titulo || !FechaInicio || !FechaFin || !HoraInicio || !HoraFin) {
     return res.status(400).json({ Error: "Faltan datos obligatorios" });
   }
 
-  const Insertar = `
-  INSERT INTO Eventos (
+  const archivoAdjunto = req.file ? req.file.filename : null;
+
+  const sql = `INSERT INTO Eventos 
+    (Titulo, FechaInicio, FechaFin, HoraInicio, HoraFin, Ubicacion, Dimension, AsignarA, 
+     Descripcion, Materia, PermisoVisualizacion, PermisoEdicion, Recordatorio, Tipo, UsuarioMail, ArchivoAdjunto)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+
+  db.run(sql, [
     Titulo, FechaInicio, FechaFin, HoraInicio, HoraFin, Ubicacion, Dimension, AsignarA,
     Descripcion, Materia, PermisoVisualizacion, PermisoEdicion,
-    Recordatorio, Tipo, UsuarioId, Estado
-  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-`;
-
-  const valores = [
-    Titulo, FechaInicio, FechaFin, HoraInicio, HoraFin, Ubicacion, Dimension, AsignarA,
-    Descripcion, Materia, PermisoVisualizacion, PermisoEdicion,
-    Recordatorio ? 1 : 0, Tipo, UsuarioId, 'Pendiente'
-  ];
-
-
-
-  db.run(Insertar, valores, function (error) {
-    if (error) {
-      console.error("❌ Error al crear evento:", error.message);
+    Recordatorio, Tipo, req.user?.Mail, archivoAdjunto
+  ], function (err) {
+    if (err) {
+      console.error(err);
       return res.status(500).json({ Error: "Error al crear evento" });
     }
-    return res.status(201).json({
-      Mensaje: "Evento creado correctamente",
-      Id: this.lastID
+    // `this.lastID` te da el ID autogenerado del nuevo evento
+    res.status(201).json({ Mensaje: "Evento creado correctamente", Id: this.lastID });
+  });
+};
+
+
+
+// Listar eventos
+exports.listar = (req, res) => {
+    db.all(`SELECT * FROM Eventos`, [], (err, rows) => {
+        if (err) return res.status(500).json({ Error: "Error al listar eventos" });
+        res.status(200).json(rows);
     });
-  });
 };
 
-const ListarEventos = (req, res) => {
-  const sql = `SELECT * FROM Eventos`;
-
-  db.all(sql, [], (error, filas) => {
-    if (error) {
-      console.error("❌ Error al listar eventos:", error.message);
-      return res.status(500).json({ Error: "Error al obtener eventos" });
-    }
-    return res.status(200).json(filas);
-  });
+// Obtener evento por ID
+exports.obtener = (req, res) => {
+    const { id } = req.params;
+    db.get(`SELECT * FROM Eventos WHERE Id = ?`, [id], (err, evento) => {
+        if (err) return res.status(500).json({ Error: "Error al obtener evento" });
+        if (!evento) return res.status(404).json({ Error: "Evento no encontrado" });
+        res.status(200).json(evento);
+    });
 };
 
-const EliminarEvento = (req, res) => {
+// Actualizar evento
+exports.actualizar = (req, res) => {
   const { id } = req.params;
-  db.run(`DELETE FROM Eventos WHERE Id = ?`, [id], function (err) {
-    if (err) return res.status(500).json({ Error: "Error al eliminar evento" });
-    res.status(200).json({ Mensaje: "Evento eliminado" });
+  const {
+    Titulo, FechaInicio, FechaFin, HoraInicio, HoraFin,
+    Ubicacion, Dimension, AsignarA,
+    Descripcion, Materia, PermisoVisualizacion, PermisoEdicion,
+    Recordatorio, Tipo
+  } = req.body;
+
+  const archivoAdjunto = req.file ? req.file.filename : null;
+
+  const sql = `UPDATE Eventos SET 
+    Titulo = ?, FechaInicio = ?, FechaFin = ?, HoraInicio = ?, HoraFin = ?, 
+    Ubicacion = ?, Dimension = ?, AsignarA = ?, Descripcion = ?, Materia = ?, 
+    PermisoVisualizacion = ?, PermisoEdicion = ?, Recordatorio = ?, Tipo = ?, ArchivoAdjunto = ?
+    WHERE Id = ?`;
+
+  db.run(sql, [
+    Titulo, FechaInicio, FechaFin, HoraInicio, HoraFin,
+    Ubicacion, Dimension, AsignarA, Descripcion, Materia,
+    PermisoVisualizacion, PermisoEdicion, Recordatorio, Tipo,
+    archivoAdjunto, id
+  ], (err) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ Error: "Error al actualizar evento" });
+    }
+    res.status(200).json({ Mensaje: "Evento actualizado correctamente" });
   });
 };
 
-const FiltrarEventos = (req, res) => {
-  const { texto, dimension, fecha, responsable } = req.query;
 
-  let condiciones = [];
-  let valores = [];
+// Eliminar evento
+exports.eliminar = (req, res) => {
+    const { id } = req.params;
 
-  if (texto) {
-    condiciones.push("(Titulo LIKE ? OR Descripcion LIKE ?)");
-    valores.push(`%${texto}%`, `%${texto}%`);
-  }
-  if (dimension) {
-    condiciones.push("Dimension = ?");
-    valores.push(dimension);
-  }
-  if (responsable) {
-    condiciones.push("AsignarA = ?");
-    valores.push(responsable);
-  }
+    // Primero eliminamos los documentos asociados
+    documentoController.eliminarPorEventoInterno(id, (errDocs) => {
+        if (errDocs) {
+            console.error("⚠️ Error al eliminar documentos del evento:", errDocs.message);
+            // seguimos con la eliminación del evento aunque falle la limpieza de documentos
+        }
 
-  const where = condiciones.length ? `WHERE ${condiciones.join(" AND ")}` : "";
-  const sql = `SELECT * FROM Eventos ${where}`;
-
-  db.all(sql, valores, (err, filas) => {
-    if (err) return res.status(500).json({ Error: "Error al filtrar eventos" });
-    res.status(200).json(filas);
-  });
+        // Ahora eliminamos el evento
+        db.run(`DELETE FROM Eventos WHERE Id = ?`, [id], (err) => {
+            if (err) return res.status(500).json({ Error: "Error al eliminar evento" });
+            res.status(200).json({ Mensaje: "Evento y documentos asociados eliminados correctamente" });
+        });
+    });
 };
-
-module.exports = { CrearEvento, ListarEventos, EliminarEvento, FiltrarEventos };

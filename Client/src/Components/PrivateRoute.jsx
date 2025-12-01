@@ -7,8 +7,14 @@ function PrivateRoute({ children, roles }) {
     return <Navigate to="/login" />;
   }
 
-  // 📌 Normalizar rol a minúsculas para comparación
-  const rolNormalizado = usuario.Rol?.toLowerCase();
+  // Normalizar rol
+  let rolNormalizado = usuario.Rol?.toLowerCase();
+
+  // Mapear "director" a "admin"
+  if (rolNormalizado === "director") {
+    rolNormalizado = "admin";
+  }
+
   const rolesNormalizados = roles.map(r => r.toLowerCase());
 
   if (!rolesNormalizados.includes(rolNormalizado)) {

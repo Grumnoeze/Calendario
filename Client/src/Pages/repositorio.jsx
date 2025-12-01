@@ -1,31 +1,51 @@
-import { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import Logo from './img/Logo.jpg';
-import './repositorio.css';
+import { useState, useEffect, useCallback } from "react";
+import api from "../api"; // usa axios con token
+import "./repositorio.css";
 
-function Repositorio() {
-  const navigate = useNavigate();
+export default function Repositorio() {
   const [documentos, setDocumentos] = useState([]);
-  const [eventosCalendario, setEventosCalendario] = useState([]);
-  const [menuDesplegableAbierto, setMenuDesplegableAbierto] = useState(false);
-  const [filtros, setFiltros] = useState({ texto: '', dimension: '', materia: '' });
-  const [mostrarModal, setMostrarModal] = useState(false);
-  const [form, setForm] = useState({
-    nombre: '',
-    dimension: '',
-    materia: '',
-    eventoId: '',
-    archivo: null
+  const [eventos, setEventos] = useState([]);
+  const [filtros, setFiltros] = useState({
+    texto: "",
+    dimension: "",
+    materia: "",
   });
 
+  const [mostrarModal, setMostrarModal] = useState(false);
+  const [form, setForm] = useState({
+    nombre: "",
+    dimension: "",
+    materia: "",
+    eventoId: "",
+    archivo: null,
+  });
+
+  // =============================
+  // 📌 BUSCAR DOCUMENTOS
+  // =============================
   const buscarDocumentos = useCallback(async () => {
     try {
-      const params = new URLSearchParams(filtros);
-      const res = await axios.get(`http://localhost:3000/api/documentos?${params}`);
-      setDocumentos(res.data);
+      const res = await api.get("/documentos");
+      let docs = res.data;
+
+      // FILTROS FRONTEND
+      docs = docs.filter((d) => {
+        const coincideTexto =
+          filtros.texto === "" ||
+          d.Nombre.toLowerCase().includes(filtros.texto.toLowerCase());
+
+        const coincideDimension =
+          filtros.dimension === "" || d.Dimension === filtros.dimension;
+
+        const coincideMateria =
+          filtros.materia === "" || d.Materia === filtros.materia;
+
+        return coincideTexto && coincideDimension && coincideMateria;
+      });
+
+      setDocumentos(docs);
     } catch (err) {
-      console.error('Error al buscar documentos', err);
+      console.error("Error al buscar documentos:", err);
     }
   }, [filtros]);
 
@@ -33,189 +53,211 @@ function Repositorio() {
     buscarDocumentos();
   }, [buscarDocumentos]);
 
+  // =============================
+  // 📌 LISTAR EVENTOS REALES PARA EL SELECT
+  // =============================
   useEffect(() => {
-    // Cargar eventos para el desplegable
-    axios.get('http://localhost:3000/api/listarEventos')
-      .then(response => {
-        const eventosFormateados = response.data.map(ev => ({
-          id: ev.Id,
-          title: ev.Titulo,
-          start: `${ev.FechaInicio}T${ev.HoraInicio}`,
-          end: `${ev.FechaFin}T${ev.HoraFin}`,
-        }));
-        setEventosCalendario(eventosFormateados);
-      })
-      .catch(() => console.error("Error al cargar eventos"));
+    const cargarEventos = async () => {
+      try {
+        const res = await api.get("/eventos");
+        setEventos(res.data);
+      } catch (err) {
+        console.error("Error al cargar eventos:", err);
+      }
+    };
+    cargarEventos();
   }, []);
 
-  const handleChange = (e) => {
+  // =============================
+  // 📌 Manejo de filtros
+  // =============================
+  const handleChangeFiltros = (e) => {
     const { name, value } = e.target;
-    setFiltros(prev => ({ ...prev, [name]: value }));
+    setFiltros((prev) => ({ ...prev, [name]: value }));
   };
 
-  const irAlEvento = (eventoId) => {
-    navigate('/calendario', { state: { eventoId } });
-  };
-
-  // Subir documento (mantengo tu lógica original dentro del modal)
+  // =============================
+  // 📌 Subir archivo
+  // =============================
   const handleUpload = async (e) => {
     e.preventDefault();
+
     try {
       const data = new FormData();
-      data.append('archivo', form.archivo);
-      data.append('nombre', form.nombre);
-      data.append('dimension', form.dimension);
-      data.append('materia', form.materia);
-      data.append('eventoId', form.eventoId);
+      data.append("archivo", form.archivo);
+      data.append("Nombre", form.nombre);
+      data.append("Dimension", form.dimension);
+      data.append("Materia", form.materia);
+      data.append("EventoId", form.eventoId);
 
-      await axios.post('http://localhost:3000/api/subirDocumento', data);
+      await api.post("/documentos", data);
+
       setMostrarModal(false);
       buscarDocumentos();
     } catch (err) {
-      console.error('Error al subir documento', err);
+      console.error("Error al subir documento:", err);
     }
   };
 
   return (
-    <div className="repositorio-layout">
-      <aside className="sidebar">
-        <div className="logo-container">
-          <img src={Logo} alt="Logo institucional" className="logo-img" />
-          <hr className="logo-divider" />
-        </div>
+    <div className="repositorio-panel-solo">
+      <h1>📁 Repositorio de documentos</h1>
 
-        <h2 className="rol-usuario">Director</h2>
+      {/* ===========================
+          FILTROS
+      ============================ */}
+      <section className="filtros-repositorio">
+        <input
+          type="text"
+          name="texto"
+          value={filtros.texto}
+          onChange={handleChangeFiltros}
+          placeholder="Buscar documentos..."
+          className="input-busqueda"
+        />
 
-        <nav className="menu-navegacion">
-          <button className="menu-btn" onClick={() => navigate("/calendario")}>
-            📅 Calendario<br /><span>Vista mensual y diaria</span>
-          </button>
-          <button className="menu-btn" onClick={() => navigate("/agregar-evento")}>
-            ➕ Crear evento<br /><span>Crear nuevo evento</span>
-          </button>
-          <button className="menu-btn" onClick={() => navigate("/buscar-filtrar")}>
-            🔍 Buscar y filtrar<br /><span>Buscar un evento específico</span>
-          </button>
-          <button className="menu-btn" onClick={() => navigate("/admin-panel")}>
-            ⚙️ Panel Admin<br /><span>Usuarios y permisos</span>
-          </button>
-          <button className="menu-btn activo" onClick={() => navigate("/repositorio")}>
-            📁 Repositorio<br /><span>Documento adjunto</span>
-          </button>
-        </nav>
+        <select
+          name="dimension"
+          value={filtros.dimension}
+          onChange={handleChangeFiltros}
+          className="filtro-select"
+        >
+          <option value="">Todas las dimensiones</option>
+          <option value="Tecnico-Administrativa">Técnico-Administrativa</option>
+          <option value="Pedagogica-Didactica">Pedagógica-Didáctica</option>
+          <option value="Socio-Comunitaria">Socio-Comunitaria</option>
+        </select>
 
-        <div className="usuario-sidebar">
-          <span>👤 Pablo Gómez (admin)</span>
-          <button className="cerrar-sesion" onClick={() => {
-            localStorage.removeItem("usuario");
-            navigate("/login");
-          }}>
-            Cerrar sesión
-          </button>
-        </div>
-      </aside>
+        <select
+          name="materia"
+          value={filtros.materia}
+          onChange={handleChangeFiltros}
+          className="filtro-select"
+        >
+          <option value="">Todas las materias</option>
+          <option value="Matematicas">Matemáticas</option>
+          <option value="Practicas del Lenguaje">
+            Prácticas del Lenguaje
+          </option>
+          <option value="Educacion Fisica">Educación Física</option>
+        </select>
 
-      <main className="repositorio-panel">
-        <section className="repositorio-superior">
-          <div className="filtros-repositorio">
-            <input
-              type="text"
-              name="texto"
-              value={filtros.texto}
-              onChange={handleChange}
-              placeholder="🔍 Buscar documentos por nombre o evento..."
-              className="input-busqueda"
-            />
+        <button className="btn-subir" onClick={() => setMostrarModal(true)}>
+          📤 Subir documento
+        </button>
+      </section>
 
-            <div className="grupo-filtros">
-              <select name="dimension" value={filtros.dimension} onChange={handleChange} className="filtro-select">
-                <option value="">📂 Todas las dimensiones</option>
-                <option value="Tecnico-Administrativa">🛠️ Técnico-Administrativa</option>
-                <option value="Pedadogica-Didactica">📘 Pedagógico-Didáctica</option>
-                <option value="Socio-Comunitaria">🤝 Socio-Comunitaria</option>
-              </select>
+      {/* ===========================
+          LISTA DE DOCUMENTOS
+      ============================ */}
+      <section className="lista-documentos">
+        {documentos.length === 0 ? (
+          <p>No se encontraron documentos.</p>
+        ) : (
+          documentos.map((doc) => (
+            <div key={doc.Id} className="tarjeta-documento">
+              <h4>{doc.Nombre}</h4>
+              <p>
+                <strong>Dimensión:</strong> {doc.Dimension}
+              </p>
+              <p>
+                <strong>Materia:</strong> {doc.Materia}
+              </p>
+              <p>
+                <strong>Evento:</strong> {doc.EventoId || "—"}
+              </p>
 
-              <select name="materia" value={filtros.materia} onChange={handleChange} className="filtro-select">
-                <option value="">📚 Materia</option>
-                <option value="Matematicas">➗ Matemática</option>
-                <option value="Practicas del Lenguaje">📖 Lengua</option>
-                <option value="Educacion Fisica">🏃 Educación Física</option>
-              </select>
+              <a
+                className="btn-descargar"
+                href={`http://localhost:3000/api/documentos/descargar/${doc.Ruta}`}
+              >
+                ⬇️ Descargar
+              </a>
             </div>
-          </div>
-
-          <button className="btn-subir" onClick={() => setMostrarModal(true)}>
-            📤 Subir nuevo documento
-          </button>
-        </section>
-
-        <section className="lista-documentos">
-          {documentos.length === 0 ? (
-            <p>No se encontraron documentos</p>
-          ) : (
-            documentos.map(doc => (
-              <div key={doc.Id} className="tarjeta-documento">
-                <div className="tarjeta-contenido-horizontal">
-                  <div className="tarjeta-info-principal">
-                    <h4 className="doc-nombre">{doc.Nombre}</h4>
-                    <span className={`etiqueta-dimension ${doc.Dimension?.toLowerCase().replace(/\s/g, '-')}`}>
-                      {doc.Dimension}
-                    </span>
-                  </div>
-                  <div className="doc-detalles-grid">
-                    <div><strong>📅 Evento:</strong> {doc.EventoNombre || '—'}</div>
-                    <div><strong>📚 Materia:</strong> {doc.Materia || '—'}</div>
-                    <div><strong>👤 Subido por:</strong> {doc.SubidoPor || '—'}</div>
-                    {/* <div><strong>📄 Tipo:</strong> PDF</div> */}
-                    {/* <div><strong>📦 Tamaño:</strong> {doc.Tamano || '—'}</div> */}
-                  </div>
-
-                  <div className="doc-acciones">
-                    <a
-                      href={`http://localhost:3000/uploads/${doc.Ruta}`}
-                      className="btn-descargar"
-                      download
-                    >
-                      ⬇️ Descargar
-                    </a>
-                  </div>
-                </div>
-              </div>
-            ))
-          )}
-        </section>
-
-        {mostrarModal && (
-          <div className="modal-overlay">
-            <div className="modal-contenido">
-              <h3>📤 Subir Documento</h3>
-              <form onSubmit={handleUpload}>
-                <input type="text" placeholder="Nombre del archivo" onChange={(e) => setForm({ ...form, nombre: e.target.value })} required />
-                <select onChange={(e) => setForm({ ...form, dimension: e.target.value })} required>
-                  <option value="">Dimensión</option>
-                  <option value="Tecnico-Administrativa">Técnico-Administrativa</option>
-                  <option value="Pedadogica-Didactica">Pedagógica-Didáctica</option>
-                  <option value="Socio-Comunitaria">Socio-Comunitaria</option>
-                </select>
-                <select onChange={(e) => setForm({ ...form, materia: e.target.value })} required>
-                  <option value="">Materia</option>
-                  <option value="Matematicas">Matemáticas</option>
-                  <option value="Practicas del Lenguaje">Lengua</option>
-                  <option value="Educacion Fisica">Educación Física</option>
-                </select>
-                <input type="number" placeholder="ID del evento" onChange={(e) => setForm({ ...form, eventoId: e.target.value })} required />
-                <input type="file" onChange={(e) => setForm({ ...form, archivo: e.target.files[0] })} required />
-                <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
-                  <button type="submit">Subir</button>
-                  <button type="button" onClick={() => setMostrarModal(false)}>Cancelar</button>
-                </div>
-              </form>
-            </div>
-          </div>
+          ))
         )}
-      </main>
+      </section>
+
+      {/* ===========================
+          MODAL SUBIR DOCUMENTO
+      ============================ */}
+      {mostrarModal && (
+        <div className="modal-overlay">
+          <div className="modal-contenido">
+            <h3>📤 Subir Documento</h3>
+
+            <form onSubmit={handleUpload}>
+              <input
+                type="text"
+                placeholder="Nombre del archivo"
+                required
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, nombre: e.target.value }))
+                }
+              />
+
+              <select
+                required
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, dimension: e.target.value }))
+                }
+              >
+                <option value="">Dimensión</option>
+                <option value="Tecnico-Administrativa">
+                  Técnico-Administrativa
+                </option>
+                <option value="Pedagogica-Didactica">
+                  Pedagógica-Didáctica
+                </option>
+                <option value="Socio-Comunitaria">Socio-Comunitaria</option>
+              </select>
+
+              <select
+                required
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, materia: e.target.value }))
+                }
+              >
+                <option value="">Materia</option>
+                <option value="Matematicas">Matemáticas</option>
+                <option value="Practicas del Lenguaje">
+                  Prácticas del Lenguaje
+                </option>
+                <option value="Educacion Fisica">Educación Física</option>
+              </select>
+
+              <select
+                required
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, eventoId: e.target.value }))
+                }
+              >
+                <option value="">Asociar a evento</option>
+                {eventos.map((ev) => (
+                  <option key={ev.Id} value={ev.Id}>
+                    {ev.Titulo}
+                  </option>
+                ))}
+              </select>
+
+              <input
+                type="file"
+                required
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, archivo: e.target.files[0] }))
+                }
+              />
+
+              <div className="modal-buttons">
+                <button type="submit">Subir</button>
+                <button type="button" onClick={() => setMostrarModal(false)}>
+                  Cancelar
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
-
-export default Repositorio;

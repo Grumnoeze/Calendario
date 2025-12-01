@@ -1,12 +1,29 @@
-import Encabezado from "./Global/Encabezado"
-import "./Layouts.css"
+import { useState } from "react";
+import Sidebar from "./Sidebar";
+import "./Layouts.css";
+import { Outlet } from "react-router-dom";
 
-function Layouts() {
+
+export default function Layouts() {
+  const [sidebarColapsada, setSidebarColapsada] = useState(false);
+
+
   return (
-    <>
-        <Encabezado />
-    </>
-  )
-}
+    <div className={`layout-wrapper ${sidebarColapsada ? "colapsado" : ""}`}>
+      <button
+        className="toggle-sidebar-btn"
+        onClick={() => setSidebarColapsada(!sidebarColapsada)}
+      >
+        {sidebarColapsada ? "☰" : "✖"}
+      </button>
 
-export default Layouts
+
+      <Sidebar sidebarColapsada={sidebarColapsada} />
+
+
+      <div className="contenido">
+        <Outlet />
+      </div>
+    </div>
+  );
+}

@@ -1,589 +1,431 @@
+// Calendario.jsx completo y corregido
 import { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../api";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import esLocale from "@fullcalendar/core/locales/es";
-import Logo from "./img/Logo.jpg";
 import "./Calendario.css";
 
-function Calendario() {
-  const navigate = useNavigate();
+export default function Calendario() {
   const calendarRef = useRef(null);
 
   const [eventos, setEventos] = useState([]);
-  const [eventoHover, setEventoHover] = useState(null);
   const [eventoSeleccionado, setEventoSeleccionado] = useState(null);
-  const [sidebarColapsada, setSidebarColapsada] = useState(false);
+  const [eventoHover, setEventoHover] = useState(null);
+  const [modalDetalles, setModalDetalles] = useState(null);
+  const [modalEditar, setModalEditar] = useState(null);
 
-  // 📌 NUEVO: Estados para el modal de edición
-  const [mostrarModalEdicion, setMostrarModalEdicion] = useState(false);
-  const [eventoEnEdicion, setEventoEnEdicion] = useState(null);
-  const [formEdicion, setFormEdicion] = useState({
-    titulo: '',
-    descripcion: '',
-    fechaInicio: '',
-    horaInicio: '',
-    fechaFin: '',
-    horaFin: '',
-    ubicacion: '',
-    dimension: '',
-    asignarA: '',
-    materia: '',
-    tipo: '',
-    estado: 'Pendiente',
-  });
+  const coloresEstado = {
+    Pendiente: "#ffeb3b",
+    Realizado: "#4caf50",
+    Cancelado: "#f44336",
+  };
 
-  const actualizarColorEvento = (id, estado) => {
-    const color =
-      estado === "Pendiente"
-        ? "#ffeb3b"
-        : estado === "Cancelado"
-        ? "#f44336"
-        : estado === "Realizado"
+  const obtenerColor = (estado, tipo) => {
+    return (
+      coloresEstado[estado] ||
+      (tipo === "clase"
         ? "#4caf50"
-        : "#2196f3";
-
-    setEventos((prev) =>
-      prev.map((ev) =>
-        ev.id === id
-          ? {
-              ...ev,
-              backgroundColor: color,
-              extendedProps: { ...ev.extendedProps, estado },
-            }
-          : ev
-      )
+        : tipo === "reunion"
+          ? "#2196f3"
+          : "#f44336")
     );
-
-    const calendarApi = calendarRef.current?.getApi();
-    const evento = calendarApi?.getEventById(id);
-    if (evento) {
-      evento.setProp("backgroundColor", color);
-      evento.setExtendedProp("estado", estado);
-    }
   };
 
-  const guardarEstadoEnBD = async (id, estado) => {
-    try {
-      await axios.put(
-        `http://localhost:3000/api/actualizarEstado/${id}`,
-        { estado }
-      );
-    } catch (error) {
-      console.error("❌ Error al actualizar estado:", error);
-    }
+  // FORMATEO PARA MOSTRAR SOLO HH:mm
+  const limpiarHora = (horaISO) => {
+    if (!horaISO) return "";
+    const sinTZ = horaISO.split(/[+-]/)[0];
+    return sinTZ.slice(0, 5);
   };
 
-  // 📌 NUEVO: Función para abrir modal de edición
-  const abrirModalEdicion = (evento) => {
-    const fechaInicio = new Date(evento.start);
-    const fechaFin = new Date(evento.end);
-
-    setEventoEnEdicion(evento);
-    setFormEdicion({
-      titulo: evento.title,
-      descripcion: evento.extendedProps?.descripcion || '',
-      fechaInicio: fechaInicio.toISOString().split('T')[0],
-      horaInicio: fechaInicio.toTimeString().slice(0, 5),
-      fechaFin: fechaFin.toISOString().split('T')[0],
-      horaFin: fechaFin.toTimeString().slice(0, 5),
-      ubicacion: evento.extendedProps?.ubicacion || '',
-      dimension: evento.extendedProps?.dimension || '',
-      asignarA: evento.extendedProps?.asignarA || '',
-      materia: evento.extendedProps?.materia || '',
-      tipo: evento.extendedProps?.tipo || '',
-      estado: evento.extendedProps?.estado || 'Pendiente',
-    });
-    setMostrarModalEdicion(true);
-  };
-
-  // 📌 NUEVO: Función para manejar cambios en el formulario de edición
-  const manejarCambioEdicion = (e) => {
-    const { name, value } = e.target;
-    setFormEdicion(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  // 📌 NUEVO: Función para guardar cambios del evento
-  // ⚠️ COMENTADO: Esta función necesitaría un endpoint en el backend para actualizar eventos
-  const guardarCambiosEvento = async () => {
-    try {
-      // Descomenta cuando el endpoint esté disponible:
-      // await axios.put(
-      //   `http://localhost:3000/api/actualizarEvento/${eventoEnEdicion.id}`,
-      //   {
-      //     titulo: formEdicion.titulo,
-      //     descripcion: formEdicion.descripcion,
-      //     fechaInicio: formEdicion.fechaInicio,
-      //     horaInicio: formEdicion.horaInicio,
-      //     fechaFin: formEdicion.fechaFin,
-      //     horaFin: formEdicion.horaFin,
-      //     ubicacion: formEdicion.ubicacion,
-      //     dimension: formEdicion.dimension,
-      //     asignarA: formEdicion.asignarA,
-      //     materia: formEdicion.materia,
-      //     tipo: formEdicion.tipo,
-      //     estado: formEdicion.estado,
-      //   }
-      // );
-      
-      console.log("✅ Evento actualizado (simulado):", formEdicion);
-      setMostrarModalEdicion(false);
-      
-      // Aquí se podría recargar el calendario o actualizar eventos localmente
-      // window.location.reload(); // O actualizar estado localmente
-    } catch (error) {
-      console.error("❌ Error al guardar cambios:", error);
-    }
-  };
-
+  // ============================
+  //   CARGAR EVENTOS DESDE BD
+  // ============================
   useEffect(() => {
-    axios
-      .get("http://localhost:3000/api/listarEventos")
-      .then((res) => {
+    const cargarEventos = async () => {
+      try {
+        const res = await api.get("/eventos");
+
         const eventosFormateados = res.data.map((ev) => ({
           id: ev.Id,
           title: ev.Titulo,
           start: `${ev.FechaInicio}T${ev.HoraInicio}`,
           end: `${ev.FechaFin}T${ev.HoraFin}`,
-          backgroundColor:
-            ev.Estado === "Pendiente"
-              ? "#ffeb3b"
-              : ev.Estado === "Cancelado"
-              ? "#f44336"
-              : ev.Estado === "Realizado"
-              ? "#4caf50"
-              : ev.Tipo === "clase"
-              ? "#4caf50"
-              : ev.Tipo === "reunion"
-              ? "#2196f3"
-              : "#f44336",
+          backgroundColor: obtenerColor(ev.Estado || "Pendiente", ev.Tipo),
           extendedProps: {
-            estado: ev.Estado || "Pendiente",
+            estado: ev.Estado,
+            descripcion: ev.Descripcion,
             ubicacion: ev.Ubicacion,
             dimension: ev.Dimension,
             asignarA: ev.AsignarA,
-            descripcion: ev.Descripcion,
             materia: ev.Materia,
-            permisoVisualizacion: ev.PermisoVisualizacion,
-            permisoEdicion: ev.PermisoEdicion,
-            recordatorio: ev.Recordatorio,
             tipo: ev.Tipo,
-            usuarioId: ev.UsuarioId,
+            archivoAdjunto: ev.ArchivoAdjunto,
           },
         }));
+
         setEventos(eventosFormateados);
-      })
-      .catch((err) => console.error(err));
+      } catch (e) {
+        console.error("❌ Error cargando eventos", e);
+      }
+    };
+
+    cargarEventos();
   }, []);
 
-  const handleMouseEnter = (info) => {
-    setEventoHover({
-      title: info.event.title,
-      start: info.event.startStr,
-      end: info.event.endStr,
-      x: info.jsEvent.pageX,
-      y: info.jsEvent.pageY,
+  // ============================
+  //   ACTUALIZAR ESTADO EN BD
+  // ============================
+  const actualizarEstadoBD = async (id, nuevoEstado) => {
+    try {
+      await api.put(`/eventos/actualizarEstado/${id}`, {
+        estado: nuevoEstado,
+      });
+    } catch (e) {
+      console.error("❌ Error actualizando estado en BD", e);
+    }
+  };
+
+  // ============================
+  //   ACTUALIZAR SOLO EN PANTALLA
+  // ============================
+  const actualizarEstadoEnPantalla = (id, nuevoEstado) => {
+    const calendar = calendarRef.current?.getApi();
+    const evento = calendar?.getEventById(id);
+    if (!evento) return;
+
+    const nuevoColor = obtenerColor(nuevoEstado, evento.extendedProps.tipo);
+
+    evento.setExtendedProp("estado", nuevoEstado);
+    evento.setProp("backgroundColor", nuevoColor);
+
+    setEventos((prev) =>
+      prev.map((ev) =>
+        ev.id === id
+          ? {
+            ...ev,
+            backgroundColor: nuevoColor,
+            extendedProps: {
+              ...ev.extendedProps,
+              estado: nuevoEstado,
+            },
+          }
+          : ev
+      )
+    );
+  };
+
+  // ============================
+  //   CLICK EN EVENTO
+  // ============================
+  const handleEventClick = (info) => {
+    const ev = info.event;
+    setEventoSeleccionado({
+      id: ev.id,
+      titulo: ev.title,
+      inicio: ev.startStr,
+      fin: ev.endStr,
+      descripcion: ev.extendedProps.descripcion,
+      ubicacion: ev.extendedProps.ubicacion,
+      estado: ev.extendedProps.estado || "Pendiente",
     });
   };
 
-  const handleMouseLeave = () => setEventoHover(null);
+  // ============================
+  //     CAMBIAR ESTADO
+  // ============================
+  const cambiarEstado = async (nuevoEstado) => {
+    if (!eventoSeleccionado) return;
+
+    const id = eventoSeleccionado.id;
+
+    actualizarEstadoEnPantalla(id, nuevoEstado);
+    await actualizarEstadoBD(id, nuevoEstado);
+
+    setEventoSeleccionado((prev) => ({
+      ...prev,
+      estado: nuevoEstado,
+    }));
+  };
+
+  const guardarCambiosEvento = async () => {
+    try {
+      console.log("GUARDAR EVENTO EDITADO", modalEditar);
+
+      if (!modalEditar) return;
+
+      const data = {
+        Titulo: modalEditar.titulo,
+        Descripcion: modalEditar.descripcion,
+        Ubicacion: modalEditar.ubicacion,
+        FechaInicio: modalEditar.inicio.split("T")[0],
+        HoraInicio: modalEditar.inicio.split("T")[1],
+        FechaFin: modalEditar.fin.split("T")[0],
+        HoraFin: modalEditar.fin.split("T")[1],
+        Estado: modalEditar.estado || "Pendiente",
+      };
+
+      // 👉 Usamos TU instancia axios con baseURL + token automático
+      await api.put(`/eventos/${modalEditar.id}`, data);
+
+      console.log("✔ Evento actualizado en la BD");
+
+      // 👉 Actualizamos también en pantalla
+      setEventos(prev =>
+        prev.map(ev =>
+          ev.id === modalEditar.id
+            ? {
+              ...ev,
+              title: data.Titulo,
+              start: `${data.FechaInicio}T${data.HoraInicio}`,
+              end: `${data.FechaFin}T${data.HoraFin}`,
+              extendedProps: {
+                ...ev.extendedProps,
+                descripcion: data.Descripcion,
+                ubicacion: data.Ubicacion,
+                estado: data.Estado,
+              }
+            }
+            : ev
+        )
+      );
+
+      setModalEditar(null);
+    } catch (error) {
+      console.error("❌ Error al guardar el evento editado:", error);
+    }
+  };
 
   return (
-    <div className={`calendario-layout ${sidebarColapsada ? "colapsado" : ""}`}>
-      {/* SIDEBAR */}
-      <aside className={`sidebar ${sidebarColapsada ? "colapsada" : ""}`}>
-        <div className="logo-container">
-          <img src={Logo} alt="Logo institucional" className="logo-img" />
-          <hr className="logo-divider" />
-        </div>
-
-        <h2 className="rol-usuario">{!sidebarColapsada ? "Director" : ""}</h2>
-
-        <nav className="menu-navegacion">
-          <button className={`menu-btn activo`} onClick={() => navigate("/calendario")}>
-            📅 {!sidebarColapsada ? "Calendario" : ""}
-            {!sidebarColapsada && <span>Vista mensual y diaria</span>}
-          </button>
-
-          <button className="menu-btn" onClick={() => navigate("/agregar-evento")}>
-            ➕ {!sidebarColapsada ? "Crear evento" : ""}
-            {!sidebarColapsada && <span>Crear nuevo evento</span>}
-          </button>
-
-          <button className="menu-btn" onClick={() => navigate("/buscar-filtrar")}>
-            🔍 {!sidebarColapsada ? "Buscar y filtrar" : ""}
-            {!sidebarColapsada && <span>Buscar un evento específico</span>}
-          </button>
-
-          <button className="menu-btn" onClick={() => navigate("/admin-panel")}>
-            ⚙️ {!sidebarColapsada ? "Panel Admin" : ""}
-            {!sidebarColapsada && <span>Usuarios y permisos</span>}
-          </button>
-
-          <button className="menu-btn" onClick={() => navigate("/repositorio")}>
-            📁 {!sidebarColapsada ? "Repositorio" : ""}
-            {!sidebarColapsada && <span>Documento adjunto</span>}
-          </button>
-        </nav>
-
-        <div className="usuario-sidebar">
-          <span>{!sidebarColapsada ? "Pablo Gómez (admin)" : ""}</span>
-          <button className="cerrar-sesion">Cerrar sesión</button>
-        </div>
-      </aside>
-
-      {/* CONTENIDO PRINCIPAL */}
-      <main className={`contenido ${sidebarColapsada ? "expandido" : ""}`}>
-        {/* ENCABEZADO: aquí está el botón hamburguesa integrado a la barra */}
-        <div className="encabezado">
-          <div className="header-left">
-            {/* BOTÓN HAMBURGUESA ubicado dentro del header, esquina izquierda */}
-          <button
-  className="header-hamburger"
-  onClick={() => setSidebarColapsada(!sidebarColapsada)}
-  aria-label={sidebarColapsada ? "Abrir menú" : "Cerrar menú"}
->
-  {sidebarColapsada ? "☰" : "✖"}
-</button>
-
-
-            {/* TÍTULO */}
-            <h2 className="main-title">📅 Calendario Institucional</h2>
-          </div>
-
-          {/* MENU DESPLEGABLE ubicado en la esquina derecha del header */}
-          <div className="menu-desplegable">
-          
-
-            <div className="menu-desplegable-contenido">
-              <button onClick={() => navigate("/perfil")}>Perfil</button>
-              <button onClick={() => navigate("/configuracion")}>Configuración</button>
-              <button onClick={() => console.log("Cerrar sesión")}>Cerrar sesión</button>
-            </div>
-          </div>
-        </div>
-
-        {/* CALENDARIO */}
+    <div className="calendario-contenedor">
+      <div className="calendario-box">
         <FullCalendar
           ref={calendarRef}
           plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
           initialView="dayGridMonth"
-          headerToolbar={{
-            left: "prev,next today",
-            center: "title",
-            right: "dayGridMonth,timeGridWeek,timeGridDay",
-          }}
-          events={eventos}
           locale={esLocale}
           height="auto"
-          slotMinTime="08:00:00"
-          scrollTime="08:00:00"
-          eventMouseEnter={handleMouseEnter}
-          eventMouseLeave={handleMouseLeave}
-          eventClick={(info) => {
-            const evento = info.event;
-            const estado = evento.extendedProps.estado || "Pendiente";
-            setEventoSeleccionado({
-              id: evento.id,
-              title: evento.title,
-              start: evento.startStr,
-              end: evento.endStr,
-              estado,
+          events={eventos}
+          eventClick={handleEventClick}
+          eventMouseEnter={(info) => {
+            setEventoHover({
+              title: info.event.title,
+              x: info.jsEvent.pageX,
+              y: info.jsEvent.pageY,
             });
           }}
+          eventMouseLeave={() => setEventoHover(null)}
         />
+      </div>
 
-        {eventoHover && (
-          <div
-            className="popup-evento"
-            style={{ top: eventoHover.y + 10, left: eventoHover.x + 10 }}
+      {eventoSeleccionado && (
+        <div className="panel-evento">
+          <h3>{eventoSeleccionado.titulo}</h3>
+
+          <p>📍 {eventoSeleccionado.ubicacion}</p>
+          <p>🕒 Inicio: {eventoSeleccionado.inicio}</p>
+          <p>🕒 Fin: {eventoSeleccionado.fin}</p>
+          <p>{eventoSeleccionado.descripcion}</p>
+
+          <label>Estado del evento:</label>
+          <select
+            value={eventoSeleccionado.estado}
+            onChange={(e) => cambiarEstado(e.target.value)}
           >
-            <strong>{eventoHover.title}</strong>
-            <br />
-            <span>
-              {new Date(eventoHover.start).toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-              })}{" "}
-              -{" "}
-              {new Date(eventoHover.end).toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-              })}
-            </span>
-          </div>
-        )}
+            <option value="Pendiente">🟡 Pendiente</option>
+            <option value="Realizado">🟢 Realizado</option>
+            <option value="Cancelado">🔴 Cancelado</option>
+          </select>
 
-        {eventoSeleccionado && (
-          <div className="evento-flotante">
-            <div className="evento-flotante-contenido">
-              <h3>{eventoSeleccionado.title}</h3>
-              <label>Estado:</label>
-              <select
-                value={eventoSeleccionado.estado}
-                onChange={async (e) => {
-                  const nuevoEstado = e.target.value;
-                  setEventoSeleccionado({
-                    ...eventoSeleccionado,
-                    estado: nuevoEstado,
-                  });
-                  actualizarColorEvento(eventoSeleccionado.id, nuevoEstado);
-                  await guardarEstadoEnBD(eventoSeleccionado.id, nuevoEstado);
+          <button onClick={() => setEventoSeleccionado(null)}>Cerrar</button>
+          <button
+            className="btn-detalles"
+            onClick={() => setModalDetalles(eventoSeleccionado)}
+          >
+            Detalles
+          </button>
+        </div>
+      )}
+
+      {/* MODAL DETALLES */}
+      {modalDetalles && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h2>Detalles del Evento</h2>
+
+            <p><strong>Título:</strong> {modalDetalles.titulo}</p>
+            <p><strong>Descripción:</strong> {modalDetalles.descripcion}</p>
+            <p><strong>Ubicación:</strong> {modalDetalles.ubicacion}</p>
+            <p><strong>Inicio:</strong> {modalDetalles.inicio}</p>
+            <p><strong>Fin:</strong> {modalDetalles.fin}</p>
+            <p><strong>Estado:</strong> {modalDetalles.estado}</p>
+
+            {modalDetalles.dimension && (
+              <p><strong>Dimensión:</strong> {modalDetalles.dimension}</p>
+            )}
+
+            {modalDetalles.materia && (
+              <p><strong>Materia:</strong> {modalDetalles.materia}</p>
+            )}
+
+            {modalDetalles.asignarA && (
+              <p><strong>Asignado a:</strong> {modalDetalles.asignarA}</p>
+            )}
+
+            <div className="modal-botones">
+              <button
+                className="btn-editar"
+                onClick={() => {
+                  setModalEditar(modalDetalles);
+                  setModalDetalles(null);
                 }}
               >
-                <option value="Pendiente">🕒 Pendiente</option>
-                <option value="Realizado">✅ Realizado</option>
-                <option value="Cancelado">❌ Cancelado</option>
+                Editar
+              </button>
+
+              <button className="btn-cerrar" onClick={() => setModalDetalles(null)}>
+                Cerrar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL EDITAR */}
+      {modalEditar && (
+        <div className="modal-overlay">
+          <div className="modal modal-editar">
+            <h2>Editar Evento</h2>
+
+            <div className="grupo-form">
+              <label>Título</label>
+              <input
+                value={modalEditar.titulo}
+                onChange={(e) =>
+                  setModalEditar((prev) => ({ ...prev, titulo: e.target.value }))
+                }
+              />
+            </div>
+
+            <div className="grupo-form-row">
+              <div className="grupo-form">
+                <label>Fecha inicio</label>
+                <input
+                  type="date"
+                  value={modalEditar.inicio?.split("T")[0]}
+                  onChange={(e) =>
+                    setModalEditar((prev) => ({
+                      ...prev,
+                      inicio: `${e.target.value}T${prev.inicio.split("T")[1]}`,
+                    }))
+                  }
+                />
+              </div>
+
+              <div className="grupo-form">
+                <label>Fecha fin</label>
+                <input
+                  type="date"
+                  value={modalEditar.fin?.split("T")[0]}
+                  onChange={(e) =>
+                    setModalEditar((prev) => ({
+                      ...prev,
+                      fin: `${e.target.value}T${prev.fin.split("T")[1]}`,
+                    }))
+                  }
+                />
+              </div>
+            </div>
+
+            <div className="grupo-form-row">
+              <div className="grupo-form">
+                <label>Hora inicio</label>
+                <input
+                  type="time"
+                  value={limpiarHora(modalEditar.inicio?.split("T")[1])}
+                  onChange={(e) =>
+                    setModalEditar((prev) => ({
+                      ...prev,
+                      inicio: `${prev.inicio.split("T")[0]}T${e.target.value}`,
+                    }))
+                  }
+                />
+              </div>
+
+              <div className="grupo-form">
+                <label>Hora fin</label>
+                <input
+                  type="time"
+                  value={limpiarHora(modalEditar.fin?.split("T")[1])}
+                  onChange={(e) =>
+                    setModalEditar((prev) => ({
+                      ...prev,
+                      fin: `${prev.fin.split("T")[0]}T${e.target.value}`,
+                    }))
+                  }
+                />
+              </div>
+            </div>
+
+            <div className="grupo-form">
+              <label>Ubicación</label>
+              <input
+                value={modalEditar.ubicacion}
+                onChange={(e) =>
+                  setModalEditar((prev) => ({
+
+                    ...prev,
+                    ubicacion: e.target.value,
+                  }))
+                }
+              />
+            </div>
+
+            <div className="grupo-form">
+              <label>Descripción</label>
+              <textarea
+                value={modalEditar.descripcion}
+                onChange={(e) =>
+                  setModalEditar((prev) => ({
+                    ...prev,
+                    descripcion: e.target.value,
+                  }))
+                }
+              />
+            </div>
+
+            <div className="grupo-form">
+              <label>Estado</label>
+              <select
+                value={modalEditar.estado}
+                onChange={(e) =>
+                  setModalEditar((prev) => ({
+                    ...prev,
+                    estado: e.target.value,
+                  }))
+                }
+              >
+                <option value="Pendiente">Pendiente</option>
+                <option value="Realizado">Realizado</option>
+                <option value="Cancelado">Cancelado</option>
               </select>
-              <div className="botones-panel">
-                <button onClick={() => setEventoSeleccionado(null)}>
-                  Cerrar
-                </button>
-                <button
-                  onClick={() => {
-                    const calendarApi = calendarRef.current?.getApi();
-                    const evento = calendarApi?.getEventById(
-                      eventoSeleccionado.id
-                    );
-                    if (evento) {
-                      // 📌 NUEVO: Abre modal de edición
-                      abrirModalEdicion(evento);
-                      setEventoSeleccionado(null);
-                      
-                      // ⚠️ CÓDIGO ANTERIOR COMENTADO (detalles de lectura solo):
-                      // const detalles = prepararEventoDetalles(evento);
-                      // setEventoEditable(detalles);
-                      // setMostrarDetalles(true);
-                    }
-                  }}
-                >
-                  Editar
-                </button>
-              </div>
+            </div>
+
+            <div className="acciones-modal">
+              <button className="btn-guardar" onClick={guardarCambiosEvento}>
+                Guardar cambios
+              </button>
+
+              <button className="btn-cerrar" onClick={() => setModalEditar(null)}>
+                Cancelar
+              </button>
             </div>
           </div>
-        )}
-
-        {/* ⚠️ CÓDIGO ANTERIOR COMENTADO (modal de detalles solo lectura):
-        {mostrarDetalles && eventoEditable && (
-          <div className="modal-overlay">
-            <div className="modal-detalles">
-              <h3>📋 Detalles del evento</h3>
-
-              <p>
-                <strong>Título:</strong> {eventoEditable.title}
-              </p>
-              <p>
-                <strong>Fecha inicio:</strong> {eventoEditable.fechaInicio}{" "}
-                {eventoEditable.horaInicio}
-              </p>
-              <p>
-                <strong>Fecha fin:</strong> {eventoEditable.fechaFin}{" "}
-                {eventoEditable.horaFin}
-              </p>
-              <p>
-                <strong>Ubicación:</strong> {eventoEditable.ubicacion}
-              </p>
-              <p>
-                <strong>Dimensión:</strong> {eventoEditable.dimension}
-              </p>
-              <p>
-                <strong>Asignado a:</strong> {eventoEditable.asignarA}
-              </p>
-              <p>
-                <strong>Materia:</strong> {eventoEditable.materia}
-              </p>
-              <p>
-                <strong>Descripción:</strong> {eventoEditable.descripcion}
-              </p>
-              <p>
-                <strong>Permiso visualización:</strong>{" "}
-                {eventoEditable.permisoVisualizacion}
-              </p>
-              <p>
-                <strong>Permiso edición:</strong>{" "}
-                {eventoEditable.permisoEdicion}
-              </p>
-              <p>
-                <strong>Recordatorio:</strong> {eventoEditable.recordatorio}
-              </p>
-              <p>
-                <strong>Estado:</strong> {eventoEditable.estado}
-              </p>
-              <p>
-                <strong>Tipo:</strong> {eventoEditable.tipo}
-              </p>
-
-              <div className="botones-modal">
-                <button onClick={() => setMostrarDetalles(false)}>
-                  Cerrar
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-        */}
-
-        {/* 📌 NUEVO: MODAL DE EDICIÓN CON FORMULARIO */}
-        {mostrarModalEdicion && eventoEnEdicion && (
-          <div className="modal-overlay">
-            <div className="modal-edicion">
-              <h3>✏️ Editar Evento</h3>
-
-              <form onSubmit={(e) => { e.preventDefault(); guardarCambiosEvento(); }}>
-                <div className="form-grupo">
-                  <label>Título:</label>
-                  <input
-                    type="text"
-                    name="titulo"
-                    value={formEdicion.titulo}
-                    onChange={manejarCambioEdicion}
-                    required
-                  />
-                </div>
-
-                <div className="form-grupo">
-                  <label>Descripción:</label>
-                  <textarea
-                    name="descripcion"
-                    value={formEdicion.descripcion}
-                    onChange={manejarCambioEdicion}
-                    rows="3"
-                  ></textarea>
-                </div>
-
-                <div className="form-grupo">
-                  <label>Fecha Inicio:</label>
-                  <input
-                    type="date"
-                    name="fechaInicio"
-                    value={formEdicion.fechaInicio}
-                    onChange={manejarCambioEdicion}
-                    required
-                  />
-                </div>
-
-                <div className="form-grupo">
-                  <label>Hora Inicio:</label>
-                  <input
-                    type="time"
-                    name="horaInicio"
-                    value={formEdicion.horaInicio}
-                    onChange={manejarCambioEdicion}
-                    required
-                  />
-                </div>
-
-                <div className="form-grupo">
-                  <label>Fecha Fin:</label>
-                  <input
-                    type="date"
-                    name="fechaFin"
-                    value={formEdicion.fechaFin}
-                    onChange={manejarCambioEdicion}
-                    required
-                  />
-                </div>
-
-                <div className="form-grupo">
-                  <label>Hora Fin:</label>
-                  <input
-                    type="time"
-                    name="horaFin"
-                    value={formEdicion.horaFin}
-                    onChange={manejarCambioEdicion}
-                    required
-                  />
-                </div>
-
-                <div className="form-grupo">
-                  <label>Ubicación:</label>
-                  <input
-                    type="text"
-                    name="ubicacion"
-                    value={formEdicion.ubicacion}
-                    onChange={manejarCambioEdicion}
-                  />
-                </div>
-
-                <div className="form-grupo">
-                  <label>Dimensión:</label>
-                  <select
-                    name="dimension"
-                    value={formEdicion.dimension}
-                    onChange={manejarCambioEdicion}
-                  >
-                    <option value="">Selecciona dimensión</option>
-                    <option value="Tecnico-Administrativa">Técnico-Administrativa</option>
-                    <option value="Socio-Comunitaria">Socio-Comunitaria</option>
-                    <option value="Pedagogica-Didactica">Pedagógica-Didáctica</option>
-                  </select>
-                </div>
-
-                <div className="form-grupo">
-                  <label>Asignar A:</label>
-                  <input
-                    type="text"
-                    name="asignarA"
-                    value={formEdicion.asignarA}
-                    onChange={manejarCambioEdicion}
-                  />
-                </div>
-
-                <div className="form-grupo">
-                  <label>Materia:</label>
-                  <input
-                    type="text"
-                    name="materia"
-                    value={formEdicion.materia}
-                    onChange={manejarCambioEdicion}
-                  />
-                </div>
-
-                <div className="form-grupo">
-                  <label>Tipo:</label>
-                  <input
-                    type="text"
-                    name="tipo"
-                    value={formEdicion.tipo}
-                    onChange={manejarCambioEdicion}
-                  />
-                </div>
-
-                <div className="form-grupo">
-                  <label>Estado:</label>
-                  <select
-                    name="estado"
-                    value={formEdicion.estado}
-                    onChange={manejarCambioEdicion}
-                  >
-                    <option value="Pendiente">🕒 Pendiente</option>
-                    <option value="Realizado">✅ Realizado</option>
-                    <option value="Cancelado">❌ Cancelado</option>
-                  </select>
-                </div>
-
-                <div className="botones-modal-edicion">
-                  <button type="button" onClick={() => setMostrarModalEdicion(false)} className="btn-cancelar">
-                    Cancelar
-                  </button>
-                  <button type="submit" className="btn-guardar">
-                    Guardar Cambios
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        )}
-      </main>
+        </div>
+      )}
     </div>
   );
 }
-
-export default Calendario;

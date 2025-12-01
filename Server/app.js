@@ -1,30 +1,26 @@
-
-const Express = require('express');
-
-const Cors = require('cors');
-
-const App = Express();
-
-App.use(Cors());
-
-require("dotenv").config();
-
-const PORT = process.env.PORT || 5000; 
-
-App.use(Express.json());
-
-const EventoRouter = require('./src/Router/Evento.Router');
-const Router = require('./src/Router/Login.Router');
-const RepositorioRouter = require('./src/Router/Repositorio.Router');
+const express = require('express');
+const cors = require('cors');
 const path = require('path');
+require('dotenv').config();
 
-App.use('/uploads', Express.static(path.join(__dirname, 'src/uploads')));
+const usuarioRouter = require('./src/Router/Usuario.Router');
+const eventoRouter = require('./src/Router/Evento.Router');
+const documentoRouter = require('./src/Router/Documento.Router');
 
-App.use('/api', RepositorioRouter);
-App.use('/api', EventoRouter);
-App.use('/api', Router);
+const app = express();
+const PORT = process.env.PORT || 3000;
 
+app.use(cors());
+app.use(express.json());
 
-App.listen(PORT, () => {
-    console.log(`🚀 http://localhost:${PORT}`);
-})
+// Carpeta pública para descargas
+app.use('/uploads', express.static(path.join(__dirname, 'src/uploads')));
+
+// Rutas
+app.use('/api/usuarios', usuarioRouter);
+app.use('/api/eventos', eventoRouter);
+app.use('/api/documentos', documentoRouter);
+
+app.listen(PORT, () => {
+  console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
+});

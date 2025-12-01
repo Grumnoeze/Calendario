@@ -66,42 +66,7 @@ function AdminPanel() {
 
   return (
     <div className="admin-layout">
-      <aside className="sidebar">
-        <div className="logo-container">
-          <img src={Logo} alt="Logo institucional" className="logo-img" />
-          <hr className="logo-divider" />
-        </div>
-
-        <h2 className="rol-usuario">Director</h2>
-
-        <nav className="menu-navegacion">
-          <button className="menu-btn" onClick={() => navigate("/calendario")}>
-            📅 Calendario<br /><span>Vista mensual y diaria</span>
-          </button>
-          <button className="menu-btn" onClick={() => navigate("/agregar-evento")}>
-            ➕ Crear evento<br /><span>Crear nuevo evento</span>
-          </button>
-          <button className="menu-btn" onClick={() => navigate("/buscar-filtrar")}>
-            🔍 Buscar y filtrar<br /><span>Buscar un evento específico</span>
-          </button>
-          <button className="menu-btn" onClick={() => navigate("/admin-panel")}>
-            ⚙️ Panel Admin<br /><span>Usuarios y permisos</span>
-          </button>
-          <button className="menu-btn activo" onClick={() => navigate("/repositorio")}>
-            📁 Repositorio<br /><span>Documento adjunto</span>
-          </button>
-        </nav>
-
-        <div className="usuario-sidebar">
-          <span>👤 Pablo Gómez (admin)</span>
-          <button className="cerrar-sesion" onClick={() => {
-            localStorage.removeItem("usuario");
-            navigate("/login");
-          }}>
-            Cerrar sesión
-          </button>
-        </div>
-      </aside>
+      
 
       <main className="contenido">
         <header className="encabezado">
@@ -113,7 +78,7 @@ function AdminPanel() {
         <section className="admin-seccion">
           <h3>👥 Gestión de Usuarios</h3>
 
-          {esAdmin && (
+          {admin && (
             <div className="boton-agregar-usuario">
               <button className="btn-agregar" onClick={() => navigate("/crear-usuario")}>
                 ➕ Agregar nuevo usuario

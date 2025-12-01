@@ -1,178 +1,162 @@
-
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import Logo from './img/Logo.jpg';
 import './AgregarEvento.css';
-
 
 function AgregarEvento() {
     const navigate = useNavigate();
-    const [form, setForm] = useState({
-        Titulo: '',
-        Fecha: '',
-        FechaFin: '',
-        HoraInicio: '',
-        HoraFin: '',
-        Ubicacion: '',
-        UbicacionOtro: '',
-        Dimension: '',
-        AsignarA: '',
-        Descripcion: '',
-        Materia: '',
-        Recordatorio: true
-    });
-    const [mensaje, setMensaje] = useState('');
-    const [usuarios, setUsuarios] = useState([]);
 
     const usuarioLocal = JSON.parse(localStorage.getItem("usuario"));
     const UsuarioId = usuarioLocal?.Id;
 
+    const formInicial = {
+        Titulo: '', Fecha: '', FechaFin: '',
+        HoraInicio: '', HoraFin: '',
+        Ubicacion: '', UbicacionOtro: '',
+        Dimension: '', AsignarA: '',
+        Descripcion: '', Materia: '',
+        Recordatorio: true
+    };
+
+    const [form, setForm] = useState(formInicial);
+    const [usuarios, setUsuarios] = useState([]);
+    const [mensaje, setMensaje] = useState('');
+
     useEffect(() => {
-        // Cargar usuarios para el select "Asignar a"
-        axios.get('http://localhost:3000/api/listarUsuarios')
-            .then(response => {
-                // si tu API devuelve todos los usuarios, podes filtrar por estado si hace falta
-                setUsuarios(response.data || []);
-            })
-            .catch(err => console.error('Error al cargar usuarios', err));
+        const token = localStorage.getItem("token");
+        axios.get("http://localhost:3000/api/usuarios", {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
+            .then(res => setUsuarios(res.data || []))
+            .catch(err => console.error("Error cargando usuarios", err));
     }, []);
 
-    const handleChange = (e) => {
-        const { name, value, type, checked } = e.target;
+    const handleChange = ({ target }) => {
+        const { name, value, type, checked } = target;
 
         if (name === "Dimension") {
-            setForm(prev => ({
-                ...prev,
+            return setForm(f => ({
+                ...f,
                 Dimension: value,
                 PermisoVisualizacion: value,
                 PermisoEdicion: value
             }));
-        } else {
-            setForm(prev => ({
-                ...prev,
-                [name]: type === 'checkbox' ? checked : value
-            }));
         }
-    };
 
+        setForm(f => ({
+            ...f,
+            [name]: type === "checkbox" ? checked : value
+        }));
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // Validación de fechas
+        if (form.FechaFin && form.FechaFin < form.Fecha) {
+            setMensaje("❌ La fecha fin no puede ser anterior a la fecha inicio");
+            setTimeout(() => setMensaje(""), 4000);
+            return;
+        }
+
+        // Validación de horas (solo si están en la misma fecha)
+        if (form.Fecha === form.FechaFin || !form.FechaFin) {
+            if (form.HoraFin <= form.HoraInicio) {
+                setMensaje("❌ La hora fin debe ser mayor que la hora inicio");
+                setTimeout(() => setMensaje(""), 4000);
+                return;
+            }
+        }
+
         try {
-            const evento = {
-                Titulo: form.Titulo,
-                FechaInicio: form.Fecha,
-                FechaFin: form.FechaFin || form.Fecha,
-                HoraInicio: form.HoraInicio,
-                HoraFin: form.HoraFin,
-                Ubicacion: form.Ubicacion === 'Otro' ? form.UbicacionOtro : form.Ubicacion,
-                Dimension: form.Dimension,
-                AsignarA: form.AsignarA,
-                Descripcion: form.Descripcion,
-                Materia: form.Materia,
-                PermisoVisualizacion: form.PermisoVisualizacion,
-                PermisoEdicion: form.PermisoEdicion,
-                Recordatorio: form.Recordatorio,
-                Tipo: form.Dimension || 'evento',
-                UsuarioId
-            };
+            const formData = new FormData();
+            formData.append("Titulo", form.Titulo);
+            formData.append("FechaInicio", form.Fecha);
+            formData.append("FechaFin", form.FechaFin || form.Fecha);
+            formData.append("HoraInicio", form.HoraInicio);
+            formData.append("HoraFin", form.HoraFin);
+            formData.append("Ubicacion", form.Ubicacion === "Otro" ? form.UbicacionOtro : form.Ubicacion);
+            formData.append("Dimension", form.Dimension);
+            formData.append("AsignarA", form.AsignarA);
+            formData.append("Descripcion", form.Descripcion);
+            formData.append("Materia", form.Materia);
+            formData.append("PermisoVisualizacion", form.PermisoVisualizacion);
+            formData.append("PermisoEdicion", form.PermisoEdicion);
+            formData.append("Recordatorio", form.Recordatorio);
+            formData.append("Tipo", form.Dimension || "evento");
+            formData.append("UsuarioId", UsuarioId);
 
+            // Archivo adjunto (solo si existe)
+            if (form.Adjunto) {
+                formData.append("Adjunto", form.Adjunto);
+            }
 
-            const res = await axios.post('http://localhost:3000/api/crearEvento', evento);
-            setMensaje(res.data?.Mensaje || 'Evento creado');
-
-            setForm({
-                Titulo: '',
-                Fecha: '',
-                FechaFin: '',
-                HoraInicio: '',
-                HoraFin: '',
-                Ubicacion: '',
-                UbicacionOtro: '',
-                Dimension: '',
-                AsignarA: '',
-                Descripcion: '',
-                Materia: '',
-                Recordatorio: true
+            const res = await axios.post("http://localhost:3000/api/eventos", formData, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    "Content-Type": "multipart/form-data"
+                }
             });
-            setTimeout(() => setMensaje(''), 3000);
-        } catch (error) {
-            setMensaje(error.response?.data?.Error || 'Error desconocido');
-            setTimeout(() => setMensaje(''), 4000);
+
+            setMensaje(res.data?.Mensaje || "Evento creado correctamente");
+            setForm(formInicial);
+            setTimeout(() => setMensaje(""), 3000);
+
+        } catch (err) {
+            setMensaje(err.response?.data?.Error || "Error desconocido");
+            setTimeout(() => setMensaje(""), 4000);
         }
     };
 
+
+
+
     return (
-
-
-        
-        
         <form onSubmit={handleSubmit} className="formulario-evento">
+
+            {/* Título */}
             <div className="grupo-form">
                 <label>Título del evento *</label>
-                <input
-                    name="Titulo"
-                    placeholder="Ej: Reunión de padres"
-                    onChange={handleChange}
-                    value={form.Titulo}
-                    required
-                />
+                <input name="Titulo" required placeholder="Ej: Reunión de padres"
+                    value={form.Titulo} onChange={handleChange} />
             </div>
+
+            {/* Fechas */}
             <div className="grupo-form-row">
                 <div className="grupo-form">
                     <label>Fecha inicio *</label>
-                    <input
-                        name="Fecha"
-                        type="date"
-                        onChange={handleChange}
-                        value={form.Fecha}
-                        required
-                    />
+                    <input type="date" name="Fecha" required
+                        value={form.Fecha} onChange={handleChange} />
                 </div>
+
                 <div className="grupo-form">
                     <label>Fecha fin</label>
-                    <input
-                        name="FechaFin"
-                        type="date"
-                        onChange={handleChange}
-                        value={form.FechaFin}
-                    />
+                    <input type="date" name="FechaFin"
+                        value={form.FechaFin} onChange={handleChange} />
                 </div>
             </div>
 
+            {/* Horarios */}
             <div className="grupo-form-row">
-                <div className="grupo-form">
-                    <label>Hora de inicio *</label>
-                    <input
-                        name="HoraInicio"
-                        type="time"
-                        onChange={handleChange}
-                        value={form.HoraInicio}
-                        required
-                    />
-                </div>
-                <div className="grupo-form">
-                    <label>Hora de fin *</label>
-                    <input
-                        name="HoraFin"
-                        type="time"
-                        onChange={handleChange}
-                        value={form.HoraFin}
-                        required
-                    />
-                </div>
+                {[
+                    { label: "Hora de inicio *", name: "HoraInicio" },
+                    { label: "Hora de fin *", name: "HoraFin" }
+                ].map(campo => (
+                    <div className="grupo-form" key={campo.name}>
+                        <label>{campo.label}</label>
+                        <input type="time" required name={campo.name}
+                            value={form[campo.name]} onChange={handleChange} />
+                    </div>
+                ))}
             </div>
 
+            {/* Ubicación */}
             <div className="grupo-form">
                 <label>Ubicación</label>
-                <select
-                    name="Ubicacion"
-                    onChange={handleChange}
-                    value={form.Ubicacion}
-                >
-                    <option value="">Seleccione una ubicación</option>
+                <select name="Ubicacion" value={form.Ubicacion} onChange={handleChange}>
+                    <option value="">Seleccione...</option>
                     <option value="SUM">SUM</option>
                     <option value="Campo Deportes">Campo Deportes</option>
                     <option value="Aula 1">Aula 1</option>
@@ -182,110 +166,79 @@ function AgregarEvento() {
                 </select>
             </div>
 
-            {form.Ubicacion === 'Otro' && (
+            {form.Ubicacion === "Otro" && (
                 <div className="grupo-form">
                     <label>Especificar ubicación</label>
-                    <input
-                        name="UbicacionOtro"
-                        placeholder="Ingrese la ubicación"
-                        onChange={handleChange}
-                        value={form.UbicacionOtro}
-                        required
-                    />
+                    <input name="UbicacionOtro" required placeholder="Ingrese la ubicación"
+                        value={form.UbicacionOtro} onChange={handleChange} />
                 </div>
             )}
 
-
-
+            {/* Dimensión */}
             <div className="grupo-form">
                 <label>Dimensión *</label>
-                <select
-                    name="Dimension"
-                    onChange={handleChange}
-                    value={form.Dimension}
-                    required
-                >
-                    <option value="">Seleccione una dimensión</option>
+                <select name="Dimension" required value={form.Dimension} onChange={handleChange}>
+                    <option value="">Seleccione...</option>
                     <option value="Tecnico-Administrativa">Técnico-Administrativa</option>
                     <option value="Socio-Comunitaria">Socio-Comunitaria</option>
                     <option value="Pedadogica-Didactica">Pedagógica-Didáctica</option>
-                    {/* <option value="Otro">Otro</option> */}
                 </select>
             </div>
 
-            {form.Dimension === 'Otro' && (
-                <div className="grupo-form">
-                    <label>Especificar dimensión *</label>
-                    <input
-                        name="DimensionOtro"
-                        placeholder="Ingrese la dimensión personalizada"
-                        onChange={handleChange}
-                        value={form.Dimension}
-                        required
-                    />
-                </div>
-            )}
+            {/* Archivo adjunto */}
             <div className="grupo-form">
-                <label>Asignar a</label>
-                <select
-                    name="AsignarA"
-                    onChange={handleChange}
-                    value={form.AsignarA}
-                    required
-                >
-                    <option value="">Seleccione un usuario</option>
-                    {usuarios.length > 0 ? (
-                        usuarios.map(u => (
-                            <option key={u.Id} value={u.Id}>
-                                {u.Name} {u.Rol ? `(${u.Rol})` : ''}
-                            </option>
-                        ))
-                    ) : (
-                        <option disabled>Cargando usuarios...</option>
-                    )}
-                </select>
-
-            </div>
-
-
-            <div className="grupo-form">
-                <label>Descripción</label>
-                <textarea
-                    name="Descripcion"
-                    placeholder="Descripción detallada del evento"
-                    onChange={handleChange}
-                    value={form.Descripcion}
-                    rows="4"
+                <label>Archivo adjunto</label>
+                <input
+                    type="file"
+                    name="Adjunto"
+                    onChange={(e) => setForm(f => ({ ...f, Adjunto: e.target.files[0] }))}
                 />
             </div>
 
 
+            {/* Asignar a */}
+            <div className="grupo-form">
+                <label>Asignar a</label>
+                <select name="AsignarA" required value={form.AsignarA} onChange={handleChange}>
+                    <option value="">Seleccione...</option>
+                    {usuarios.length
+                        ? usuarios
+                            .filter(u => u.Rol?.toLowerCase() === "docente")
+                            .map(u => (
+                                <option key={u.Mail} value={u.Mail}>
+                                    {u.Name} ({u.Rol})
+                                </option>
+                            ))
+                        : <option disabled>Cargando...</option>
+                    }
+                </select>
 
+            </div>
 
+            {/* Descripción */}
+            <div className="grupo-form">
+                <label>Descripción</label>
+                <textarea name="Descripcion" rows="4"
+                    value={form.Descripcion} onChange={handleChange}
+                    placeholder="Descripción detallada" />
+            </div>
 
-            
-
+            {/* Materia */}
             <div className="grupo-form">
                 <label>Materia</label>
-                <select
-                    name="Materia"
-                    onChange={handleChange}
-                    value={form.Materia}
-                >
+                <select name="Materia" value={form.Materia} onChange={handleChange}>
                     <option value="">Sin materia</option>
-                    <option value="Matematicas">Matemáticas</option>
-                    <option value="Educacion Fisica">Educación Física</option>
-                    <option value="Practicas del Lenguaje">Prácticas del Lenguaje</option>
-                    <option value="Musica">Música</option>
-                    <option value="Ciencias Sociales">Ciencias Sociales</option>
-                    <option value="Ciencias Naturales">Ciencias Naturales</option>
-                    <option value="Ingles">Inglés</option>
+                    {["Matematicas", "Educacion Fisica", "Practicas del Lenguaje",
+                        "Musica", "Ciencias Sociales", "Ciencias Naturales", "Ingles"
+                    ].map(m => <option key={m}>{m}</option>)}
                 </select>
             </div>
 
+            {/* Botones */}
             <div className="grupo-botones">
-                <button type="submit" className="btn-submit">Crear evento</button>
-                <button type="button" className="btn-cancelar" onClick={() => navigate("/calendario")}>Cancelar</button>
+                <button className="btn-submit">Crear evento</button>
+                <button type="button" className="btn-cancelar"
+                    onClick={() => navigate("/calendario")}>Cancelar</button>
             </div>
 
             <div className="info-recordatorio">

@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './CrearUsuario.css';
-import axios from "axios";
-
+import api from "../api"; // 👈 usamos el helper centralizado
 
 function CrearUsuario() {
   const navigate = useNavigate();
@@ -16,6 +15,8 @@ function CrearUsuario() {
       pedagogico: { ver: false, editar: false }
     }
   });
+  const [mensaje, setMensaje] = useState("");
+  const [tipoMensaje, setTipoMensaje] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -41,11 +42,11 @@ function CrearUsuario() {
     // Convertir permisos a strings
     const permisoVisualizacion = Object.keys(form.permisos)
       .filter(dim => form.permisos[dim].ver)
-      .join(','); // ej: "tecnico,socio"
+      .join(',');
 
     const permisoEdicion = Object.keys(form.permisos)
       .filter(dim => form.permisos[dim].editar)
-      .join(','); // ej: "pedagogico"
+      .join(',');
 
     const nuevoUsuario = {
       Mail: form.correo,
@@ -56,14 +57,15 @@ function CrearUsuario() {
     };
 
     try {
-      const res = await axios.post("http://localhost:3000/api/registrarUsuario", nuevoUsuario);
-      console.log("Usuario creado:", res.data);
-      navigate("/admin-panel");
+      const res = await api.post("/usuarios", nuevoUsuario); // 👈 endpoint correcto
+      setMensaje(res.data.Mensaje || "Usuario creado correctamente");
+      setTipoMensaje("success");
+      setTimeout(() => navigate("/admin-panel"), 2000);
     } catch (error) {
-      console.error("❌ Error al crear usuario:", error.response?.data || error.message);
+      setMensaje(error.response?.data?.Error || "Error al crear usuario");
+      setTipoMensaje("error");
     }
   };
-
 
   return (
     <div className="crear-usuario-panel">
@@ -100,12 +102,10 @@ function CrearUsuario() {
             <option value="familia">Familia</option>
             <option value="director">Director</option>
           </select>
-
         </div>
 
         <fieldset className="seccion-permisos">
           <legend>Permisos por dimensión</legend>
-
           {[
             { key: 'tecnico', label: '🛠️ Técnico–Administrativa' },
             { key: 'socio', label: '🤝 Socio–Comunitaria' },
@@ -135,6 +135,8 @@ function CrearUsuario() {
           ))}
         </fieldset>
 
+        {mensaje && <p className={`mensaje ${tipoMensaje}`}>{mensaje}</p>}
+
         <div className="botones-formulario">
           <button type="button" onClick={() => navigate('/admin-panel')}>Cancelar</button>
           <button type="submit">Crear Usuario</button>
@@ -143,4 +145,5 @@ function CrearUsuario() {
     </div>
   );
 }
+
 export default CrearUsuario;
