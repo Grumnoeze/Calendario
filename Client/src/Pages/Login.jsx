@@ -50,13 +50,13 @@ function Login() {
       // Redirigir según el rol
       switch (usuario.Rol?.toLowerCase()) {
         case "admin":
-          navigate("/admin-panel");
+          navigate("/calendario");
           break;
         case "docente":
-          navigate("/agregar-evento");
+          navigate("/vista-docente");
           break;
         case "familia":
-          navigate("/calendario");
+          navigate("/vista-familia");
           break;
         default:
           setMensaje("Rol desconocido");

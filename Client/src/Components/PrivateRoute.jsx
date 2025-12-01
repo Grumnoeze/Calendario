@@ -7,8 +7,24 @@ function PrivateRoute({ children, roles }) {
     return <Navigate to="/login" />;
   }
 
-  if (!roles.includes(usuario.Rol)) {
-    return <h2>⛔ Acceso denegado</h2>;
+  // 📌 Normalizar rol a minúsculas para comparación
+  const rolNormalizado = usuario.Rol?.toLowerCase();
+  const rolesNormalizados = roles.map(r => r.toLowerCase());
+
+  if (!rolesNormalizados.includes(rolNormalizado)) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '100vh',
+        flexDirection: 'column',
+        backgroundColor: '#f5f5f5'
+      }}>
+        <h2 style={{ color: '#f44336' }}>⛔ Acceso denegado</h2>
+        <p>No tienes permisos para acceder a esta página</p>
+      </div>
+    );
   }
 
   return children;

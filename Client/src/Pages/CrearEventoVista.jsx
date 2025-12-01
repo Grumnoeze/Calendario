@@ -5,6 +5,11 @@ import './Calendario.css';
 
 function CrearEventoVista() {
   const navigate = useNavigate();
+  
+  // 📌 Obtener rol del usuario desde localStorage
+  const usuarioLocal = JSON.parse(localStorage.getItem("usuario"));
+  const rolUsuario = usuarioLocal?.Rol || "docente";
+  const nombreUsuario = usuarioLocal?.Name || "Usuario";
 
   return (
     <div className="calendario-layout">
@@ -15,28 +20,35 @@ function CrearEventoVista() {
           <hr className="logo-divider" />
         </div>
 
-        <h2 className="rol-usuario">Director</h2>
+        <h2 className="rol-usuario">{rolUsuario === "docente" ? "Docente" : "Director"}</h2>
 
         <nav className="menu-navegacion">
-          <button className="menu-btn" onClick={() => navigate("/calendario")}>
+          {/* 📌 Opciones según rol */}
+          <button className="menu-btn" onClick={() => navigate("/vista-docente")}>
             📅 Calendario<br /><span>Vista mensual y diaria</span>
           </button>
-          <button className="menu-btn" onClick={() => navigate("/agregar-evento")}>
+          <button className="menu-btn activo" onClick={() => navigate("/agregar-evento")}>
             ➕ Crear evento<br /><span>Crear nuevo evento</span>
           </button>
           <button className="menu-btn" onClick={() => navigate("/buscar-filtrar")}>
             🔍 Buscar y filtrar<br /><span>Buscar un evento específico</span>
           </button>
-          <button className="menu-btn" onClick={() => navigate("/admin-panel")}>
-            ⚙️ Panel Admin<br /><span>Usuarios y permisos</span>
-          </button>
-          <button className="menu-btn activo" onClick={() => navigate("/repositorio")}>
-            📁 Repositorio<br /><span>Documento adjunto</span>
-          </button>
+          
+          {/* 📌 Opciones solo para admin */}
+          {rolUsuario?.toLowerCase() === "admin" && (
+            <>
+              <button className="menu-btn" onClick={() => navigate("/admin-panel")}>
+                ⚙️ Panel Admin<br /><span>Usuarios y permisos</span>
+              </button>
+              <button className="menu-btn" onClick={() => navigate("/repositorio")}>
+                📁 Repositorio<br /><span>Documento adjunto</span>
+              </button>
+            </>
+          )}
         </nav>
 
         <div className="usuario-sidebar">
-          <span>👤 Pablo Gómez (admin)</span>
+          <span>👤 {nombreUsuario} ({rolUsuario})</span>
           <button className="cerrar-sesion" onClick={() => {
             localStorage.removeItem("usuario");
             navigate("/login");

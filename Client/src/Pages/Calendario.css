@@ -20,6 +20,7 @@
   margin: 0;
   font-size: 1.2rem;
   font-weight: bold;
+  color: white;
 }
 
 .nuevo-evento {
@@ -943,7 +944,8 @@ p {
   margin: 0;
   font-size: 1.05rem;
   font-weight: 700;
-  color: white;
+  color: rgb(255, 255, 255);
+  text-shadow: 0 0 10px rgba(255, 235, 59, 0.8), 0 0 20px rgba(255, 193, 7, 0.6);
 }
 
 /* menú desplegable (derecha) — queda pegado al header */
@@ -1140,4 +1142,52 @@ p {
   background-color: #45a049;
   transform: translateY(-2px);
   box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+}
+
+/* 📌 VISTA FAMILIA: SIN BARRA LATERAL */
+.vista-familia-layout {
+  display: flex;
+  height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #fdfdfd;
+}
+
+.contenido-familia {
+  width: 100%;
+  padding: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.encabezado-familia {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #1A3D64;
+  color: white;
+  padding: 1rem 2rem;
+  border-bottom: 2px solid #0077b6;
+}
+
+.encabezado-familia h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.btn-cerrar-sesion {
+  background-color: #f44336;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-cerrar-sesion:hover {
+  background-color: #e53935;
+  transform: scale(1.05);
 }

@@ -10,9 +10,12 @@ function BuscarYFiltrar() {
   const [eventosCalendario, setEventosCalendario] = useState([]);
   const [menuDesplegableAbierto, setMenuDesplegableAbierto] = useState(false);
 
-  // 🔹 Rol del usuario (para controlar visibilidad del botón)
-  const rolUsuario = "Director"; 
+  // 📌 Obtener rol del usuario desde localStorage
+  const usuarioLocal = JSON.parse(localStorage.getItem("usuario"));
+  const rolUsuario = usuarioLocal?.Rol || "docente";
+  const nombreUsuario = usuarioLocal?.Name || "Usuario";
   const esAdminODocente = rolUsuario.toLowerCase() === "admin" || rolUsuario.toLowerCase() === "docente";
+  const esAdmin = rolUsuario.toLowerCase() === "admin";
 
   const [filtros, setFiltros] = useState({
     texto: '',
@@ -69,10 +72,10 @@ function BuscarYFiltrar() {
           <hr className="logo-divider" />
         </div>
 
-        <h2 className="rol-usuario">{rolUsuario}</h2>
+        <h2 className="rol-usuario">{rolUsuario === "docente" ? "Docente" : "Director"}</h2>
 
         <nav className="menu-navegacion">
-          <button className="menu-btn" onClick={() => navigate("/calendario")}>
+          <button className="menu-btn" onClick={() => navigate("/vista-docente")}>
             📅 Calendario<br /><span>Vista mensual y diaria</span>
           </button>
 
@@ -84,13 +87,18 @@ function BuscarYFiltrar() {
             🔍 Buscar y filtrar<br /><span>Buscar un evento específico</span>
           </button>
 
-          <button className="menu-btn" onClick={() => navigate("/admin-panel")}>
-            ⚙️ Panel Admin<br /><span>Usuarios y permisos</span>
-          </button>
+          {/* 📌 Panel Admin y Repositorio: Solo para Admin */}
+          {esAdmin && (
+            <>
+              <button className="menu-btn" onClick={() => navigate("/admin-panel")}>
+                ⚙️ Panel Admin<br /><span>Usuarios y permisos</span>
+              </button>
 
-          <button className="menu-btn" onClick={() => navigate("/repositorio")}>
-            📁 Repositorio<br /><span>Documento adjunto</span>
-          </button>
+              <button className="menu-btn" onClick={() => navigate("/repositorio")}>
+                📁 Repositorio<br /><span>Documento adjunto</span>
+              </button>
+            </>
+          )}
 
           {/* 📌 MENÚ DESPLEGABLE */}
           <div className="menu-desplegable-wrapper">
@@ -164,8 +172,13 @@ function BuscarYFiltrar() {
         </nav>
 
         <div className="usuario-sidebar">
-          <span>Pablo Gómez (admin)</span>
-          <button className="cerrar-sesion">Cerrar sesión</button>
+          <span>{nombreUsuario} ({rolUsuario})</span>
+          <button className="cerrar-sesion" onClick={() => {
+            localStorage.removeItem("usuario");
+            navigate("/login");
+          }}>
+            Cerrar sesión
+          </button>
         </div>
       </aside>
 

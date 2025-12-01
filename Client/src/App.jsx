@@ -6,6 +6,8 @@ import AdminPanel from "./Pages/AdminPanel";
 import AgregarEvento from "./Pages/AgregarEvento";
 import CrearEventoVista from "./Pages/CrearEventoVista";
 import Calendario from "./Pages/Calendario";
+import VistaFamilia from "./Pages/VistaFamilia";
+import VistaDocente from "./Pages/VistaDocente";
 import Repositorio from "./Pages/repositorio";
 import BuscarFiltrar from "./Pages/BuscarYFiltrar";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
@@ -48,6 +50,19 @@ function App() {
   <Route path="/buscar-filtrar" element={
     <PrivateRoute roles={["docente", "admin"]}>
       <BuscarFiltrar />
+    </PrivateRoute>
+  } />
+  
+  {/* 📌 NUEVAS RUTAS: Vista Familia y Vista Docente */}
+  <Route path="/vista-familia" element={
+    <PrivateRoute roles={["familia"]}>
+      <VistaFamilia />
+    </PrivateRoute>
+  } />
+  
+  <Route path="/vista-docente" element={
+    <PrivateRoute roles={["docente"]}>
+      <VistaDocente />
     </PrivateRoute>
   } />
 </Routes>
