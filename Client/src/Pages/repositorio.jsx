@@ -7,8 +7,7 @@ import './repositorio.css';
 function Repositorio() {
   const navigate = useNavigate();
   const [documentos, setDocumentos] = useState([]);
-  const [eventosCalendario, setEventosCalendario] = useState([]);
-  const [menuDesplegableAbierto, setMenuDesplegableAbierto] = useState(false);
+  // Eliminado: eventosCalendario no se utiliza
   const [filtros, setFiltros] = useState({ texto: '', dimension: '', materia: '' });
   const [mostrarModal, setMostrarModal] = useState(false);
   const [form, setForm] = useState({
@@ -33,29 +32,14 @@ function Repositorio() {
     buscarDocumentos();
   }, [buscarDocumentos]);
 
-  useEffect(() => {
-    // Cargar eventos para el desplegable
-    axios.get('http://localhost:3000/api/listarEventos')
-      .then(response => {
-        const eventosFormateados = response.data.map(ev => ({
-          id: ev.Id,
-          title: ev.Titulo,
-          start: `${ev.FechaInicio}T${ev.HoraInicio}`,
-          end: `${ev.FechaFin}T${ev.HoraFin}`,
-        }));
-        setEventosCalendario(eventosFormateados);
-      })
-      .catch(() => console.error("Error al cargar eventos"));
-  }, []);
+  // Eliminado: useEffect para cargar eventos ya que eventosCalendario no se utiliza
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFiltros(prev => ({ ...prev, [name]: value }));
   };
 
-  const irAlEvento = (eventoId) => {
-    navigate('/calendario', { state: { eventoId } });
-  };
+  // Eliminado: irAlEvento ya que no se utiliza
 
   // Subir documento (mantengo tu lógica original dentro del modal)
   const handleUpload = async (e) => {
