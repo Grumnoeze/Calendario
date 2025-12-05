@@ -1,5 +1,5 @@
 // Calendario.jsx completo y corregido
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import api from "../api";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -8,32 +8,31 @@ import interactionPlugin from "@fullcalendar/interaction";
 import esLocale from "@fullcalendar/core/locales/es";
 import "./Calendario.css";
 
+const COLORES_ESTADO = {
+  Pendiente: "#ffeb3b",
+  Realizado: "#4caf50",
+  Cancelado: "#f44336",
+};
+
 export default function Calendario() {
   const calendarRef = useRef(null);
   const [docsEvento, setDocsEvento] = useState([]);
 
   const [eventos, setEventos] = useState([]);
   const [eventoSeleccionado, setEventoSeleccionado] = useState(null);
-  const [eventoHover, setEventoHover] = useState(null);
   const [modalDetalles, setModalDetalles] = useState(null);
   const [modalEditar, setModalEditar] = useState(null);
 
-  const coloresEstado = {
-    Pendiente: "#ffeb3b",
-    Realizado: "#4caf50",
-    Cancelado: "#f44336",
-  };
-
-  const obtenerColor = (estado, tipo) => {
+  const obtenerColor = useCallback((estado, tipo) => {
     return (
-      coloresEstado[estado] ||
+      COLORES_ESTADO[estado] ||
       (tipo === "clase"
         ? "#4caf50"
         : tipo === "reunion"
           ? "#2196f3"
           : "#f44336")
     );
-  };
+  }, []);
 
   // FORMATEO PARA MOSTRAR SOLO HH:mm
   const limpiarHora = (horaISO) => {
@@ -74,7 +73,7 @@ export default function Calendario() {
     };
 
     cargarEventos();
-  }, []);
+  }, [obtenerColor]);
 
   // cargar documentos cuando se abre modalDetalles
   useEffect(() => {
@@ -227,20 +226,19 @@ export default function Calendario() {
           ref={calendarRef}
           plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
           initialView="dayGridMonth"
+          headerToolbar={{ left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek,timeGridDay' }}
           locale={esLocale}
           height="auto"
           events={eventos}
           eventClick={handleEventClick}
-          eventMouseEnter={(info) => {
-            setEventoHover({
-              title: info.event.title,
-              x: info.jsEvent.pageX,
-              y: info.jsEvent.pageY,
-            });
+          eventMouseEnter={() => {
+            // opción: mostrar tooltip o manejar hover
+            // actualmente no hacemos nada para evitar errores
           }}
-          eventMouseLeave={() => setEventoHover(null)}
+          eventMouseLeave={() => {
+            // limpiar tooltip si se implementa en el futuro
+          }}
         />
-
       </div>
 
       {eventoSeleccionado && (
