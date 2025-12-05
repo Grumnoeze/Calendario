@@ -24,13 +24,41 @@ exports.subir = (req, res) => {
   });
 };
 
-// Listar documentos
+// Listar documentos con título de evento
 exports.listar = (req, res) => {
-  db.all(`SELECT * FROM Documentos`, [], (err, rows) => {
+  const sql = `
+    SELECT d.Id, d.Nombre, d.Dimension, d.Materia, d.EventoId, d.Ruta, d.SubidoPor,
+           e.Titulo AS EventoTitulo
+    FROM Documentos d
+    LEFT JOIN Eventos e ON d.EventoId = e.Id
+  `;
+  db.all(sql, [], (err, rows) => {
     if (err) return res.status(500).json({ Error: "Error al listar documentos" });
     res.status(200).json(rows);
   });
 };
+
+// Listar documentos por EventoId
+exports.listarPorEvento = (req, res) => {
+  const { eventoId } = req.params;
+
+  const sql = `
+    SELECT d.Id, d.Nombre, d.Dimension, d.Materia, d.Ruta, d.SubidoPor,
+           e.Titulo AS EventoTitulo
+    FROM Documentos d
+    LEFT JOIN Eventos e ON d.EventoId = e.Id
+    WHERE d.EventoId = ?
+  `;
+
+  db.all(sql, [eventoId], (err, rows) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ Error: "Error al listar documentos del evento" });
+    }
+    res.status(200).json(rows);
+  });
+};
+
 
 // Descargar documento
 exports.descargar = (req, res) => {

@@ -32,7 +32,8 @@ export default function Repositorio() {
       docs = docs.filter((d) => {
         const coincideTexto =
           filtros.texto === "" ||
-          d.Nombre.toLowerCase().includes(filtros.texto.toLowerCase());
+          d.Nombre.toLowerCase().includes(filtros.texto.toLowerCase()) ||
+          (d.EventoTitulo && d.EventoTitulo.toLowerCase().includes(filtros.texto.toLowerCase()));
 
         const coincideDimension =
           filtros.dimension === "" || d.Dimension === filtros.dimension;
@@ -135,12 +136,12 @@ export default function Repositorio() {
           className="filtro-select"
         >
           <option value="">Todas las materias</option>
-          <option value="Matematicas">Matemáticas</option>
-          <option value="Practicas del Lenguaje">
-            Prácticas del Lenguaje
-          </option>
-          <option value="Educacion Fisica">Educación Física</option>
+          {[
+            "Matematicas", "Educacion Fisica", "Practicas del Lenguaje",
+            "Musica", "Ciencias Sociales", "Ciencias Naturales", "Ingles"
+          ].map(m => <option key={m} value={m}>{m}</option>)}
         </select>
+
 
         <button className="btn-subir" onClick={() => setMostrarModal(true)}>
           📤 Subir documento
@@ -164,15 +165,19 @@ export default function Repositorio() {
                 <strong>Materia:</strong> {doc.Materia}
               </p>
               <p>
-                <strong>Evento:</strong> {doc.EventoId || "—"}
+                <strong>Evento:</strong> {doc.EventoTitulo || "—"}
               </p>
 
+
               <a
-                className="btn-descargar"
-                href={`http://localhost:3000/api/documentos/descargar/${doc.Ruta}`}
+                className="btn-ver"
+                href={`http://localhost:3000/uploads/eventos/${doc.Ruta}`}
+                target="_blank"
+                rel="noopener noreferrer"
               >
-                ⬇️ Descargar
+                📂 Ver archivo
               </a>
+
             </div>
           ))
         )}
@@ -219,20 +224,19 @@ export default function Repositorio() {
                 }
               >
                 <option value="">Materia</option>
-                <option value="Matematicas">Matemáticas</option>
-                <option value="Practicas del Lenguaje">
-                  Prácticas del Lenguaje
-                </option>
-                <option value="Educacion Fisica">Educación Física</option>
+                {[
+                  "Matematicas", "Educacion Fisica", "Practicas del Lenguaje",
+                  "Musica", "Ciencias Sociales", "Ciencias Naturales", "Ingles"
+                ].map(m => <option key={m}>{m}</option>)}
               </select>
 
+
               <select
-                required
                 onChange={(e) =>
                   setForm((f) => ({ ...f, eventoId: e.target.value }))
                 }
               >
-                <option value="">Asociar a evento</option>
+                <option value="">Sin evento</option>
                 {eventos.map((ev) => (
                   <option key={ev.Id} value={ev.Id}>
                     {ev.Titulo}

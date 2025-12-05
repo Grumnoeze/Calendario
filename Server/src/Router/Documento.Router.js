@@ -31,4 +31,7 @@ router.delete('/:id', verificarToken, documentoController.eliminar);
 // Eliminar documento por nombre de archivo (Ruta)
 router.delete('/nombre/:nombre', verificarToken, documentoController.eliminarPorNombre);
 
+// Listar documentos por EventoId
+router.get('/evento/:eventoId', verificarToken, documentoController.listarPorEvento);
+
 module.exports = router;

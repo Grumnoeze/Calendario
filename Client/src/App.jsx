@@ -41,7 +41,6 @@ function App() {
           }
         />
 
-
         <Route
           path="/admin-panel"
           element={
@@ -81,7 +80,7 @@ function App() {
         <Route
           path="/vista-familia"
           element={
-            <PrivateRoute roles={["familia"]}>
+            <PrivateRoute roles={["familia", "admin"]}>
               <VistaFamilia />
             </PrivateRoute>
           }
@@ -90,7 +89,7 @@ function App() {
         <Route
           path="/vista-docente"
           element={
-            <PrivateRoute roles={["docente"]}>
+            <PrivateRoute roles={["docente", "admin"]}>
               <VistaDocente />
             </PrivateRoute>
           }

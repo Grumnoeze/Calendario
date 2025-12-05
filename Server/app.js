@@ -21,6 +21,8 @@ app.use('/api/usuarios', usuarioRouter);
 app.use('/api/eventos', eventoRouter);
 app.use('/api/documentos', documentoRouter);
 
+app.use("/uploads/eventos", express.static(path.join(__dirname, "uploads/eventos")));
+
 app.listen(PORT, () => {
   console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
 });

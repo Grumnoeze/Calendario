@@ -10,6 +10,7 @@ import "./Calendario.css";
 
 export default function Calendario() {
   const calendarRef = useRef(null);
+  const [docsEvento, setDocsEvento] = useState([]);
 
   const [eventos, setEventos] = useState([]);
   const [eventoSeleccionado, setEventoSeleccionado] = useState(null);
@@ -44,11 +45,11 @@ export default function Calendario() {
   // ============================
   //   CARGAR EVENTOS DESDE BD
   // ============================
+  // cargar eventos al inicio
   useEffect(() => {
     const cargarEventos = async () => {
       try {
         const res = await api.get("/eventos");
-
         const eventosFormateados = res.data.map((ev) => ({
           id: ev.Id,
           title: ev.Titulo,
@@ -66,7 +67,6 @@ export default function Calendario() {
             archivoAdjunto: ev.ArchivoAdjunto,
           },
         }));
-
         setEventos(eventosFormateados);
       } catch (e) {
         console.error("❌ Error cargando eventos", e);
@@ -75,6 +75,20 @@ export default function Calendario() {
 
     cargarEventos();
   }, []);
+
+  // cargar documentos cuando se abre modalDetalles
+  useEffect(() => {
+    if (modalDetalles?.id) {
+      api.get(`/documentos/evento/${modalDetalles.id}`)
+        .then(res => setDocsEvento(res.data))
+        .catch(err => console.error("Error cargando documentos del evento", err));
+    } else {
+      setDocsEvento([]); // limpiar cuando se cierra el modal
+    }
+  }, [modalDetalles]);
+
+
+
 
   // ============================
   //   ACTUALIZAR ESTADO EN BD
@@ -128,11 +142,18 @@ export default function Calendario() {
       titulo: ev.title,
       inicio: ev.startStr,
       fin: ev.endStr,
-      descripcion: ev.extendedProps.descripcion,
-      ubicacion: ev.extendedProps.ubicacion,
       estado: ev.extendedProps.estado || "Pendiente",
+      ubicacion: ev.extendedProps.ubicacion,
+      descripcion: ev.extendedProps.descripcion,
+      dimension: ev.extendedProps.dimension,
+      materia: ev.extendedProps.materia,
+      asignarA: ev.extendedProps.asignarA,
+      archivoAdjunto: ev.extendedProps.archivoAdjunto // 👈 importante
     });
   };
+
+
+
 
   // ============================
   //     CAMBIAR ESTADO
@@ -219,6 +240,7 @@ export default function Calendario() {
           }}
           eventMouseLeave={() => setEventoHover(null)}
         />
+
       </div>
 
       {eventoSeleccionado && (
@@ -252,6 +274,7 @@ export default function Calendario() {
 
       {/* MODAL DETALLES */}
       {modalDetalles && (
+
         <div className="modal-overlay">
           <div className="modal">
             <h2>Detalles del Evento</h2>
@@ -271,9 +294,34 @@ export default function Calendario() {
               <p><strong>Materia:</strong> {modalDetalles.materia}</p>
             )}
 
-            {modalDetalles.asignarA && (
-              <p><strong>Asignado a:</strong> {modalDetalles.asignarA}</p>
+            {modalDetalles.asignadoNombre && (
+              <p><strong>Asignado a:</strong> {modalDetalles.asignadoNombre}</p>
             )}
+
+
+            {docsEvento.length > 0 && (
+              <div>
+                <strong>Archivos adjuntos:</strong>
+                <ul>
+                  {docsEvento.map(doc => (
+                    <li key={doc.Id}>
+                      <a
+                        href={`http://localhost:3000/uploads/eventos/${doc.Ruta}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        📂 {doc.Nombre}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+                <a href={`/repositorio?eventoId=${modalDetalles.id}`}>
+                  👉 Ver todos en repositorio
+                </a>
+              </div>
+            )}
+
+
 
             <div className="modal-botones">
               <button
