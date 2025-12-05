@@ -91,14 +91,14 @@ function AdminPanel() {
               <option value="familia">Familia</option>
             </select>
 
-            {esAdmin && (
+            
               <button
                 className="btn-agregar"
                 onClick={() => navigate("/crear-usuario")}
               >
                 ➕ Nuevo Usuario
               </button>
-            )}
+            
           </div>
 
           {/* Tabla de usuarios */}
