@@ -8,10 +8,8 @@ function AdminPanel() {
   const navigate = useNavigate();
   const [usuarios, setUsuarios] = useState([]);
   const [mensaje, setMensaje] = useState('');
-  const [menuDesplegableAbierto, setMenuDesplegableAbierto] = useState(false);
-
-  // const usuarioLocal = JSON.parse(localStorage.getItem("usuario"));
-  // const esAdmin = usuarioLocal?.Rol === "admin";
+  const usuarioLocal = JSON.parse(localStorage.getItem("usuario")) || null;
+  const esAdmin = usuarioLocal?.Rol?.toLowerCase() === "admin";
 
   useEffect(() => {
     axios.get('http://localhost:3000/api/listarUsuarios')
@@ -72,7 +70,7 @@ function AdminPanel() {
           <hr className="logo-divider" />
         </div>
 
-        <h2 className="rol-usuario">Director</h2>
+        <h2 className="rol-usuario">{usuarioLocal?.Rol ? usuarioLocal.Rol : 'Director'}</h2>
 
         <nav className="menu-navegacion">
           <button className="menu-btn" onClick={() => navigate("/calendario")}>
@@ -93,7 +91,7 @@ function AdminPanel() {
         </nav>
 
         <div className="usuario-sidebar">
-          <span>👤 Pablo Gómez (admin)</span>
+          <span>👤 {usuarioLocal?.Name ? usuarioLocal.Name : 'Usuario'} ({usuarioLocal?.Rol ? usuarioLocal.Rol : '—'})</span>
           <button className="cerrar-sesion" onClick={() => {
             localStorage.removeItem("usuario");
             navigate("/login");

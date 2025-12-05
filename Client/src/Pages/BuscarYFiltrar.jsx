@@ -204,12 +204,14 @@ function BuscarYFiltrar() {
               <option value="Pedadogica-Didactica">Pedagógica-Didáctica</option>
             </select>
 
-            <select name="asignadoA" value={filtros.asignadoA} onChange={handleChange} className="filtro-select">
-              <option value="">Asignado a: Todos</option>
-              <option value="docente">Asignado a: Docente</option>
-              <option value="director">Asignado a: Director</option>
-              <option value="familia">Asignado a: Familia</option>
-            </select>
+            <input
+              type="text"
+              name="asignadoA"
+              value={filtros.asignadoA}
+              onChange={handleChange}
+              placeholder="Buscar por nombre y apellido..."
+              className="filtro-input"
+            />
 
             <button className="btn-limpiar" onClick={limpiarFiltros}>Limpiar Filtros</button>
           </div>

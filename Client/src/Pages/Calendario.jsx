@@ -17,6 +17,8 @@ function Calendario() {
   const [eventoHover, setEventoHover] = useState(null);
   const [eventoSeleccionado, setEventoSeleccionado] = useState(null);
   const [sidebarColapsada, setSidebarColapsada] = useState(false);
+  const [mostrarDetalles, setMostrarDetalles] = useState(false);
+  const [eventoEditable, setEventoEditable] = useState(null);
 
   // 📌 NUEVO: Estados para el modal de edición
   const [mostrarModalEdicion, setMostrarModalEdicion] = useState(false);
@@ -194,6 +196,36 @@ function Calendario() {
 
   const handleMouseLeave = () => setEventoHover(null);
 
+  const prepararEventoDetalles = (evento) => {
+    const fechaInicio = new Date(evento.start);
+    const fechaFin = new Date(evento.end);
+
+    return {
+      id: evento.id,
+      title: evento.title,
+      fechaInicio: fechaInicio.toLocaleDateString(),
+      horaInicio: fechaInicio.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+      fechaFin: fechaFin.toLocaleDateString(),
+      horaFin: fechaFin.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+      ubicacion: evento.extendedProps?.ubicacion || "Sin ubicación",
+      dimension: evento.extendedProps?.dimension || "Sin dimensión",
+      asignarA: evento.extendedProps?.asignarA || "No asignado",
+      descripcion: evento.extendedProps?.descripcion || "Sin descripción",
+      materia: evento.extendedProps?.materia || "Sin materia",
+      permisoVisualizacion: evento.extendedProps?.permisoVisualizacion || "N/A",
+      permisoEdicion: evento.extendedProps?.permisoEdicion || "N/A",
+      recordatorio: evento.extendedProps?.recordatorio || "Sí",
+      estado: evento.extendedProps?.estado || "Pendiente",
+      tipo: evento.extendedProps?.tipo || "General",
+    };
+  };
+
   return (
     <div className={`calendario-layout ${sidebarColapsada ? "colapsado" : ""}`}>
       {/* SIDEBAR */}
@@ -352,18 +384,15 @@ function Calendario() {
                       eventoSeleccionado.id
                     );
                     if (evento) {
-                      // 📌 NUEVO: Abre modal de edición
-                      abrirModalEdicion(evento);
+                      // 📌 Abre modal de detalles con botones Cerrar y Editar
+                      const detalles = prepararEventoDetalles(evento);
+                      setEventoEditable({...detalles, eventoObj: evento});
+                      setMostrarDetalles(true);
                       setEventoSeleccionado(null);
-                      
-                      // ⚠️ CÓDIGO ANTERIOR COMENTADO (detalles de lectura solo):
-                      // const detalles = prepararEventoDetalles(evento);
-                      // setEventoEditable(detalles);
-                      // setMostrarDetalles(true);
                     }
                   }}
                 >
-                  Editar
+                  Detalles
                 </button>
               </div>
             </div>
@@ -429,6 +458,76 @@ function Calendario() {
           </div>
         )}
         */}
+
+        {/* 📌 NUEVO: MODAL DE DETALLES CON BOTONES CERRAR Y EDITAR */}
+        {mostrarDetalles && eventoEditable && (
+          <div className="modal-overlay">
+            <div className="modal-detalles">
+              <h3>📋 Detalles del evento</h3>
+
+              <p>
+                <strong>Título:</strong> {eventoEditable.title}
+              </p>
+              <p>
+                <strong>Fecha inicio:</strong> {eventoEditable.fechaInicio}{" "}
+                {eventoEditable.horaInicio}
+              </p>
+              <p>
+                <strong>Fecha fin:</strong> {eventoEditable.fechaFin}{" "}
+                {eventoEditable.horaFin}
+              </p>
+              <p>
+                <strong>Ubicación:</strong> {eventoEditable.ubicacion}
+              </p>
+              <p>
+                <strong>Dimensión:</strong> {eventoEditable.dimension}
+              </p>
+              <p>
+                <strong>Asignado a:</strong> {eventoEditable.asignarA}
+              </p>
+              <p>
+                <strong>Materia:</strong> {eventoEditable.materia}
+              </p>
+              <p>
+                <strong>Descripción:</strong> {eventoEditable.descripcion}
+              </p>
+              <p>
+                <strong>Permiso visualización:</strong>{" "}
+                {eventoEditable.permisoVisualizacion}
+              </p>
+              <p>
+                <strong>Permiso edición:</strong>{" "}
+                {eventoEditable.permisoEdicion}
+              </p>
+              <p>
+                <strong>Recordatorio:</strong> {eventoEditable.recordatorio}
+              </p>
+              <p>
+                <strong>Estado:</strong> {eventoEditable.estado}
+              </p>
+              <p>
+                <strong>Tipo:</strong> {eventoEditable.tipo}
+              </p>
+
+              <div className="botones-modal">
+                <button onClick={() => setMostrarDetalles(false)}>
+                  Cerrar
+                </button>
+                <button
+                  onClick={() => {
+                    // 📌 Abre modal de edición desde el botón Editar del modal de detalles
+                    if (eventoEditable.eventoObj) {
+                      abrirModalEdicion(eventoEditable.eventoObj);
+                      setMostrarDetalles(false);
+                    }
+                  }}
+                >
+                  Editar
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* 📌 NUEVO: MODAL DE EDICIÓN CON FORMULARIO */}
         {mostrarModalEdicion && eventoEnEdicion && (

@@ -96,9 +96,7 @@ function CrearUsuario() {
           <select name="rol" onChange={handleChange} required>
             <option value="">Seleccionar rol</option>
             <option value="docente">Docente</option>
-            <option value="preceptor">Preceptor</option>
             <option value="familia">Familia</option>
-            <option value="director">Director</option>
           </select>
 
         </div>
